@@ -7,6 +7,7 @@
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/3dViewer/OBJLoader.js")'></script>
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/3dViewer/Detector.js")'></script>
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/3dViewer/addCanvas.js")'></script>
+	<script type='text/javascript' src='@routes.Assets.at("javascripts/3dViewer/BoundingBoxHelper.js")'></script>
 	
 	<div class="row">
 	  <div class="col-md-8" id="model-viewer">
@@ -19,9 +20,11 @@
 	</div>
    
   <script>
-  	initCanvas("#model-viewer",
-  	"@routes.Assets.at("3dAssets/model.obj")", 
-  	"@routes.Assets.at("3dAssets/texture.png")");
+  
+  	var viewer = new Viewer();
+  	viewer.initCanvas("#model-viewer",
+  	"@routes.Assets.at("3dAssets/candleHolder.obj")", 
+  	"@routes.Assets.at("3dAssets/candleHolder.png")");
   </script>
   
 }
