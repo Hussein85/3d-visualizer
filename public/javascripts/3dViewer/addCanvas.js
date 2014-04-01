@@ -16,9 +16,9 @@ function initCanvas(id, modelPath, texturePath) {
 
 		// These variables set the camera behaviour and sensitivity.
 		controls = new THREE.TrackballControls(camera);
-		controls.rotateSpeed = 5.0;
-		controls.zoomSpeed = 5;
-		controls.panSpeed = 2;
+		controls.rotateSpeed = 1.0;
+		controls.zoomSpeed = 1.2;
+		controls.panSpeed = 0.8
 		controls.noZoom = false;
 		controls.noPan = false;
 		controls.staticMoving = true;
