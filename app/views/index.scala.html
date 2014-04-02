@@ -11,7 +11,11 @@
 	
 	<div class="row">
 	  <div class="col-md-8" id="model-viewer">
-	 	 <div class="alert alert-success">Model Viewer</div>
+	 	<div class="alert alert-success">Model Viewer</div>
+	 	<div id="canvas-place-holder"></div> 
+	 	<div id="camera-control">
+	 		<button type="button" class="btn btn-primary" id="tooglePanY">Toogle Y paning</button>
+	 	</div> 
 	  </div>
 	  <div class="col-md-4" id="model-info">
 	  	<div class="alert alert-info">Model information</div>
@@ -20,11 +24,15 @@
 	</div>
    
   <script>
-  
-  	var viewer = new Viewer();
-  	viewer.initCanvas("#model-viewer",
-  	"@routes.Assets.at("3dAssets/candleHolder.obj")", 
-  	"@routes.Assets.at("3dAssets/candleHolder.png")");
+  	var viewer = new Viewer("#canvas-place-holder",
+  		  	"@routes.Assets.at("3dAssets/candleHolder.obj")", 
+  		  	"@routes.Assets.at("3dAssets/candleHolder.png")");
+  	viewer.initCanvas();
+  	
+  	$( "#tooglePanY" ).click(function() {
+ 	 viewer.tooglePanY();
+});
+  	
   </script>
   
 }

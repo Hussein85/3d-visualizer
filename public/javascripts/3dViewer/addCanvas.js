@@ -1,20 +1,28 @@
 // Create a constructor
-function Viewer() {
-	
+function Viewer(id, modelPath, texturePath) {
 	this.scene;
+	this.id = id;
+	this.camera;
+	this.modelPath = modelPath;
+	this.texturePath = texturePath;
+	this.panY = false;
 }
 
+Viewer.prototype.tooglePanY = function(){
+	this.panY = !this.panY;
+}
 
-Viewer.prototype.initCanvas = function(id, modelPath, texturePath) {
+Viewer.prototype.initCanvas = function() {
+	var that = this;
+
 	if (!Detector.webgl)
 		Detector.addGetWebGLMessage();
 
-	var camera, controls, renderer;
-
+	var controls, renderer;
 
 	var cross;
 	var size = {
-		width : $(id).width(),
+		width : $(that.id).width(),
 		height : 400
 	};
 
@@ -23,12 +31,10 @@ Viewer.prototype.initCanvas = function(id, modelPath, texturePath) {
 
 	function init() {
 
-		camera = new THREE.PerspectiveCamera(45, size.width / size.height, 1,
-				1000);
-		// The zoom
-		camera.position.z = 300;
+		that.camera = new THREE.PerspectiveCamera(45, size.width / size.height,
+				1, 1000);
 
-		controls = new THREE.TrackballControls(camera);
+		controls = new THREE.TrackballControls(that.camera);
 
 		controls.rotateSpeed = 1.0;
 		controls.zoomSpeed = 1.2;
@@ -45,14 +51,14 @@ Viewer.prototype.initCanvas = function(id, modelPath, texturePath) {
 		controls.addEventListener('change', render);
 
 		// world
-		scene = new THREE.Scene();
+		that.scene = new THREE.Scene();
 
 		// You can set the color of the ambient light to any value.
 		// I have chose a completely white light because I want to paint
 		// all the shading into my texture. You propably want something darker.
 		var ambient = new THREE.AmbientLight(0xffffff);
 		// lights
-		scene.add(ambient);
+		that.scene.add(ambient);
 
 		/** * Texture Loading ** */
 		var manager = new THREE.LoadingManager();
@@ -64,7 +70,7 @@ Viewer.prototype.initCanvas = function(id, modelPath, texturePath) {
 
 		// You can set the texture properties in this function.
 		// The string has to be the path to your texture file.
-		loader.load(texturePath, function(image) {
+		loader.load(that.texturePath, function(image) {
 			texture.image = image;
 			texture.needsUpdate = true;
 			// I wanted a nearest neighbour filtering for my low-poly character,
@@ -79,31 +85,30 @@ Viewer.prototype.initCanvas = function(id, modelPath, texturePath) {
 
 		// As soon as the OBJ has been loaded this function looks for a mesh
 		// inside the data and applies the texture to it.
-		loader.load(modelPath, function(event) {
+		loader.load(that.modelPath, function(event) {
 			var object = event;
-			object.name = modelPath;
+			object.name = that.modelPath;
 			object.traverse(function(child) {
 				if (child instanceof THREE.Mesh) {
 					child.material.map = texture;
 					// child.scale.set(100, 100, 100);
 					child.geometry.computeBoundingBox();
-					child.position.y = 0;
-					child.position.x = 0;
-					child.position.z = 0;
+					child.position.set(0, 0, 0);
 					var bb = new THREE.BoundingBoxHelper(child, 0xffff00);
 					bb.update();
-					scene.add(bb);
+					that.scene.add(bb);
+					that.camera.position.set(0, 0, 300);
 				}
 			});
 
-			scene.add(object);
+			that.scene.add(object);
 		});
 
 		// Grid and Axis
 		var axis = new THREE.AxisHelper(100);
 		var grid = new THREE.GridHelper(100, 10);
-		scene.add(axis);
-		scene.add(grid);
+		that.scene.add(axis);
+		that.scene.add(grid);
 		// renderer
 
 		renderer = new THREE.WebGLRenderer({
@@ -111,15 +116,15 @@ Viewer.prototype.initCanvas = function(id, modelPath, texturePath) {
 		});
 		renderer.setSize(size.width, size.height);
 
-		$(id).append(renderer.domElement);
+		$(that.id).append(renderer.domElement);
 
 		window.addEventListener('resize', onWindowResize, false);
 	}
 
 	function onWindowResize() {
 
-		camera.aspect = size.width / size.height;
-		camera.updateProjectionMatrix();
+		that.camera.aspect = size.width / size.height;
+		that.camera.updateProjectionMatrix();
 
 		renderer.setSize(size.width, size.height);
 
@@ -133,12 +138,22 @@ Viewer.prototype.initCanvas = function(id, modelPath, texturePath) {
 
 		requestAnimationFrame(animate);
 		controls.update();
-		// camera.position.y = -scene.get...geometry.boundingBox.min.y * 100;
+
+		if (that.panY){
+			doPanY();
+		}	
+
 		render();
+	}
+
+	function doPanY() {
+		var timer = new Date().getTime() * 0.0005;
+		that.scene.position.setY(Math.floor(Math.cos(timer) * 100));
+		that.scene.updateMatrix();
 	}
 
 	function render() {
 
-		renderer.render(scene, camera);
+		renderer.render(that.scene, that.camera);
 	}
 }
