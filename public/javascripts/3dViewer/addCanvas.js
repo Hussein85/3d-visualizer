@@ -8,7 +8,7 @@ function Viewer(id, modelPath, texturePath) {
 	this.panY = false;
 }
 
-Viewer.prototype.tooglePanY = function(){
+Viewer.prototype.tooglePanY = function() {
 	this.panY = !this.panY;
 }
 
@@ -94,6 +94,8 @@ Viewer.prototype.initCanvas = function() {
 					// child.scale.set(100, 100, 100);
 					child.geometry.computeBoundingBox();
 					child.position.set(0, 0, 0);
+					that.scene.position.setY(-child.geometry.boundingBox.max.y / 2);
+					that.scene.updateMatrix();
 					var bb = new THREE.BoundingBoxHelper(child, 0xffff00);
 					bb.update();
 					that.scene.add(bb);
@@ -139,9 +141,9 @@ Viewer.prototype.initCanvas = function() {
 		requestAnimationFrame(animate);
 		controls.update();
 
-		if (that.panY){
+		if (that.panY) {
 			doPanY();
-		}	
+		}
 
 		render();
 	}
