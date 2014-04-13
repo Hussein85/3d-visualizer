@@ -1,7 +1,13 @@
 add.art=Add art
 
+app.title=Archive
+
+error.required = The field is required
+
 form.name=Name
 form.email=Email address
 form.model.name=Model name
 
-error.required = The field is required
+navbar.add=Upload
+navbar.language=Language
+navbar.viewer=Viewer

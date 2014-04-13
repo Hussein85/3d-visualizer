@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String)(content: Html)(implicit lang: Lang)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -28,44 +28,65 @@
   <body>
   
   <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-	  <div class="container">
-	    <!-- Brand and toggle get grouped for better mobile display -->
-	    <div class="navbar-header">
-	      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-	        <span class="sr-only">Toggle navigation</span>
-	        <span class="icon-bar"></span>
-	        <span class="icon-bar"></span>
-	        <span class="icon-bar"></span>
-	      </button>
-	      <a class="navbar-brand" href="#">Arkivet</a>
-	    </div>
-	
-	    <!-- Collect the nav links, forms, and other content for toggling -->
-	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-	      <ul class="nav navbar-nav">
-            <li @if(title=="Archive home page."){class="active"}><a href="/">Viewer</a></li>
-            <li @if(title=="Add a model to the archive."){class="active"}><a href="/addModel">Lägg till</a></li
-          </ul>        
-	      <ul class="nav navbar-nav navbar-right">
-	        <li class="dropdown">
-	          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-	          <ul class="dropdown-menu">
-	            <li><a href="#">Action</a></li>
-	            <li><a href="#">Another action</a></li>
-	            <li><a href="#">Something else here</a></li>
-	            <li class="divider"></li>
-	            <li><a href="#">Separated link</a></li>
-	          </ul>
-	        </li>
-	      </ul>
-	    </div><!-- /.navbar-collapse -->
-	  </div><!-- /.container-fluid -->
-	</nav>
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">@Messages("app.title")</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+         <li @if(title=="Archive home page."){class="active"}><a href="/">@Messages("navbar.viewer")</a></li>
+            <li @if(title=="Add a model to the archive."){class="active"}><a href="/addModel">@Messages("navbar.add")</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">@Messages("navbar.language")<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li id="language-sweden"><a href="#"><img src="@routes.Assets.at("images/flags/flags/shiny/64/Sweden.png")"></image>Svenska</a></li>
+            <li id="language-us"><a href="#"><img src="@routes.Assets.at("images/flags/flags/shiny/64/United-States.png")"></image>English</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+  
 
     <div class="container">
     	<script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))'></script>
         @content
     </div><!-- /.container -->
+    
+    <script>
+	$( "#language-sweden" ).click(function() {
+		$.ajax({
+		    url: '@routes.Application.language',
+		    data: { code: "se"},
+		    type: 'POST',
+		    success: function(result) {
+		        location.reload(false)
+		    }
+		});
+		});
+	$( "#language-us" ).click(function() {
+		$.ajax({
+		    url: '@routes.Application.language',
+		    data: { code: "en"},
+		    type: 'POST',
+		    success: function(result) {
+		        location.reload(false)
+		    }
+		});
+		});
+	</script>
 
 
     <!-- Bootstrap core JavaScript

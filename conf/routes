@@ -4,6 +4,7 @@
 
 # Home page
 GET     /                           controllers.Application.index
+POST     /language                   controllers.Application.language
 GET     /addModel                   controllers.Model.addForm
 POST    /addModel                   controllers.Model.upload
 

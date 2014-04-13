@@ -1,7 +1,13 @@
 add.art=Lägg till ett konstverk
 
+app.title=Arkiv
+
+error.required = Fältet är nödvändigt
+
 form.name=Namn
 form.email=Email adress
 form.model.name=Model namn
 
-error.required = Fältet är nödvändigt
+navbar.add=Ladda upp
+navbar.language=Språk
+navbar.viewer=Visare
