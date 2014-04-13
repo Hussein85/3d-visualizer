@@ -1,0 +1,7 @@
+add.art=Add art
+
+form.name=Name
+form.email=Email address
+form.model.name=Model name
+
+error.required = The field is required

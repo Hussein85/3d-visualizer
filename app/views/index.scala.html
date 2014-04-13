@@ -1,6 +1,6 @@
 @(message: String)
 
-@main("Welcome to Play") {
+@main("Archive home page.") {
 	
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/3dViewer/three.min.js")'></script>
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/3dViewer/TrackballControls.js")'></script>
@@ -26,7 +26,7 @@
   <script>
   	var viewer = new Viewer("#canvas-place-holder",
   		  	"@routes.Assets.at("3dAssets/candleHolder.obj")", 
-  		  	"@routes.Assets.at("3dAssets/candleHolder.png")");
+  		  	"@routes.Assets.at("3dAssets/candleHolderSmal.jpg")");
   	viewer.initCanvas();
   	
   	$( "#tooglePanY" ).click(function() {

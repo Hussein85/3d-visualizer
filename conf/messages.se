@@ -1,0 +1,7 @@
+add.art=Lägg till ett konstverk
+
+form.name=Namn
+form.email=Email adress
+form.model.name=Model namn
+
+error.required = Fältet är nödvändigt
