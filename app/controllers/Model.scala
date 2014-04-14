@@ -7,7 +7,8 @@ import play.api.data._
 import play.api.data.Forms._
 import utils._
 
-object Model extends Controller with Language{
+
+object Model extends Controller{
   
   case class Model(name: String, age: Int)
 
@@ -16,7 +17,7 @@ object Model extends Controller with Language{
       "name" -> text,
       "age" -> number)(Model.apply)(Model.unapply))
 
-  def addForm = Action {
+  def addForm = Action { implicit request =>
     Ok(views.html.model.addForm(modelForm))
   }
 

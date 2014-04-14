@@ -1,6 +1,7 @@
-@(modelForm: Form[Model.Model])(implicit lang: Lang)
+@(modelForm: Form[Model.Model])(implicit request: play.api.mvc.Request[Any])
 @import helper._
 
+@defining(utils.Language.langCode(request)) { implicit langCode =>
 @main(Messages("add.art")) {
 	<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap-fileupload.css")">
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/3dViewer/three.min.js")'></script>
@@ -10,7 +11,7 @@
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/3dViewer/addCanvas.js")'></script>
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/3dViewer/BoundingBoxHelper.js")'></script>
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/bootstrap-fileupload.js")'></script>
-	
+
 	@if(modelForm.hasErrors) {
 	<ul class="list-group">
 	    <div class="panel panel-danger">
@@ -91,5 +92,5 @@
 	}
   
 }
-
+}
   
