@@ -1,4 +1,8 @@
-@(title: String)(content: Html)(implicit langCode: Lang)
+@(title: String)(content: Html)(implicit req: RequestHeader, langCode: Lang)
+
+@helper.javascriptRouter("jsRoutes")(
+		  routes.javascript.Application.language
+		)
 
 <!DOCTYPE html>
 <html>
@@ -14,7 +18,8 @@
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <link rel='stylesheet' href='@routes.WebJarAssets.at(WebJarAssets.locate("css/bootstrap.min.css"))'>
-
+        <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))'></script>
+		<script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
 
@@ -61,32 +66,9 @@
   
 
     <div class="container">
-    	<script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))'></script>
+    	
         @content
     </div><!-- /.container -->
-    
-    <script>
-	$( "#language-sweden" ).click(function() {
-		$.ajax({
-		    url: '@routes.Application.language',
-		    data: { code: "se"},
-		    type: 'POST',
-		    success: function(result) {
-		        location.reload(false)
-		    }
-		});
-		});
-	$( "#language-us" ).click(function() {
-		$.ajax({
-		    url: '@routes.Application.language',
-		    data: { code: "en"},
-		    type: 'POST',
-		    success: function(result) {
-		        location.reload(false)
-		    }
-		});
-		});
-	</script>
 
 
     <!-- Bootstrap core JavaScript
@@ -94,5 +76,6 @@
     <!-- Placed at the end of the document so the pages load faster -->
 		
 		<script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("js/bootstrap.min.js"))'></script>
+		<script type='text/javascript' src='@routes.Assets.at("javascripts/museum/languageSelector.js")'></script>
   </body>
 </html>

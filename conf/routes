@@ -13,3 +13,5 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 # Enable webjar based resources to be returned
 GET     /webjars/*file              controllers.WebJarAssets.at(file)
+
+GET /javascriptRoutes  controllers.Application.javascriptRoutes

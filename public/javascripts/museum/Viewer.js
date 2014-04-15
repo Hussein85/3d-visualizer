@@ -6,10 +6,31 @@ function Viewer(id, modelPath, texturePath) {
 	this.modelPath = modelPath;
 	this.texturePath = texturePath;
 	this.panY = false;
+	this.boundingBoxEnabled = false;
+	this.bb;
+	this.object;
+	this.controls;
 }
 
 Viewer.prototype.tooglePanY = function() {
 	this.panY = !this.panY;
+}
+
+Viewer.prototype.resetView = function() {
+	this.controls.reset();
+	this.scene.position.setY(-this.object.geometry.boundingBox.max.y / 2);
+	this.scene.updateMatrix();
+	this.camera.position.set(0, 0, 300);	
+}
+
+Viewer.prototype.toogleBoundingBox = function() {
+	if (this.boundingBoxEnabled) {
+		this.scene.remove(this.bb);
+		this.boundingBoxEnabled = !this.boundingBoxEnabled;
+	} else {
+		this.scene.add(this.bb);
+		this.boundingBoxEnabled = !this.boundingBoxEnabled;
+	}
 }
 
 Viewer.prototype.initCanvas = function() {
@@ -18,7 +39,7 @@ Viewer.prototype.initCanvas = function() {
 	if (!Detector.webgl)
 		Detector.addGetWebGLMessage();
 
-	var controls, renderer;
+	var renderer;
 
 	var cross;
 	var size = {
@@ -34,21 +55,21 @@ Viewer.prototype.initCanvas = function() {
 		that.camera = new THREE.PerspectiveCamera(45, size.width / size.height,
 				1, 1000);
 
-		controls = new THREE.TrackballControls(that.camera);
+		that.controls = new THREE.TrackballControls(that.camera);
 
-		controls.rotateSpeed = 1.0;
-		controls.zoomSpeed = 1.2;
-		controls.panSpeed = 0.8;
+		that.controls.rotateSpeed = 1.0;
+		that.controls.zoomSpeed = 1.2;
+		that.controls.panSpeed = 0.8;
 
-		controls.noZoom = false;
-		controls.noPan = false;
+		that.controls.noZoom = false;
+		that.controls.noPan = false;
 
-		controls.staticMoving = true;
-		controls.dynamicDampingFactor = 0.3;
+		that.controls.staticMoving = true;
+		that.controls.dynamicDampingFactor = 0.3;
 
-		controls.keys = [ 65, 83, 68 ];
+		that.controls.keys = [ 65, 83, 68 ];
 
-		controls.addEventListener('change', render);
+		that.controls.addEventListener('change', render);
 
 		// world
 		that.scene = new THREE.Scene();
@@ -87,19 +108,17 @@ Viewer.prototype.initCanvas = function() {
 		// inside the data and applies the texture to it.
 		loader.load(that.modelPath, function(event) {
 			var object = event;
-			object.name = that.modelPath;
 			object.traverse(function(child) {
 				if (child instanceof THREE.Mesh) {
+					that.object = child;
+					that.object.name = that.modelPath;
 					child.material.map = texture;
 					// child.scale.set(100, 100, 100);
 					child.geometry.computeBoundingBox();
 					child.position.set(0, 0, 0);
-					that.scene.position.setY(-child.geometry.boundingBox.max.y / 2);
-					that.scene.updateMatrix();
-					var bb = new THREE.BoundingBoxHelper(child, 0xffff00);
-					bb.update();
-					that.scene.add(bb);
-					that.camera.position.set(0, 0, 300);
+					that.bb = new THREE.BoundingBoxHelper(child, 0xffff00);
+					that.bb.update();
+					that.resetView();
 				}
 			});
 
@@ -130,7 +149,7 @@ Viewer.prototype.initCanvas = function() {
 
 		renderer.setSize(size.width, size.height);
 
-		controls.handleResize();
+		this.controls.handleResize();
 
 		render();
 
@@ -139,7 +158,7 @@ Viewer.prototype.initCanvas = function() {
 	function animate() {
 
 		requestAnimationFrame(animate);
-		controls.update();
+		that.controls.update();
 
 		if (that.panY) {
 			doPanY();
