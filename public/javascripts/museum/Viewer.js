@@ -17,19 +17,20 @@ Viewer.prototype.tooglePanY = function() {
 }
 
 Viewer.prototype.resetView = function() {
+	this.toogleBoundingBox(false);
 	this.controls.reset();
 	this.scene.position.setY(-this.object.geometry.boundingBox.max.y / 2);
 	this.scene.updateMatrix();
 	this.camera.position.set(0, 0, 300);	
 }
 
-Viewer.prototype.toogleBoundingBox = function() {
-	if (this.boundingBoxEnabled) {
+Viewer.prototype.toogleBoundingBox = function(forceState) {
+	if (forceState == false || this.boundingBoxEnabled) {
 		this.scene.remove(this.bb);
-		this.boundingBoxEnabled = !this.boundingBoxEnabled;
+		this.boundingBoxEnabled =false;
 	} else {
 		this.scene.add(this.bb);
-		this.boundingBoxEnabled = !this.boundingBoxEnabled;
+		this.boundingBoxEnabled = true;
 	}
 }
 
@@ -149,7 +150,7 @@ Viewer.prototype.initCanvas = function() {
 
 		renderer.setSize(size.width, size.height);
 
-		this.controls.handleResize();
+		that.controls.handleResize();
 
 		render();
 
