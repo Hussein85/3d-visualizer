@@ -1,6 +1,9 @@
 import play.api._
+
+import scala.slick.driver.PostgresDriver.simple._
 import play.api.mvc._
 import play.api.i18n._
+import models.Tag
 
 object Global extends GlobalSettings {
 

@@ -8,6 +8,9 @@ libraryDependencies ++= Seq(
   "org.webjars" %% "webjars-play" % "2.2.1-2",
   "org.webjars" % "bootstrap" % "3.1.1",
   "com.typesafe.slick" %% "slick" % "2.0.1",
+  "postgresql" % "postgresql" % "9.1-901.jdbc4",
+  "com.typesafe.play" %% "play-slick" % "0.6.0.1",
+  "com.typesafe.slick" %% "slick" % "2.0.1",
   "org.slf4j" % "slf4j-nop" % "1.6.4"
 )     
 
