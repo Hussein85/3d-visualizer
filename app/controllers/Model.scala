@@ -1,14 +1,14 @@
 package controllers
 
 import play.api._
+import play.api.libs.json._
 import play.api.mvc._
-import play.api.libs.Files._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.db.slick._
-import utils._
 import models.Tag
 import models.Tags
+import utils.FormHelper.saveFormFile
 
 object Model extends Controller {
 
@@ -18,12 +18,6 @@ object Model extends Controller {
     mapping(
       "name" -> text,
       "tags" -> text)((name, tags) => Model(name, tags.split(",").map(tag => new Tag(None, tag)).toList))((m: Model) => Some(m.name, m.tags.map(tag => tag.name).mkString(","))))
-
-  /*"tags" -> list(
-      mapping(
-        "id" -> optional(number),
-        "tags" -> text
-        )(Tag.apply)(Tag.unapply))*/
 
   def addForm = Action { implicit request =>
     Ok(views.html.model.addForm(modelForm))
@@ -37,27 +31,22 @@ object Model extends Controller {
       model => {
         saveFormFile(request, "object-file")
         saveFormFile(request, "texture-file")
-        Logger.info(model.toString)
         model.tags.foreach(tag => {
           Logger.info(s"tag: $tag")
-          Tags.insert(tag) 
+          Tags.insert(tag)
         })
         Ok("Model uploaded")
       })
-
   }
 
-  def saveFormFile(request: Request[MultipartFormData[TemporaryFile]], requestName: String) = {
-    request.body.file(requestName).map { objectFile =>
-      import java.io.File
-      val filename = objectFile.filename
-      val contentType = objectFile.contentType
-      val uploadPath = Constants.uploadDir.getPath + s"/$filename"
-      objectFile.ref.moveTo(new File(uploadPath), true)
-      Logger.info(s"Saved file to: $uploadPath")
-    }.getOrElse {
-      Logger.info(s"Missing object file: $requestName")
+  def allTags = DBAction { implicit request =>
+    /*implicit val jsonWriter = new Writes[(String, String)] {
+      def writes(c: (String, String)): JsValue = {
+        Json.obj(c._1 -> c._2)
+      }
     }
+    val tags = Tags.all.map(tag => ("tag_name", tag.name))*/
+    Ok(Json.toJson(Tags.all.map(_.name)))
   }
 
 }

@@ -1,4 +1,4 @@
-@(message: String)(implicit request: play.api.mvc.Request[Any])
+@(toBeAbleToCompile: String = "")(implicit request: play.api.mvc.Request[Any])
 
 @defining(utils.Language.langCode(request)) { implicit langCode =>
 @main("Archive home page.") {

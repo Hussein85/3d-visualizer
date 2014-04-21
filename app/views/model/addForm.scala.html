@@ -5,10 +5,11 @@
 @main(Messages("add.art")) {
 	<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap-tagsinput.css")">
 	<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap-fileupload.css")">
-	<script type='text/javascript' src='@routes.Assets.at("javascripts/typeahead/typeahead.bundle.js")'></script>
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/typeahead/bootstrap3-typeahead.js")'></script>
+	<script type='text/javascript' src='@routes.Assets.at("javascripts/typeahead/bloodhound.js")'></script>
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/bootstrap-tagsinput.js")'></script>
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/bootstrap-fileupload.js")'></script>
+	<script type='text/javascript' src='@routes.Assets.at("javascripts/museum/input-tags.js")'></script>
 
 	@if(modelForm.hasErrors) {
 	<ul class="list-group">
@@ -18,7 +19,6 @@
 		    }
 	</ul>
 	}
-	
 	@form(action = routes.Model.upload, 'enctype -> "multipart/form-data") {
 		<div class="row">
 		  <div class="col-md-4" id="addForm-column1">
@@ -39,14 +39,8 @@
 			 	   <input type="email" class="form-control" id="modelName" placeholder="Enter model name">
 			  </div>
 			  <label for="tags">@Messages("form.tag-the-model")</label><br/>
-			  <input type="text" class="form-control" id="tags" name="tags" placeholder="@Messages("form.enter") @Messages("form.tags")">
-			  <script>
-			  $('#tags').tagsinput({
-				  typeahead: {
-				    source: ['Amsterdam', 'Washington', 'Sydney', 'Beijing', 'Cairo']
-				  }
-				});
-			  </script>
+<!-- TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS-->
+		  <input type="text" id="tags" name="tags" class="form-control" placeholder="@Messages("form.enter") @Messages("form.tags")">
 		  </div>
 		  <div class="col-md-4" id="addForm-column3">		 	 
 		  	<div class="alert alert-info">File</div>

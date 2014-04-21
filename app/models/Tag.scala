@@ -18,9 +18,11 @@ object Tags {
   val tags = TableQuery[Tags]
 
   def insert(tag: Tag)(implicit s: Session) {
-    Logger.info(s"Tried to save tag: $tag")
     tags.insert(tag)
-    Logger.info(s"Saved tag: $tag")
+  }
+  
+  def all(implicit s: Session): List[Tag] = {
+     tags.list
   }
 
 }

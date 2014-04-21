@@ -5,8 +5,9 @@
 # Home page
 GET     /                           controllers.Application.index
 POST     /language                   controllers.Application.language
-GET     /addModel                   controllers.Model.addForm
-POST    /addModel                   controllers.Model.upload
+GET     /model/add                   controllers.Model.addForm
+POST    /model/add                   controllers.Model.upload
+GET     /model/alltags              controllers.Model.allTags
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

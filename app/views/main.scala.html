@@ -1,7 +1,8 @@
 @(title: String)(content: Html)(implicit req: RequestHeader, langCode: Lang)
 
 @helper.javascriptRouter("jsRoutes")(
-		  routes.javascript.Application.language
+		  routes.javascript.Application.language,
+		  routes.javascript.Model.allTags
 		)
 
 <!DOCTYPE html>
@@ -49,7 +50,7 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
          <li @if(title=="Archive home page."){class="active"}><a href="/">@Messages("navbar.viewer")</a></li>
-            <li @if(title=="Add a model to the archive."){class="active"}><a href="/addModel">@Messages("navbar.add")</a></li>
+            <li @if(title=="Add a model to the archive."){class="active"}><a href="@routes.Model.addForm">@Messages("navbar.add")</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">

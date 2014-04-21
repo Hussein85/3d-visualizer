@@ -7,7 +7,7 @@ import utils.Language
 object Application extends Controller {
 
   def index = Action { implicit request =>
-    Ok(views.html.index("Your new application is ready."))
+    Ok(views.html.viewer())
   }
 
   def language = Action(parse.urlFormEncoded) { implicit request =>
@@ -21,7 +21,8 @@ object Application extends Controller {
     import routes.javascript._
     Ok(
       Routes.javascriptRouter("jsRoutes")(
-       routes.javascript.Application.language)).as("text/javascript")
+       routes.javascript.Application.language,
+       routes.javascript.Model.allTags)).as("text/javascript")
   }
 
 }
