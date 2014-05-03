@@ -5,11 +5,21 @@ app.title=Arkiv
 error.required = Fältet är nödvändigt
 
 form.name=Namn
-form.email=Email adress
-form.model.name=Model namn
-form.tag-the-model=Tagga upp modellen
+form.email=E-Post adress
+form.model.name=Namn
 form.tags=Taggar
 form.enter=Ange
+
+form.model.heading.info=Allmän information om modellen
+form.model.name.enter=Ange modellens namn
+form.tags.enter=Ange taggar för modellen
+form.model.heading.file=Modellfiler
+form.model.file.object=Objektfilen
+form.model.file.select=Välj fil
+form.model.file.texture=Texturfilen
+form.model.password=Lösenordsskydda modellen
+form.model.heading.text=Text om modellen
+form.model.upload=Spara modellen
 
 navbar.add=Ladda upp
 navbar.language=Språk
