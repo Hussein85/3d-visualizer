@@ -9,6 +9,10 @@ object Application extends Controller {
   def index = Action { implicit request =>
     Ok(views.html.viewer())
   }
+  
+  def tags = Action { implicit request =>
+    Ok(views.html.tags())
+  }
 
   def language = Action(parse.urlFormEncoded) { implicit request =>
     val code = request.body.get("code").head.head

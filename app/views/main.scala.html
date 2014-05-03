@@ -6,7 +6,7 @@
 		)
 
 <!DOCTYPE html>
-<html>
+<html data-ng-app="">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,10 +20,8 @@
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <link rel='stylesheet' href='@routes.WebJarAssets.at(WebJarAssets.locate("css/bootstrap.min.css"))'>
         <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))'></script>
+        <script type='text/javascript' src='@routes.Assets.at("javascripts/angular.min.js")'></script>
 		<script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
-    <!-- Just for debugging purposes. Don't actually copy this line! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -49,8 +47,9 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-         <li @if(title=="Archive home page."){class="active"}><a href="/">@Messages("navbar.viewer")</a></li>
-            <li @if(title=="Add a model to the archive."){class="active"}><a href="@routes.Model.addForm">@Messages("navbar.add")</a></li>
+         <li @if(title=="Museumarkivets förstasida"){class="active"}><a href="/">@Messages("navbar.viewer")</a></li>
+         <li @if(title=="Lägg till en model"){class="active"}><a href="@routes.Model.addForm">@Messages("navbar.add")</a></li>
+         <li @if(title=="Använda taggar"){class="active"}><a href="@routes.Application.tags">Taggar</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">

@@ -1,0 +1,17 @@
+@(toBeAbleToCompile: String = "")(implicit request: play.api.mvc.Request[Any])
+
+@defining(utils.Language.langCode(request)) { implicit langCode =>
+@main("Tags") {
+<body data-ng-init="tags=[{name:'Brons'}, {name:'Yxa'}, {name:'1500-talet'}, {name:'Gotland'}]">
+		<ul class="list-group">	
+			<li class="list-group-item list-group-item-success">Alla taggarna i databasen</li>
+			<li class="list-group-item list-group-item-primary">
+				<input data-ng-model="tagNameFilter" type="text" class="form-control" placeholder="Filtrera listan" />
+			</li>
+			<li data-ng-repeat="tag in tags | filter:tagNameFilter | orderBy:'name'" class="list-group-item" ng-class-odd="'list-group-item-primary'" ng-class-even="'list-group-item-warning'">
+				{{ tag.name | uppercase}}
+			</li>
+		</ul>
+</body>
+}
+}

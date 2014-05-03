@@ -1,4 +1,4 @@
-@(modelForm: Form[Model.Model])(implicit request: play.api.mvc.Request[Any])
+@(modelForm: Form[controllers.Model.Model])(implicit request: play.api.mvc.Request[Any])
 @import helper._
 
 @defining(utils.Language.langCode(request)) { implicit langCode =>
@@ -10,6 +10,7 @@
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/bootstrap-tagsinput.js")'></script>
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/bootstrap-fileupload.js")'></script>
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/museum/input-tags.js")'></script>
+	<script type='text/javascript' src='@routes.Assets.at("javascripts/tinymce/tinymce.min.js")'></script>
 
 	@if(modelForm.hasErrors) {
 	<ul class="list-group">
@@ -22,30 +23,18 @@
 	@form(action = routes.Model.upload, 'enctype -> "multipart/form-data") {
 		<div class="row">
 		  <div class="col-md-4" id="addForm-column1">
-		  	<div class="alert alert-info">User data</div>
+		  	<div class="alert alert-info">@Messages("form.model.heading.info")</div>
 		  	  <div class="form-group">
-			 	   <label for="userName">@Messages("form.name")</label>
-			 	   <input type="text" class="form-control" id="userName" name="name" placeholder="Enter name">
+			    <label for="name">@Messages("form.model.name")</label>
+				<input type="text" class="form-control" id="name" name="name" placeholder=@Messages("form.model.name.enter")>
 			  </div>
 			  <div class="form-group">
-			 	   <label for="userEmail">@Messages("form.email")</label>
-			 	   <input type="email" class="form-control" id="userEmail" placeholder="Enter email">
-			  </div>
-		  </div>
-		  <div class="col-md-4" id="addForm-column2">
-		  	<div class="alert alert-info">Meta data</div>
-		  		<div class="form-group">
-			 	   <label for="modelName">@Messages("form.model.name")</label>
-			 	   <input type="email" class="form-control" id="modelName" placeholder="Enter model name">
-			  </div>
-			  <label for="tags">@Messages("form.tag-the-model")</label><br/>
-<!-- TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS TAGS-->
-		  <input type="text" id="tags" name="tags" class="form-control" placeholder="@Messages("form.enter") @Messages("form.tags")">
-		  </div>
-		  <div class="col-md-4" id="addForm-column3">		 	 
-		  	<div class="alert alert-info">File</div>
+			    <label for="tags">@Messages("form.tag-the-model")</label><br/>
+				<input type="text" id="tags" name="tags" class="form-control" placeholder="@Messages("form.tags.enter") @Messages("form.tags")">
+			  </div>		 	 
+		  	<div class="alert alert-info">@Messages("form.model.heading.file")</div>
 				<div class="form-group">
-					<label>Object file</label>
+					<label>@Messages("form.model.file.object")</label>
 				    <div class="fileupload fileupload-new" data-provides="fileupload">
 				        <div class="input-group">
 				            <div class="form-control uneditable-input"><i class="icon-file fileupload-exists"></i> 
@@ -53,16 +42,16 @@
 				            </div>
 				            <div class="input-group-btn">
 				                <a class="btn btn-default btn-file">
-				                    <span class="fileupload-new">Select file</span>
-				                    <span class="fileupload-exists">Change</span>
+				                    <span class="fileupload-new">@Messages("form.model.file.select")</span>
+				                    <span class="fileupload-exists">@Messages("form.model.file.change")</span>
 				                    <input type="file" class="file-input" name="object-file"/></a>
-				                <a href="#" class="btn btn-default fileupload-exists" data-dismiss="fileupload">Remove</a>
+				                <a href="#" class="btn btn-default fileupload-exists" data-dismiss="fileupload">@Messages("form.model.file.remove")</a>
 				            </div>
 				        </div>
 				    </div>
 				</div>
 				<div class="form-group">
-					<label>Texutre file</label>
+					<label>@Messages("form.model.file.texture")</label>
 				    <div class="fileupload fileupload-new" data-provides="fileupload">
 				        <div class="input-group">
 				            <div class="form-control uneditable-input"><i class="icon-file fileupload-exists"></i> 
@@ -70,24 +59,37 @@
 				            </div>
 				            <div class="input-group-btn">
 				                <a class="btn btn-default btn-file">
-				                    <span class="fileupload-new">Select file</span>
-				                    <span class="fileupload-exists">Change</span>
+				                    <span class="fileupload-new">@Messages("form.model.file.select")</span>
+				                    <span class="fileupload-exists">@Messages("form.model.file.change")</span>
 				                    <input type="file" class="file-input" name="texture-file"/></a>
-				                <a href="#" class="btn btn-default fileupload-exists" data-dismiss="fileupload">Remove</a>
+				                <a href="#" class="btn btn-default fileupload-exists" data-dismiss="fileupload">@Messages("form.model.file.remove")</a>
 				            </div>
 				        </div>
 				    </div>
 				</div>
 				<div class="checkbox">
 				    <label>
-				      <input type="checkbox">Password protected
+				      <input type="checkbox" name="password">@Messages("form.model.password")
 				    </label>
 				 </div>
 		  </div>		  
+		  <div class="col-md-8" id="addForm-text">
+		    <div class="alert alert-info">@Messages("form.model.heading.text")</div>
+		    <div class="form-group">
+				<input type="text" class="form-control" id="text" name="text" placeholder=@Messages("form.model.text.enter")>
+			</div>	
+		    <script type="text/javascript">
+				tinymce.init({
+				    selector: "#text",
+				    statusbar: true,
+				    height: '300px'
+				 });
+			</script>		
+		  </div>
 		</div>
 		<div class="row">
 		  <div class="col-md-12">
-		    <button value="Send" type="submit" id="submit" class="btn btn-success form-control">Upload</button>
+		    <button value="Send" type="submit" id="submit" class="btn btn-success form-control">@Messages("form.model.upload")</button>
 		  </div>
 		</div>
 	}
