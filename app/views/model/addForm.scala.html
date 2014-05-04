@@ -1,5 +1,7 @@
 @(modelForm: Form[controllers.Model.Model])(implicit request: play.api.mvc.Request[Any])
 @import helper._
+@import twirl.pimpForPlay._
+@implicitFieldConstructor = @{ FieldConstructor( views.html.helper.bootstrap3.basicForm.inputFieldConstructor.f ) }
 
 @defining(utils.Language.langCode(request)) { implicit langCode =>
 @main(Messages("add.art")) {
@@ -24,14 +26,17 @@
 		<div class="row">
 		  <div class="col-md-4" id="addForm-column1">
 		  	<div class="alert alert-info">@Messages("form.model.heading.info")</div>
-		  	  <div class="form-group">
-			    <label for="name">@Messages("form.model.name")</label>
-				<input type="text" class="form-control" id="name" name="name" placeholder=@Messages("form.model.name.enter")>
-			  </div>
-			  <div class="form-group">
-			    <label for="tags">@Messages("form.tags")</label><br/>
-				<input type="text" id="tags" name="tags" class="form-control" placeholder="@Messages("form.tags.enter")">
-			  </div>		 	 
+		  	@* _help -> "" is used to suppress the Required field pre Post, the error after submit will still work. *@
+		  	@helper.inputText(modelForm("name"), 
+		  		'_label -> Messages("form.model.name"), 
+		  		'placeholder -> Messages("form.model.name.enter"),
+		  		'_help -> ""
+		  	)
+		  	@helper.inputText(modelForm("tags"), 
+		  		'_label -> Messages("form.tags"), 
+		  		'placeholder -> Messages("form.tags.enter"),
+		  		'_help -> ""	
+		  		)	 
 		  	<div class="alert alert-info">@Messages("form.model.heading.file")</div>
 				<div class="form-group">
 					<label>@Messages("form.model.file.object")</label>

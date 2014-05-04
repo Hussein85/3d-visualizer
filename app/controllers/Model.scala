@@ -9,15 +9,22 @@ import play.api.db.slick._
 import models.Tag
 import models.Tags
 import utils.FormHelper.saveFormFile
+import java.sql.Date
+import org.joda.time.DateTime
 
 object Model extends Controller {
 
-  case class Model(name: String, tags: List[Tag])
+  case class Model(name: String, material: String, location: String, text: String, year: Int, tags: List[Tag])
 
   val modelForm: Form[Model] = Form(
     mapping(
-      "name" -> text,
-      "tags" -> text)((name, tags) => Model(name, tags.split(",").map(tag => new Tag(None, tag)).toList))((m: Model) => Some(m.name, m.tags.map(tag => tag.name).mkString(","))))
+      "name" -> nonEmptyText,
+      "material" -> text,
+      "location" -> text,
+      "text" -> text,
+      "year" -> number,
+      "tags" -> nonEmptyText)(
+        (name, material, location, text, year, tags) => Model(name, material, location, text, year, tags.split(",").map(tag => new Tag(None, tag)).toList))((m: Model) => Some(m.name, m.material, m.location, m.text, m.year, m.tags.map(tag => tag.name).mkString(","))))
 
   def addForm = Action { implicit request =>
     Ok(views.html.model.addForm(modelForm))
@@ -28,10 +35,13 @@ object Model extends Controller {
       formWithErrors => {
         BadRequest(views.html.model.addForm(formWithErrors))
       },
-      model => {
+      m => {
+        // TODO: Take userID from session and real paths for object and texture
+        new models.Model(id = None, name = m.name, userID = 1, date = new DateTime(0).withYear(m.year), 
+            material = m.material, location = m.location, text = m.text, pathObject = "", pathTexure = "")
         saveFormFile(request, "object-file")
         saveFormFile(request, "texture-file")
-        model.tags.foreach(tag => {
+        m.tags.foreach(tag => {
           Logger.info(s"tag: $tag")
           Tags.insert(tag)
         })
