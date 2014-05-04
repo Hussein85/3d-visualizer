@@ -11,6 +11,9 @@ import models.Tags
 import utils.FormHelper.saveFormFile
 import java.sql.Date
 import org.joda.time.DateTime
+import models.Models
+import models.TagModels
+import models.TagModel
 
 object Model extends Controller {
 
@@ -37,13 +40,16 @@ object Model extends Controller {
       },
       m => {
         // TODO: Take userID from session and real paths for object and texture
-        new models.Model(id = None, name = m.name, userID = 1, date = new DateTime(0).withYear(m.year), 
-            material = m.material, location = m.location, text = m.text, pathObject = "", pathTexure = "")
-        saveFormFile(request, "object-file")
-        saveFormFile(request, "texture-file")
+        val dbModel = new models.Model(id = None, name = m.name, userID = 1, date = new DateTime(m.year, 1, 1, 0, 0, 0),
+          material = m.material, location = m.location, text = m.text,
+          pathObject = saveFormFile(request, "object-file"), pathTexure = saveFormFile(request, "texture-file"))
+        Logger.info(s"model: $dbModel")
+        val modelID = Models.insert(dbModel);
+        Logger.info(s"Modellinfo: $modelID")
         m.tags.foreach(tag => {
           Logger.info(s"tag: $tag")
-          Tags.insert(tag)
+          val tagID = Tags.insert(tag)
+          TagModels.insert(TagModel(tagID, modelID))
         })
         Ok("Model uploaded")
       })

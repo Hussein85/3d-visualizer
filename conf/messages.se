@@ -20,6 +20,12 @@ form.model.file.texture=Texturfilen
 form.model.password=Lösenordsskydda modellen
 form.model.heading.text=Text om modellen
 form.model.upload=Spara modellen
+form.model.material=Material
+form.model.location=Plats
+form.model.year=År
+form.model.material.enter=Ange modellens material
+form.model.location.enter=Ange modellens ursprungsplats
+form.model.year.enter=Ange vilket år modellen skapades
 
 navbar.add=Ladda upp
 navbar.language=Språk

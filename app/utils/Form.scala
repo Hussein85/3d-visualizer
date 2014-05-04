@@ -6,7 +6,7 @@ import play.api._
 
 object FormHelper {
   
-  def saveFormFile(request: Request[MultipartFormData[TemporaryFile]], requestName: String) = {
+  def saveFormFile(request: Request[MultipartFormData[TemporaryFile]], requestName: String): String = {
     request.body.file(requestName).map { objectFile =>
       import java.io.File
       val filename = objectFile.filename
@@ -14,8 +14,10 @@ object FormHelper {
       val uploadPath = Constants.uploadDir.getPath + s"/$filename"
       objectFile.ref.moveTo(new File(uploadPath), true)
       Logger.info(s"Saved file to: $uploadPath")
+      uploadPath
     }.getOrElse {
       Logger.info(s"Missing object file: $requestName")
+      ""
     }
   }
 

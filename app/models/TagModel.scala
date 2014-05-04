@@ -1,3 +1,5 @@
+package models
+
 import play.api._
 import play.api.Play.current
 import scala.slick.driver.PostgresDriver.simple._

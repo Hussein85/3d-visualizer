@@ -32,11 +32,26 @@
 		  		'placeholder -> Messages("form.model.name.enter"),
 		  		'_help -> ""
 		  	)
+		  	@helper.inputText(modelForm("material"), 
+		  		'_label -> Messages("form.model.material"), 
+		  		'placeholder -> Messages("form.model.material.enter"),
+		  		'_help -> ""	
+		  	)
+		  	@helper.inputText(modelForm("location"), 
+		  		'_label -> Messages("form.model.location"), 
+		  		'placeholder -> Messages("form.model.location.enter"),
+		  		'_help -> ""	
+		  	)
+		  	@helper.inputText(modelForm("year"), 
+		  		'_label -> Messages("form.model.year"), 
+		  		'placeholder -> Messages("form.model.year.enter"),
+		  		'_help -> ""	
+		  	)	
 		  	@helper.inputText(modelForm("tags"), 
 		  		'_label -> Messages("form.tags"), 
 		  		'placeholder -> Messages("form.tags.enter"),
 		  		'_help -> ""	
-		  		)	 
+		  	)	
 		  	<div class="alert alert-info">@Messages("form.model.heading.file")</div>
 				<div class="form-group">
 					<label>@Messages("form.model.file.object")</label>

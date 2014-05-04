@@ -26,8 +26,8 @@ object Models {
 
   val models = TableQuery[Models]
 
-  def insert(model: Model)(implicit s: Session) {
-    models.insert(model)
+  def insert(model: Model)(implicit s: Session): Int = {
+    (models returning models.map(_.id)) += model
   }
 
   def all(implicit s: Session): List[Model] = {
