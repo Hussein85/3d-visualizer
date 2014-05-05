@@ -14,10 +14,14 @@ import org.joda.time.DateTime
 import models.Models
 import models.TagModels
 import models.TagModel
+import play.api.data.validation.Constraint
 
 object Model extends Controller {
 
   case class Model(name: String, material: String, location: String, text: String, year: Int, tags: List[Tag])
+
+  val formObject = "object-file"
+  val textureObject = "texture-file"
 
   val modelForm: Form[Model] = Form(
     mapping(
@@ -34,15 +38,30 @@ object Model extends Controller {
   }
 
   def upload = DBAction(parse.multipartFormData) { implicit request =>
+    val filesMissing: List[(String, String)] =
+      ((request.body.file(formObject) match {
+        case None => Some("formObject" -> "File missing")
+        case Some(x) => None
+      }) +: (request.body.file(formObject) match {
+        case None => Some("formObject" -> "File missing")
+        case Some(x) => None
+      }) +: Nil).flatten
+    Logger.info("After filesMissing")
+    def addFileMissingErrorsToForm(form: play.api.data.Form[Model], filesMissing: List[(String, String)]): play.api.data.Form[Model] = {
+      filesMissing match {
+        case Nil => form
+        case head :: tail => addFileMissingErrorsToForm(form.withError(head._1,head._2), tail)
+      }
+    }
     modelForm.bindFromRequest.fold(
       formWithErrors => {
-        BadRequest(views.html.model.addForm(formWithErrors))
+        BadRequest(views.html.model.addForm(addFileMissingErrorsToForm(formWithErrors, filesMissing)))
       },
       m => {
-        // TODO: Take userID from session and real paths for object and texture
+        // TODO: Take userID from session
         val dbModel = new models.Model(id = None, name = m.name, userID = 1, date = new DateTime(m.year, 1, 1, 0, 0, 0),
           material = m.material, location = m.location, text = m.text,
-          pathObject = saveFormFile(request, "object-file"), pathTexure = saveFormFile(request, "texture-file"))
+          pathObject = saveFormFile(request, formObject), pathTexure = saveFormFile(request, textureObject))
         Logger.info(s"model: $dbModel")
         val modelID = Models.insert(dbModel);
         Logger.info(s"Modellinfo: $modelID")
