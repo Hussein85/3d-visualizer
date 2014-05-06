@@ -40,13 +40,12 @@ object Model extends Controller {
   def upload = DBAction(parse.multipartFormData) { implicit request =>
     val filesMissing: List[(String, String)] =
       ((request.body.file(formObject) match {
-        case None => Some("formObject" -> "File missing")
+        case None => Some(formObject -> "error.required")
         case Some(x) => None
-      }) +: (request.body.file(formObject) match {
-        case None => Some("formObject" -> "File missing")
+      }) +: (request.body.file(textureObject) match {
+        case None => Some(textureObject -> "error.required")
         case Some(x) => None
       }) +: Nil).flatten
-    Logger.info("After filesMissing")
     def addFileMissingErrorsToForm(form: play.api.data.Form[Model], filesMissing: List[(String, String)]): play.api.data.Form[Model] = {
       filesMissing match {
         case Nil => form

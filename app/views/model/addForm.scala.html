@@ -3,6 +3,23 @@
 @import twirl.pimpForPlay._
 @implicitFieldConstructor = @{ FieldConstructor( views.html.helper.bootstrap3.basicForm.inputFieldConstructor.f ) }
 
+@errorForField(fieldName: String) = @{
+val sb = new StringBuilder("")
+	if(modelForm.hasErrors) {
+	    if(modelForm.errors.size > 0) {
+	        for(formError <- modelForm.errors) {
+                if(formError.key.contains(fieldName)){	                  
+                  sb.append("<p class='help-block'></p>")
+                  sb.append("<p class='help-block' style='color: #a94442'>")
+                  sb.append(Messages(formError.message.toString)(utils.Language.langCode(request)))
+                  sb.append("</p>")
+                }
+	        }
+	    }
+	}
+	Html(sb.toString)
+}
+
 @defining(utils.Language.langCode(request)) { implicit langCode =>
 @main(Messages("add.art")) {
 	<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap-tagsinput.css")">
@@ -22,6 +39,9 @@
 		    }
 	</ul>
 	}
+	
+	
+	
 	@form(action = routes.Model.upload, 'enctype -> "multipart/form-data") {
 		<div class="row">
 		  <div class="col-md-4" id="addForm-column1">
@@ -67,6 +87,7 @@
 				                    <input type="file" class="file-input" name="object-file"/></div>
 				            </div>
 				        </div>
+				        @errorForField("object-file")
 				    </div>
 				</div>
 				<div class="form-group">
@@ -81,8 +102,9 @@
 				                    <span class="fileupload-new">@Messages("form.model.file.select")</span>
 				                    <span class="fileupload-exists">@Messages("form.model.file.select")</span>
 				                    <input type="file" class="file-input" name="texture-file"/></div>
-				            </div>
+				            </div>          
 				        </div>
+				        @errorForField("texture-file")
 				    </div>
 				</div>
 				<div class="checkbox">
@@ -111,6 +133,7 @@
 		  </div>
 		</div>
 	}
+
 	
   
 }
