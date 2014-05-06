@@ -4,7 +4,7 @@
 @implicitFieldConstructor = @{ FieldConstructor( views.html.helper.bootstrap3.basicForm.inputFieldConstructor.f ) }
 
 @errorForField(fieldName: String) = @{
-val sb = new StringBuilder("")
+	val sb = new StringBuilder("")
 	if(modelForm.hasErrors) {
 	    if(modelForm.errors.size > 0) {
 	        for(formError <- modelForm.errors) {
@@ -32,12 +32,7 @@ val sb = new StringBuilder("")
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/tinymce/tinymce.min.js")'></script>
 
 	@if(modelForm.hasErrors) {
-	<ul class="list-group">
-	    <div class="panel panel-danger">
-		    @modelForm.errors.map { error =>
-		    	<li class="list-group-item list-group-item-danger">@error.key: @Messages(error.message)</li>
-		    }
-	</ul>
+		<div class="alert alert-danger">@Messages("error.pressent")</div>
 	}
 	
 	

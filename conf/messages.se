@@ -2,7 +2,10 @@ add.art=Lägg till ett konstverk
 
 app.title=Arkiv
 
-error.required = Fältet är nödvändigt
+error.required=Fältet är nödvändigt
+error.pressent=Formuläret innehöll felaktigheter
+error.number=Fältet godkänner bara ett nummer t ex 1870 (4 siffror)
+error.4digityear=Året måste skrivas med 4 siffror t ex 1870
 
 form.name=Namn
 form.email=E-Post adress

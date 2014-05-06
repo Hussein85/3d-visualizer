@@ -51,7 +51,7 @@
       <ul class="nav navbar-nav">
          <li @if(title=="Museumarkivets förstasida"){class="active"}><a href="/">@Messages("navbar.viewer")</a></li>
          <li @if(title=="Lägg till en model"){class="active"}><a href="@routes.Model.addForm">@Messages("navbar.add")</a></li>
-         <li @if(title=="Använda taggar"){class="active"}><a href="@routes.Application.tags">Taggar</a></li>
+         @* <li @if(title=="Använda taggar"){class="active"}><a href="@routes.Application.tags">Taggar</a></li> *@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">

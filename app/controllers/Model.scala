@@ -14,7 +14,7 @@ import org.joda.time.DateTime
 import models.Models
 import models.TagModels
 import models.TagModel
-import play.api.data.validation.Constraint
+import play.api.data.validation._
 
 object Model extends Controller {
 
@@ -22,6 +22,12 @@ object Model extends Controller {
 
   val formObject = "object-file"
   val textureObject = "texture-file"
+    
+  val fourDigitYearConstraint: Constraint[Int] = Constraint("constraints.4digityear") {
+	case i if i.toString.length == 4 => Valid
+	case _ => Invalid("error.4digityear")
+  }
+  val fourDigitYearCheck: Mapping[Int] = number.verifying(fourDigitYearConstraint)
 
   val modelForm: Form[Model] = Form(
     mapping(
@@ -29,7 +35,7 @@ object Model extends Controller {
       "material" -> text,
       "location" -> text,
       "text" -> text,
-      "year" -> number,
+      "year" -> fourDigitYearCheck,
       "tags" -> nonEmptyText)(
         (name, material, location, text, year, tags) => Model(name, material, location, text, year, tags.split(",").map(tag => new Tag(None, tag)).toList))((m: Model) => Some(m.name, m.material, m.location, m.text, m.year, m.tags.map(tag => tag.name).mkString(","))))
 
