@@ -24,6 +24,7 @@ object Model extends Controller {
   val textureObject = "texture-file"
     
   val fourDigitYearConstraint: Constraint[Int] = Constraint("constraints.4digityear") {
+    case i if i > DateTime.now.year.get => Invalid("error.inFuture")
 	case i if i.toString.length == 4 => Valid
 	case _ => Invalid("error.4digityear")
   }

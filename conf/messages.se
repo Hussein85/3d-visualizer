@@ -1,42 +1,37 @@
 add.art=Lägg till ett konstverk
-
 app.title=Arkiv
-
-error.required=Fältet är nödvändigt
-error.pressent=Formuläret innehöll felaktigheter
-error.number=Fältet godkänner bara ett nummer t ex 1870 (4 siffror)
 error.4digityear=Året måste skrivas med 4 siffror t ex 1870
-
-form.name=Namn
+error.inFuture=Året kan inte vara i framtiden
+error.number=Fältet godkänner bara ett heltal
+error.pressent=Formuläret innehöll felaktigheter
+error.required=Fältet är nödvändigt
 form.email=E-Post adress
-form.model.name=Namn
-form.tags=Taggar
 form.enter=Ange
-
-form.model.heading.info=Allmän information om modellen
-form.model.name.enter=Ange modellens namn
-form.tags.enter=Ange taggar för modellen
-form.model.heading.file=Modellfiler
 form.model.file.object=Objektfilen
 form.model.file.select=Välj fil
 form.model.file.texture=Texturfilen
-form.model.password=Lösenordsskydda modellen
+form.model.heading.file=Modellfiler
+form.model.heading.info=Allmän information om modellen
 form.model.heading.text=Text om modellen
-form.model.upload=Spara modellen
-form.model.material=Material
-form.model.location=Plats
-form.model.year=År
-form.model.material.enter=Ange modellens material
 form.model.location.enter=Ange modellens ursprungsplats
+form.model.location=Ursprungsplats
+form.model.material.enter=Ange modellens material
+form.model.material=Material
+form.model.name.enter=Ange modellens namn
+form.model.name=Namn
+form.model.password=Lösenordsskydda modellen
+form.model.upload=Spara modellen
 form.model.year.enter=Ange vilket år modellen skapades
-
+form.model.year=År
+form.name=Namn
+form.tags.enter=Ange taggar för modellen
+form.tags=Taggar
 navbar.add=Ladda upp
 navbar.language=Språk
 navbar.viewer=Visare
-
-viewer.viewer.heading=Modelvisare
-viewer.viewer.reset-view=Återställ vyn
-viewer.viewer.toogle-bounding-box=Skifta bounding box
-viewer.viewer.toogle-Y-panning=Skifta Y panorering
 viewer.information.heading=Modelinformation
 viewer.information.loremipsum=Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+viewer.viewer.heading=Modelvisare
+viewer.viewer.reset-view=Återställ vyn
+viewer.viewer.toogle-Y-panning=Skifta Y panorering
+viewer.viewer.toogle-bounding-box=Skifta bounding box

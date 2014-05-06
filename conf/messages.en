@@ -1,20 +1,37 @@
 add.art=Add art
-
 app.title=Archive
-
-error.required = The field is required
-
-form.name=Name
+error.4digityear=Enter the year with 4 digits
+error.inFuture=The year can''t be part of the future
+error.number=The field only accepts numbers
+error.pressent=The form contained errors
+error.required=The field is required
 form.email=Email address
+form.enter=Enter
+form.model.file.object=The object file
+form.model.file.select=Select file
+form.model.file.texture=The texture file
+form.model.heading.file=Model files
+form.model.heading.info=Model information
+form.model.heading.text=Text about the model
+form.model.location.enter=Enter the model''s place of origin
+form.model.location=Place of origin
+form.model.material.enter=Enter the model''s material
+form.model.material=Material
+form.model.name.enter=Enter the model''s name
 form.model.name=Model name
-
+form.model.password=Password protect the model
+form.model.upload=Save the model
+form.model.year.enter=Enter the model''s creation year
+form.model.year=Year
+form.name=Name
+form.tags.enter=Enter tags for the model
+form.tags=Tags
 navbar.add=Upload
 navbar.language=Language
 navbar.viewer=Viewer
-
-viewer.viewer.heading=Model viewer
-viewer.viewer.reset-view=Reset view
-viewer.viewer.toogle-bounding-box=Toogle bounding box
-viewer.viewer.toogle-Y-panning=Toogle Y panning
 viewer.information.heading=Model information
 viewer.information.loremipsum=Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+viewer.viewer.heading=Model viewer
+viewer.viewer.reset-view=Reset view
+viewer.viewer.toogle-Y-panning=Toogle Y panning
+viewer.viewer.toogle-bounding-box=Toogle bounding box
