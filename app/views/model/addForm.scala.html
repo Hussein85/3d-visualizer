@@ -30,6 +30,7 @@
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/bootstrap-fileupload.js")'></script>
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/museum/input-tags.js")'></script>
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/tinymce/tinymce.min.js")'></script>
+	<script type='text/javascript' src='@routes.Assets.at("javascripts/museum/tinymce-modelform.js")'></script>	
 
 	@if(modelForm.hasErrors) {
 		<div class="alert alert-danger">@Messages("error.pressent")</div>
@@ -112,15 +113,7 @@
 		    <div class="alert alert-info">@Messages("form.model.heading.text")</div>
 		    <div class="form-group">
 				<input type="text" class="form-control" id="text" name="text" placeholder=@Messages("form.model.text.enter")>
-			</div>	
-		    <script type="text/javascript">
-				tinymce.init({
-				    selector: "#text",
-				    statusbar: true,
-				    language : 'sv_SE',
-				    height: '300px'
-				 });
-			</script>		
+			</div>		
 		  </div>
 		</div>
 		<div class="row">
@@ -128,10 +121,7 @@
 		    <button value="Send" type="submit" id="submit" class="btn btn-success form-control">@Messages("form.model.upload")</button>
 		  </div>
 		</div>
-	}
-
-	
-  
+	} 
 }
 }
   
