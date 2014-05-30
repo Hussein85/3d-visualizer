@@ -13,7 +13,6 @@ object Language {
 
   def langCode(request: Request[Any]): Lang = {
     val lang: Lang = Lang.get(request.session.get("languageCode").getOrElse(defaultLanguage)).getOrElse(Lang(defaultLanguage))
-    Logger.info(s"Using langugage code: $lang")
     lang
   }
 

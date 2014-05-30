@@ -1,4 +1,6 @@
-add.art=Lägg till ett konstverk
+title.add=Ladda upp
+title.viewer=Visare
+title.browser=Utforskaren
 app.title=Arkiv
 error.4digityear=Året måste skrivas med 4 siffror t ex 1870
 error.inFuture=Året kan inte vara i framtiden
@@ -26,9 +28,7 @@ form.model.year=År
 form.name=Namn
 form.tags.enter=Ange taggar för modellen
 form.tags=Taggar
-navbar.add=Ladda upp
 navbar.language=Språk
-navbar.viewer=Visare
 viewer.information.heading=Modelinformation
 viewer.information.loremipsum=Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 viewer.viewer.heading=Modelvisare

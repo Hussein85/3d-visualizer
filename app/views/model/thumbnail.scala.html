@@ -1,0 +1,23 @@
+@(model: Model)(implicit request: play.api.mvc.Request[Any])
+
+@defining(utils.Language.langCode(request)) { implicit langCode =>
+
+<div class="thumbnail">
+	<img data-src="holder.js/300x200">
+	<dl class="dl-horizontal">
+	  <dt>Id:</dt>
+	  <dd>@model.id</dd>
+	  <dt>Name:</dt>
+	  <dd>@model.name</dd>
+	  <dt>User ID:</dt>
+	  <dd>@model.userID</dd>
+	  <dt>Material:</dt>
+	  <dd>@model.material</dd>
+	  <dt>Location:</dt>
+	  <dd>@model.location</dd>
+	  <dt>Year:</dt>
+	  <dd>@model.date.getYear</dd>
+	</dl>
+</div>
+
+}

@@ -19,6 +19,17 @@ import play.api.data.validation._
 object Model extends Controller {
 
   case class Model(name: String, material: String, location: String, text: String, year: Int, tags: List[Tag])
+  
+  def all = DBAction { implicit request =>
+    Ok(views.html.model.browser(Models.all))
+  }
+  
+  def thumbnail(id: Int) = DBAction { implicit request =>
+    Models.get(id) match {
+      case None => NotFound("The requested model is either not in the db or you lack access to it.")
+      case Some(model) => Ok(views.html.model.thumbnail(model))
+    }  
+  }
 
   val formObject = "object-file"
   val textureObject = "texture-file"

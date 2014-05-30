@@ -3,17 +3,21 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
-GET     /tags                       controllers.Application.tags
-POST     /language                   controllers.Application.language
-GET     /model/add                   controllers.Model.addForm
-POST    /model/add                   controllers.Model.upload
-GET     /model/alltags              controllers.Model.allTags
+GET     /                           	controllers.Application.index
+GET     /tags                       	controllers.Application.tags
+POST    /language                   	controllers.Application.language
+
+# Model
+GET     /model/add                  	controllers.Model.addForm
+POST    /model/add                  	controllers.Model.upload
+GET     /model/alltags             		controllers.Model.allTags
+GET     /model/thumbnail/:id         	controllers.Model.thumbnail(id: Int)
+GET     /model/all              		controllers.Model.all
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /assets/*file               	controllers.Assets.at(path="/public", file)
 
 # Enable webjar based resources to be returned
-GET     /webjars/*file              controllers.WebJarAssets.at(file)
+GET     /webjars/*file             		controllers.WebJarAssets.at(file)
 
-GET /javascriptRoutes  controllers.Application.javascriptRoutes
+GET /javascriptRoutes  					controllers.Application.javascriptRoutes

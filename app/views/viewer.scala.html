@@ -1,7 +1,7 @@
 @(toBeAbleToCompile: String = "")(implicit request: play.api.mvc.Request[Any])
 
 @defining(utils.Language.langCode(request)) { implicit langCode =>
-@main("Archive home page.") {
+@main(Messages("title.viewer")) {
 	
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/3dViewer/three.min.js")'></script>
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/3dViewer/TrackballControls.js")'></script>

@@ -33,5 +33,9 @@ object Models {
   def all(implicit s: Session): List[Model] = {
     models.list
   }
+  
+  def get(id: Int)(implicit s: Session): Option[Model] = {
+    models.filter(_.id === id).firstOption
+  }
 
 }
