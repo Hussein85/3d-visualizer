@@ -17,6 +17,9 @@ GET     /model/all              		controllers.Model.all
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               	controllers.Assets.at(path="/public", file)
 
+# Map static resources from the /upload folder to the /uploads URL path
+GET     /uploads/*file               	controllers.Application.getUploadedFile(file)
+
 # Enable webjar based resources to be returned
 GET     /webjars/*file             		controllers.WebJarAssets.at(file)
 

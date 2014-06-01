@@ -18,6 +18,6 @@ tmp
 test-result
 server.pid
 RUNNING_PID
-upload
+uploads
 ec2Commands.txt
 

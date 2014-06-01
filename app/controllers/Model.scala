@@ -33,6 +33,7 @@ object Model extends Controller {
 
   val formObject = "object-file"
   val textureObject = "texture-file"
+  val thumbnailObject = "thumbnail-file"
     
   val fourDigitYearConstraint: Constraint[Int] = Constraint("constraints.4digityear") {
     case i if i > DateTime.now.year.get => Invalid("error.inFuture")
@@ -78,7 +79,9 @@ object Model extends Controller {
         // TODO: Take userID from session
         val dbModel = new models.Model(id = None, name = m.name, userID = 1, date = new DateTime(m.year, 1, 1, 0, 0, 0),
           material = m.material, location = m.location, text = m.text,
-          pathObject = saveFormFile(request, formObject), pathTexure = saveFormFile(request, textureObject))
+          pathObject = saveFormFile(request, formObject), 
+          pathTexure = saveFormFile(request, textureObject),
+          pathThumbnail = saveFormFile(request, thumbnailObject))
         Logger.info(s"model: $dbModel")
         val modelID = Models.insert(dbModel);
         Logger.info(s"Modellinfo: $modelID")

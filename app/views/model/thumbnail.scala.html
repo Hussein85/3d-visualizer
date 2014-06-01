@@ -3,19 +3,19 @@
 @defining(utils.Language.langCode(request)) { implicit langCode =>
 
 <div class="thumbnail">
-	<img data-src="holder.js/300x200">
+	<img src="@routes.Application.getUploadedFile(model.pathThumbnail)">
 	<dl class="dl-horizontal">
-	  <dt>Id:</dt>
+	  <dt>@Messages("generic.id"):</dt>
 	  <dd>@model.id</dd>
-	  <dt>Name:</dt>
+	  <dt>@Messages("model.name"):</dt>
 	  <dd>@model.name</dd>
-	  <dt>User ID:</dt>
+	  <dt>@Messages("user.id"):</dt>
 	  <dd>@model.userID</dd>
-	  <dt>Material:</dt>
+	  <dt>@Messages("model.material"):</dt>
 	  <dd>@model.material</dd>
-	  <dt>Location:</dt>
+	  <dt>@Messages("model.location"):</dt>
 	  <dd>@model.location</dd>
-	  <dt>Year:</dt>
+	  <dt>@Messages("model.year"):</dt>
 	  <dd>@model.date.getYear</dd>
 	</dl>
 </div>

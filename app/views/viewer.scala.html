@@ -3,12 +3,12 @@
 @defining(utils.Language.langCode(request)) { implicit langCode =>
 @main(Messages("title.viewer")) {
 	
-	<script type='text/javascript' src='@routes.Assets.at("javascripts/3dViewer/three.min.js")'></script>
-	<script type='text/javascript' src='@routes.Assets.at("javascripts/3dViewer/TrackballControls.js")'></script>
-	<script type='text/javascript' src='@routes.Assets.at("javascripts/3dViewer/OBJLoader.js")'></script>
-	<script type='text/javascript' src='@routes.Assets.at("javascripts/3dViewer/Detector.js")'></script>	
-	<script type='text/javascript' src='@routes.Assets.at("javascripts/3dViewer/BoundingBoxHelper.js")'></script>
-	<script type='text/javascript' src='@routes.Assets.at("javascripts/museum/Viewer.js")'></script>
+	<script type='text/javascript' src='@routes.Assets.at( "javascripts/3dViewer/three.min.js")'></script>
+	<script type='text/javascript' src='@routes.Assets.at( "javascripts/3dViewer/TrackballControls.js")'></script>
+	<script type='text/javascript' src='@routes.Assets.at( "javascripts/3dViewer/OBJLoader.js")'></script>
+	<script type='text/javascript' src='@routes.Assets.at( "javascripts/3dViewer/Detector.js")'></script>	
+	<script type='text/javascript' src='@routes.Assets.at( "javascripts/3dViewer/BoundingBoxHelper.js")'></script>
+	<script type='text/javascript' src='@routes.Assets.at( "javascripts/museum/Viewer.js")'></script>
 	
 	<div class="row">
 	  <div class="col-md-8" id="model-viewer">
@@ -28,8 +28,8 @@
    
   <script>
   	var viewer = new Viewer("#canvas-place-holder",
-  		  	"@routes.Assets.at("3dAssets/candleHolder.obj")", 
-  		  	"@routes.Assets.at("3dAssets/candleHolderSmal.jpg")");
+  		  	"@routes.Assets.at( "3dAssets/candleHolder.obj")", 
+  		  	"@routes.Assets.at( "3dAssets/candleHolderSmal.jpg")");
   	viewer.initCanvas();
   	
   	$( "#reset-view" ).click(function() {
