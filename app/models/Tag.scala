@@ -17,6 +17,7 @@ class Tags(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[Tag](tag, 
 object Tags {
 
   val tags = TableQuery[Tags]
+  val tagModels = TableQuery[TagModels]
 
   def insert(tag: Tag)(implicit s: Session): Int = {
     try {
@@ -27,7 +28,14 @@ object Tags {
         tags.filter(_.name === tag.name).first.id.get
       }
     }
-
+  }
+  
+  def tags(model: Model)(implicit s: Session): List[Tag] = {
+		val implicitInnerJoin = for {
+		  tm <- tagModels if tm.modelID === model.id
+		  tag <- tags if tag.id === tm.tagID
+		} yield (tag)		
+		implicitInnerJoin.list
   }
 
   def all(implicit s: Session): List[Tag] = {

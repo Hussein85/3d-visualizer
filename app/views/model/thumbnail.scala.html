@@ -1,4 +1,4 @@
-@(model: Model)(implicit request: play.api.mvc.Request[Any])
+@(model: Model, tags: List[Tag])(implicit request: play.api.mvc.Request[Any])
 
 @defining(utils.Language.langCode(request)) { implicit langCode =>
 
@@ -18,6 +18,13 @@
 	  <dt>@Messages("model.year"):</dt>
 	  <dd>@model.date.getYear</dd>
 	</dl>
+	<div class="thumbnail-tags">
+		<h4>
+		@for(tag <- tags) {
+			<span class="label label-info">@tag.name</span>
+		}
+		</h4>
+	</div>	
 </div>
 
 }

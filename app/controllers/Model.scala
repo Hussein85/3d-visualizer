@@ -21,13 +21,20 @@ object Model extends Controller {
   case class Model(name: String, material: String, location: String, text: String, year: Int, tags: List[Tag])
   
   def all = DBAction { implicit request =>
-    Ok(views.html.model.browser(Models.all))
+    val models = Models.all
+    val modelsTags = models.map{ model =>
+      val tags = Tags.tags(model)
+      (model, tags)
+    }
+    Ok(views.html.model.browser(modelsTags))
   }
   
   def thumbnail(id: Int) = DBAction { implicit request =>
     Models.get(id) match {
       case None => NotFound("The requested model is either not in the db or you lack access to it.")
-      case Some(model) => Ok(views.html.model.thumbnail(model))
+      case Some(model) => {
+        Ok(views.html.model.thumbnail(model, Tags.tags(model)))
+      }
     }  
   }
 
