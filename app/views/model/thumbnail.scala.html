@@ -1,30 +1,9 @@
 @(model: Model, tags: List[Tag])(implicit request: play.api.mvc.Request[Any])
-
 @defining(utils.Language.langCode(request)) { implicit langCode =>
 
 <div class="thumbnail">
 	<img src="@routes.Application.getUploadedFile(model.pathThumbnail)">
-	<dl class="dl-horizontal">
-	  <dt>@Messages("generic.id"):</dt>
-	  <dd>@model.id</dd>
-	  <dt>@Messages("model.name"):</dt>
-	  <dd>@model.name</dd>
-	  <dt>@Messages("user.id"):</dt>
-	  <dd>@model.userID</dd>
-	  <dt>@Messages("model.material"):</dt>
-	  <dd>@model.material</dd>
-	  <dt>@Messages("model.location"):</dt>
-	  <dd>@model.location</dd>
-	  <dt>@Messages("model.year"):</dt>
-	  <dd>@model.date.getYear</dd>
-	</dl>
-	<div class="thumbnail-tags">
-		<h4>
-		@for(tag <- tags) {
-			<span class="label label-info">@tag.name</span>
-		}
-		</h4>
-	</div>	
+	@info(model, tags)
 </div>
 
 }

@@ -4,3 +4,4 @@ $(document).ready ->
     statusbar: true
     language: if museumCookie["languageCode"] == "en" then "en" else "sv_SE"
     height: "300px"
+    entity_encoding : "raw"

@@ -4,12 +4,17 @@ import play.api._
 import play.api.mvc._
 import utils.Language
 import utils.Constants
+import models.Models
+import play.api.db.slick.DBAction
+import play.api.db.slick._
+import models.Tags
 
 object Application extends Controller {
 
-  def index = Action { implicit request =>
+  def index = DBAction { implicit request =>
     Logger.info(play.api.Play.current.configuration.getString("uploadPath").get.replace("~", System.getProperty("user.home")))
-    Ok(views.html.viewer())
+    val model = Models.get(2).get
+    Ok(views.html.viewer(model, Tags.tags(model)))
   }
 
   def tags = Action { implicit request =>

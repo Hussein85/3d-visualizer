@@ -1,4 +1,4 @@
-@(toBeAbleToCompile: String = "")(implicit request: play.api.mvc.Request[Any])
+@(model: models.Model, tags: List[Tag])(implicit request: play.api.mvc.Request[Any])
 
 @defining(utils.Language.langCode(request)) { implicit langCode =>
 @main(Messages("title.viewer")) {
@@ -21,28 +21,37 @@
 	 	</div> 
 	  </div>
 	  <div class="col-md-4" id="model-info">
-	  	<div class="alert alert-info">@Messages("viewer.information.heading")</div>
-	  	<p>@Messages("viewer.information.loremipsum")</p>
+	  	<div class="alert alert-info">@Messages("viewer.information.heading.info")</div>
+	  	@views.html.model.info(model, tags)
+	  	<br/><br/>
+	  	<div class="alert alert-info">@Messages("viewer.information.heading.text")</div>
+	  	<div id="model-text"></div>
 	  </div>
 	</div>
    
   <script>
+  $( document ).ready(function() { 
   	var viewer = new Viewer("#canvas-place-holder",
   		  	"@routes.Assets.at( "3dAssets/candleHolder.obj")", 
   		  	"@routes.Assets.at( "3dAssets/candleHolderSmal.jpg")");
   	viewer.initCanvas();
   	
-  	$( "#reset-view" ).click(function() {
- 	 viewer.resetView();
-});
-  	
-  	$( "#toogle-bounding-box" ).click(function() {
- 	 viewer.toogleBoundingBox();
-});
-
-$( "#toogle-pan-Y" ).click(function() {
- 	 viewer.tooglePanY();
-});
+	$( "#reset-view" ).click(function() {
+	 	 viewer.resetView();
+	});
+	  	
+	$( "#toogle-bounding-box" ).click(function() {
+	 	 viewer.toogleBoundingBox();
+	});
+	
+	$( "#toogle-pan-Y" ).click(function() {
+	 	 viewer.tooglePanY();
+	});
+	
+	var html = $.parseHTML("@Html(model.text)");
+	
+	$("#model-text").append(html);
+	});
   	
   </script>
   
