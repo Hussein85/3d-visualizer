@@ -32,8 +32,8 @@
   <script>
   $( document ).ready(function() { 
   	var viewer = new Viewer("#canvas-place-holder",
-  		  	"@routes.Assets.at( "3dAssets/candleHolder.obj")", 
-  		  	"@routes.Assets.at( "3dAssets/candleHolderSmal.jpg")");
+  		  	"@routes.Application.getUploadedFile(model.pathObject)", 
+  		  	"@routes.Application.getUploadedFile(model.pathTexure)");
   	viewer.initCanvas();
   	
 	$( "#reset-view" ).click(function() {
