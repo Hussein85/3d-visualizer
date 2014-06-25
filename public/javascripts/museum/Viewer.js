@@ -53,25 +53,6 @@ Viewer.prototype.initCanvas = function() {
 
 	function init() {
 
-		that.camera = new THREE.PerspectiveCamera(45, size.width / size.height,
-				1, 1000);
-
-		that.controls = new THREE.TrackballControls(that.camera);
-
-		that.controls.rotateSpeed = 1.0;
-		that.controls.zoomSpeed = 1.2;
-		that.controls.panSpeed = 0.8;
-
-		that.controls.noZoom = false;
-		that.controls.noPan = false;
-
-		that.controls.staticMoving = true;
-		that.controls.dynamicDampingFactor = 0.3;
-
-		that.controls.keys = [ 65, 83, 68 ];
-
-		that.controls.addEventListener('change', render);
-
 		// world
 		that.scene = new THREE.Scene();
 
@@ -139,6 +120,25 @@ Viewer.prototype.initCanvas = function() {
 		renderer.setSize(size.width, size.height);
 
 		$(that.id).append(renderer.domElement);
+		
+		that.camera = new THREE.PerspectiveCamera(45, size.width / size.height,
+        1, 1000);
+
+    that.controls = new THREE.TrackballControls(that.camera, renderer.domElement);
+
+    that.controls.rotateSpeed = 1.0;
+    that.controls.zoomSpeed = 1.2;
+    that.controls.panSpeed = 0.8;
+
+    that.controls.noZoom = false;
+    that.controls.noPan = false;
+
+    that.controls.staticMoving = true;
+    that.controls.dynamicDampingFactor = 0.3;
+
+    that.controls.keys = [ 65, 83, 68 ];
+
+    that.controls.addEventListener('change', render);
 
 		window.addEventListener('resize', onWindowResize, false);
 	}
