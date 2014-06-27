@@ -7,13 +7,23 @@ import utils.Constants
 import models.Models
 import play.api.db.slick.DBAction
 import play.api.db.slick._
+import play.api.db.DB._
 import models.Tags
+import scala.slick.driver.PostgresDriver.simple._
+import scala.slick.driver.PostgresDriver.simple.{ Session => SlickSession }
+import play.api._
+import play.api.Play.current
 
 object Application extends Controller {
 
   def index = DBAction { implicit request =>
+    val model = Models.get(1).getOrElse(Models.get(2).get)
+    Redirect(controllers.routes.Application.viewer(model.id.get))
+  }
+
+  def viewer(id: Int) = DBAction { implicit request =>
     Logger.info(play.api.Play.current.configuration.getString("uploadPath").get.replace("~", System.getProperty("user.home")))
-    val model = Models.get(2).get
+    val model = Models.get(id).get
     Ok(views.html.viewer(model, Tags.tags(model)))
   }
 
