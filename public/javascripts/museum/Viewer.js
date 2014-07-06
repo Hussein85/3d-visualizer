@@ -12,16 +12,23 @@ function Viewer(id, modelPath, texturePath) {
 	this.controls;
 }
 
-Viewer.prototype.tooglePanY = function() {
-	this.panY = !this.panY;
-}
+
 
 Viewer.prototype.resetView = function() {
-	this.toogleBoundingBox(false);
-	this.controls.reset();
-	this.scene.position.setY(-this.object.geometry.boundingBox.max.y / 2);
-	this.scene.updateMatrix();
-	this.camera.position.set(0, 0, 300);	
+  this.toogleBoundingBox(false);
+  this.tooglePanY(false);
+  this.controls.reset();
+  this.scene.position.setY(-this.object.geometry.boundingBox.max.y / 2);
+  this.scene.updateMatrix();
+  this.camera.position.set(0, 0, 300);
+}
+
+Viewer.prototype.tooglePanY = function(forceState) {
+  if(typeof forceState !== "undefined") {
+     this.panY = forceState;
+  } else {
+    this.panY = !this.panY;
+  }
 }
 
 Viewer.prototype.toogleBoundingBox = function(forceState) {
@@ -122,7 +129,7 @@ Viewer.prototype.initCanvas = function() {
 		$(that.id).append(renderer.domElement);
 		
 		that.camera = new THREE.PerspectiveCamera(45, size.width / size.height,
-        1, 1000);
+        0.1, 1000);
 
     that.controls = new THREE.TrackballControls(that.camera, renderer.domElement);
 

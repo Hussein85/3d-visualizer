@@ -31,7 +31,7 @@
    
   <script>
   $( document ).ready(function() { 
-  	var viewer = new Viewer("#canvas-place-holder",
+  	viewer = new Viewer("#canvas-place-holder",
   		  	"@routes.Application.getUploadedFile(model.pathObject)", 
   		  	"@routes.Application.getUploadedFile(model.pathTexure)");
   	viewer.initCanvas();
