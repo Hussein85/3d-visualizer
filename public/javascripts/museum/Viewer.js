@@ -18,7 +18,7 @@ Viewer.prototype.resetView = function() {
   this.toogleBoundingBox(false);
   this.tooglePanY(false);
   this.controls.reset();
-  this.scene.position.setY(-this.object.geometry.boundingBox.max.y / 2);
+  this.scene.position.setY(-this.bb.box.max.y / 2);
   this.scene.updateMatrix();
   this.camera.position.set(0, 0, 300);
 }
@@ -102,11 +102,12 @@ Viewer.prototype.initCanvas = function() {
 					that.object = child;
 					that.object.name = that.modelPath;
 					child.material.map = texture;
-					// child.scale.set(100, 100, 100);
 					child.geometry.computeBoundingBox();
 					child.position.set(0, 0, 0);
+					var scaleFactor = 200 / child.geometry.boundingBox.max.y;
+          child.scale.set(scaleFactor, scaleFactor, scaleFactor);
 					that.bb = new THREE.BoundingBoxHelper(child, 0xffff00);
-					that.bb.update();
+					that.bb.update();		
 					that.resetView();
 				}
 			});
