@@ -20,7 +20,8 @@ libraryDependencies ++= Seq(
   "com.balihoo" %% "play2-bootstrap3" % "2.2.1-SNAPSHOT",
   "joda-time" % "joda-time" % "2.3",
   "org.joda" % "joda-convert" % "1.5",
-  "com.github.tototoshi" %% "slick-joda-mapper" % "1.1.0"
+  "com.github.tototoshi" %% "slick-joda-mapper" % "1.1.0",
+  "ws.securesocial" %% "securesocial" % "2.1.3"
 )     
 
 play.Project.playScalaSettings
