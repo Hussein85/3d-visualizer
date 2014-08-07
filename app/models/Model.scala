@@ -38,5 +38,9 @@ object Models {
   def get(id: Int)(implicit s: Session): Option[Model] = {
     models.filter(_.id === id).firstOption
   }
+  
+  def get(pathObject: String)(implicit s: Session): Option[Model] = {
+    models.filter(_.pathObject === pathObject).firstOption
+  }
 
 }

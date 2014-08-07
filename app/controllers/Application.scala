@@ -17,7 +17,7 @@ import play.api.Play.current
 object Application extends Controller {
 
   def index = DBAction { implicit request =>
-    val model = Models.get(1).getOrElse(Models.get(2).get)
+    val model = Models.get("static/candleHolder.obj").get
     Redirect(controllers.routes.Application.viewer(model.id.get))
   }
 
