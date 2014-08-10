@@ -23,11 +23,12 @@ case class User(uid: Option[Long] = None,
   authMethod: AuthenticationMethod,
   oAuth1Info: Option[OAuth1Info],
   oAuth2Info: Option[OAuth2Info],
-  passwordInfo: Option[PasswordInfo]) extends Identity
+  passwordInfo: Option[PasswordInfo],
+  admin: Boolean) extends Identity
 
 object UserFromIdentity {
   def apply(i: Identity): User = User(None, i.identityId, i.firstName, i.lastName, i.fullName,
-    i.email, i.avatarUrl, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo)
+    i.email, i.avatarUrl, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo, false )
 }
 
 class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag, "user") {
@@ -80,6 +81,9 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
   def hasher = column[Option[String]]("hasher")
   def password = column[Option[String]]("password")
   def salt = column[Option[String]]("salt")
+  
+  // Authorization
+  def admin = column[Boolean]("admin")
 
   def * : ProvenShape[User] = {
     val shapedValue = (uid.?,
@@ -99,7 +103,8 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
       refreshToken,
       hasher,
       password,
-      salt).shaped
+      salt,
+      admin).shaped
 
     shapedValue.<>({
       tuple =>
@@ -113,7 +118,8 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
           authMethod = tuple._9,
           oAuth1Info = (tuple._10, tuple._11),
           oAuth2Info = (tuple._12, tuple._13, tuple._14, tuple._15),
-          passwordInfo = (tuple._16, tuple._17, tuple._18))
+          passwordInfo = (tuple._16, tuple._17, tuple._18),
+          admin = tuple._19)
     }, {
       (u: User) =>
         Some {
@@ -135,7 +141,8 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
             u.oAuth2Info.flatMap(_.refreshToken),
             u.passwordInfo.map(_.hasher),
             u.passwordInfo.map(_.password),
-            u.passwordInfo.flatMap(_.salt))
+            u.passwordInfo.flatMap(_.salt),
+            u.admin)
         }
     })
   }

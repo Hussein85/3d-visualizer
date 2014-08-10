@@ -17,6 +17,7 @@ import models.Models
 import models.TagModels
 import models.TagModel
 import scala.slick.driver.PostgresDriver.simple._
+import service.Admin
 
 object Model extends Controller with securesocial.core.SecureSocial {
 
@@ -31,11 +32,13 @@ object Model extends Controller with securesocial.core.SecureSocial {
     Ok(views.html.model.browser(modelsTags))
   }
 
-  def thumbnail(id: Int) = DBAction { implicit request =>
-    Models.get(id) match {
-      case None => NotFound("The requested model is either not in the db or you lack access to it.")
-      case Some(model) => {
-        Ok(views.html.model.thumbnail(model, Tags.tags(model)))
+  def thumbnail(id: Int) = SecuredAction { implicit request =>
+    DB.withSession { implicit session =>
+      Models.get(id) match {
+        case None => NotFound("The requested model is either not in the db or you lack access to it.")
+        case Some(model) => {
+          Ok(views.html.model.thumbnail(model, Tags.tags(model)))
+        }
       }
     }
   }
@@ -61,11 +64,11 @@ object Model extends Controller with securesocial.core.SecureSocial {
       "tags" -> nonEmptyText)(
         (name, material, location, text, year, tags) => Model(name, material, location, text, year, tags.split(",").map(tag => new Tag(None, tag)).toList))((m: Model) => Some(m.name, m.material, m.location, m.text, m.year, m.tags.map(tag => tag.name).mkString(","))))
 
-  def addForm = Action { implicit request =>
+  def addForm = SecuredAction(Admin()) { implicit request =>
     Ok(views.html.model.addForm(modelForm))
   }
 
-  def upload = DBAction(parse.multipartFormData) { implicit request =>
+  def upload = SecuredAction(parse.multipartFormData) { implicit request =>
     val filesMissing: List[(String, String)] =
       ((request.body.file(formObject) match {
         case None => Some(formObject -> "error.required")
@@ -92,25 +95,19 @@ object Model extends Controller with securesocial.core.SecureSocial {
           pathTexure = saveFormFile(request, textureObject),
           pathThumbnail = saveFormFile(request, thumbnailObject))
         Logger.info(s"model: $dbModel")
-        val modelID = Models.insert(dbModel);
+        val modelID = DB.withSession { implicit session => Models.insert(dbModel) };
         Logger.info(s"Modellinfo: $modelID")
         m.tags.foreach(tag => {
           Logger.info(s"tag: $tag")
-          val tagID = Tags.insert(tag)
-          TagModels.insert(TagModel(tagID, modelID))
+          val tagID = DB.withSession { implicit session => Tags.insert(tag) }
+          DB.withSession { implicit session => TagModels.insert(TagModel(tagID, modelID)) }
         })
         Ok("Model uploaded")
       })
   }
 
-  def allTags = DBAction { implicit request =>
-    /*implicit val jsonWriter = new Writes[(String, String)] {
-      def writes(c: (String, String)): JsValue = {
-        Json.obj(c._1 -> c._2)
-      }
-    }
-    val tags = Tags.all.map(tag => ("tag_name", tag.name))*/
-    Ok(Json.toJson(Tags.all.map(_.name)))
+  def allTags = SecuredAction { implicit request =>
+    Ok(Json.toJson(DB.withSession { implicit session => Tags.all.map(_.name) }))
   }
 
 }
