@@ -12,6 +12,7 @@ import com.github.tototoshi.slick.PostgresJodaSupport._
 import securesocial.core.providers.Token
 
 import org.joda.time.DateTime
+import utils.Role._
 
 case class User(uid: Option[Long] = None,
   identityId: IdentityId,
@@ -24,11 +25,11 @@ case class User(uid: Option[Long] = None,
   oAuth1Info: Option[OAuth1Info],
   oAuth2Info: Option[OAuth2Info],
   passwordInfo: Option[PasswordInfo],
-  admin: Boolean) extends Identity
+  role: Role) extends Identity
 
 object UserFromIdentity {
   def apply(i: Identity): User = User(None, i.identityId, i.firstName, i.lastName, i.fullName,
-    i.email, i.avatarUrl, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo, false )
+    i.email, i.avatarUrl, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo, UnInitiated )
 }
 
 class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag, "user") {
@@ -83,7 +84,7 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
   def salt = column[Option[String]]("salt")
   
   // Authorization
-  def admin = column[Boolean]("admin")
+  def role = column[String]("role")
 
   def * : ProvenShape[User] = {
     val shapedValue = (uid.?,
@@ -104,7 +105,7 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
       hasher,
       password,
       salt,
-      admin).shaped
+      role).shaped
 
     shapedValue.<>({
       tuple =>
@@ -116,10 +117,10 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
           email = tuple._7,
           avatarUrl = tuple._8,
           authMethod = tuple._9,
-          oAuth1Info = (tuple._10, tuple._11),
-          oAuth2Info = (tuple._12, tuple._13, tuple._14, tuple._15),
-          passwordInfo = (tuple._16, tuple._17, tuple._18),
-          admin = tuple._19)
+          oAuth1Info = tuple2OAuth1Info(tuple._10, tuple._11),
+          oAuth2Info = tuple2OAuth2Info(tuple._12, tuple._13, tuple._14, tuple._15),
+          passwordInfo = tuple2PasswordInfo(tuple._16, tuple._17, tuple._18),
+          role = utils.Role.withName(tuple._19))
     }, {
       (u: User) =>
         Some {
@@ -142,7 +143,7 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
             u.passwordInfo.map(_.hasher),
             u.passwordInfo.map(_.password),
             u.passwordInfo.flatMap(_.salt),
-            u.admin)
+            u.role.toString())
         }
     })
   }

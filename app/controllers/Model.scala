@@ -18,12 +18,14 @@ import models.TagModels
 import models.TagModel
 import scala.slick.driver.PostgresDriver.simple._
 import service.Admin
+import service.Contributer
+import service.Normal
 
 object Model extends Controller with securesocial.core.SecureSocial {
 
   case class Model(name: String, material: String, location: String, text: String, year: Int, tags: List[Tag])
 
-  def all = SecuredAction { implicit request =>
+  def all = SecuredAction(Normal) { implicit request =>
     val models = DB.withSession { implicit session => Models.all }
     val modelsTags = models.map { model =>
       val tags = DB.withSession { implicit session => Tags.tags(model) }
@@ -32,7 +34,7 @@ object Model extends Controller with securesocial.core.SecureSocial {
     Ok(views.html.model.browser(modelsTags))
   }
 
-  def thumbnail(id: Int) = SecuredAction { implicit request =>
+  def thumbnail(id: Int) = SecuredAction(Normal) { implicit request =>
     DB.withSession { implicit session =>
       Models.get(id) match {
         case None => NotFound("The requested model is either not in the db or you lack access to it.")
@@ -64,11 +66,11 @@ object Model extends Controller with securesocial.core.SecureSocial {
       "tags" -> nonEmptyText)(
         (name, material, location, text, year, tags) => Model(name, material, location, text, year, tags.split(",").map(tag => new Tag(None, tag)).toList))((m: Model) => Some(m.name, m.material, m.location, m.text, m.year, m.tags.map(tag => tag.name).mkString(","))))
 
-  def addForm = SecuredAction(Admin()) { implicit request =>
+  def addForm = SecuredAction(Admin) { implicit request =>
     Ok(views.html.model.addForm(modelForm))
   }
 
-  def upload = SecuredAction(parse.multipartFormData) { implicit request =>
+  def upload = SecuredAction(Contributer)(parse.multipartFormData) { implicit request =>
     val filesMissing: List[(String, String)] =
       ((request.body.file(formObject) match {
         case None => Some(formObject -> "error.required")
@@ -106,7 +108,7 @@ object Model extends Controller with securesocial.core.SecureSocial {
       })
   }
 
-  def allTags = SecuredAction { implicit request =>
+  def allTags = SecuredAction(Normal) { implicit request =>
     Ok(Json.toJson(DB.withSession { implicit session => Tags.all.map(_.name) }))
   }
 

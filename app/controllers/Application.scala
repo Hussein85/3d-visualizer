@@ -15,17 +15,18 @@ import play.api._
 import play.api.Play.current
 import securesocial.core.{Identity, Authorization}
 import service.Admin
+import service.Normal
 
 object Application extends Controller with securesocial.core.SecureSocial {
 
-  def index = SecuredAction { implicit request =>
+  def index = SecuredAction(Normal) { implicit request =>
     DB.withSession { implicit session =>
       val model = Models.get("static/candleHolder.obj").get
       Redirect(controllers.routes.Application.viewer(model.id.get))
     }
   }
 
-  def viewer(id: Int) = SecuredAction  { implicit request => 
+  def viewer(id: Int) = SecuredAction(Normal)  { implicit request => 
     DB.withSession { implicit session =>
       Logger.info(play.api.Play.current.configuration.getString("uploadPath").get.replace("~", System.getProperty("user.home")))
       val model = Models.get(id).get
@@ -33,18 +34,18 @@ object Application extends Controller with securesocial.core.SecureSocial {
     }
   }
 
-  def tags = SecuredAction { implicit request =>
+  def tags = SecuredAction(Normal) { implicit request =>
     Ok(views.html.tags())
   }
 
-  def language = SecuredAction(parse.urlFormEncoded) { implicit request =>
+  def language = SecuredAction(Normal)(parse.urlFormEncoded) { implicit request =>
     val code = request.body.get("code").head.head
     Logger.info(s"Langugage set to $code")
     Ok(s"Language code set to: $code").withSession(
       "languageCode" -> code)
   }
 
-  def javascriptRoutes = SecuredAction { implicit request =>
+  def javascriptRoutes = SecuredAction(Normal) { implicit request =>
     import routes.javascript._
     Ok(
       Routes.javascriptRouter("jsRoutes")(
@@ -52,7 +53,7 @@ object Application extends Controller with securesocial.core.SecureSocial {
         routes.javascript.Model.allTags)).as("text/javascript")
   }
 
-  def getUploadedFile(file: String) = SecuredAction {
+  def getUploadedFile(file: String) = SecuredAction(Normal) {
     Ok.sendFile(new java.io.File(Constants.uploadDir, file))
   }
 
