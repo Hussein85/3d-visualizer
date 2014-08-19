@@ -34,7 +34,7 @@ object Global extends GlobalSettings {
     Files.copyFile(new File("public/3dAssets/candleHolderSmal.png"), new File(Constants.uploadDir.getPath + "/static/candleHolderSmal.png"), true, true)
     Files.copyFile(new File("public/3dAssets/candleHolder.obj"), new File(Constants.uploadDir.getPath + "/static/candleHolder.obj"), true, true)
 
-    val dbModel = new models.Model(id = Some(1), name = "Exempel", userID = 1, date = new DateTime(1970, 1, 1, 0, 0, 0),
+    val dbModel = new models.Model(id = Some(1), name = "Exempel", userID = "System", date = new DateTime(1970, 1, 1, 0, 0, 0),
       material = "Kermaik", location = "Lund", text = "Ett exempel på hur ett föremål kan se ut.",
       pathObject = "static/candleHolder.obj",
       pathTexure = "static/candleHolderSmal.jpg",

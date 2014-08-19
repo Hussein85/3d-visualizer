@@ -1,10 +1,9 @@
-package service
+package securesocial.museum
 
 import play.api.{Logger, Application}
 import securesocial.core._
 import securesocial.core.providers.Token
 import securesocial.core.IdentityId
-import models.Tokens
 import models.Tables
 import org.joda.time.DateTime
 

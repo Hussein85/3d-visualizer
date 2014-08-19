@@ -4,7 +4,7 @@ import _root_.java.sql.Date
 import securesocial.core._
 
 import scala.slick.lifted.ProvenShape
-import play.api.{Logger, Application}
+import play.api.{ Logger, Application }
 
 import scala.slick.driver.PostgresDriver.simple._
 import com.github.tototoshi.slick.PostgresJodaSupport._
@@ -28,8 +28,9 @@ case class User(uid: Option[Long] = None,
   role: Role) extends Identity
 
 object UserFromIdentity {
-  def apply(i: Identity): User = User(None, i.identityId, i.firstName, i.lastName, i.fullName,
-    i.email, i.avatarUrl, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo, UnInitiated )
+  def apply(i: Identity): User = Tables.Users.findByIdentityId(i.identityId).getOrElse(
+    User(None, i.identityId, i.firstName, i.lastName, i.fullName,
+      i.email, i.avatarUrl, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo, UnInitiated))
 }
 
 class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag, "user") {
@@ -51,7 +52,7 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
   implicit def tuple2IdentityId(tuple: (String, String)): IdentityId = tuple match {
     case (userId, providerId) => IdentityId(userId, providerId)
   }
-  
+
   implicit def tuple2PasswordInfo(tuple: (Option[String], Option[String], Option[String])): Option[PasswordInfo] = tuple match {
     case (Some(hasher), Some(password), Some(salt)) => Some(PasswordInfo(hasher, password, Some(salt)))
     case (Some(hasher), Some(password), _) => Some(PasswordInfo(hasher, password, None))
@@ -82,7 +83,7 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
   def hasher = column[Option[String]]("hasher")
   def password = column[Option[String]]("password")
   def salt = column[Option[String]]("salt")
-  
+
   // Authorization
   def role = column[String]("role")
 

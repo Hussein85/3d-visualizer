@@ -1,6 +1,5 @@
-package service
+package securesocial.museum
 
-import models.User
 import securesocial.core.Authorization
 import securesocial.core.Identity
 import models.Tables

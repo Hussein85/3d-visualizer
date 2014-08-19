@@ -17,9 +17,11 @@ import models.Models
 import models.TagModels
 import models.TagModel
 import scala.slick.driver.PostgresDriver.simple._
-import service.Admin
-import service.Contributer
-import service.Normal
+import securesocial.museum.UserService
+import models.Tag
+import securesocial.museum.Normal
+import securesocial.museum.Contributer
+import securesocial.museum.Admin
 
 object Model extends Controller with securesocial.core.SecureSocial {
 
@@ -90,8 +92,8 @@ object Model extends Controller with securesocial.core.SecureSocial {
         BadRequest(views.html.model.addForm(addFileMissingErrorsToForm(formWithErrors, filesMissing)))
       },
       m => {
-        // TODO: Take userID from session
-        val dbModel = new models.Model(id = None, name = m.name, userID = 1, date = new DateTime(m.year, 1, 1, 0, 0, 0),
+        val userId: String = request.user.identityId.userId
+        val dbModel = new models.Model(id = None, name = m.name, userID = userId, date = new DateTime(m.year, 1, 1, 0, 0, 0),
           material = m.material, location = m.location, text = m.text,
           pathObject = saveFormFile(request, formObject),
           pathTexure = saveFormFile(request, textureObject),
@@ -104,7 +106,7 @@ object Model extends Controller with securesocial.core.SecureSocial {
           val tagID = DB.withSession { implicit session => Tags.insert(tag) }
           DB.withSession { implicit session => TagModels.insert(TagModel(tagID, modelID)) }
         })
-        Ok("Model uploaded")
+        Redirect(routes.Model.all)
       })
   }
 
