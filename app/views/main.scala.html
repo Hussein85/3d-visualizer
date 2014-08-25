@@ -1,5 +1,14 @@
 @(title: String)(content: Html)(implicit req: RequestHeader, langCode: Lang)
 
+@import play.api.db.slick.DBAction
+@import play.api.db.slick._
+@import play.api.db.DB._
+@import scala.slick.driver.PostgresDriver.simple._
+@import scala.slick.driver.PostgresDriver.simple.{ Session => SlickSession }
+@import play.api._
+@import play.api.Play.current
+@import securesocial.core.SecureSocial
+
 @helper.javascriptRouter("jsRoutes")(
 		  routes.javascript.Application.language,
 		  routes.javascript.Model.allTags
@@ -73,8 +82,10 @@
   
 
     <div class="container">
-    	
-        @content
+    @{if(SecureSocial.currentUser.isDefined) {
+	    SecureSocial.currentUser.get.fullName
+	}}
+	@content
     </div><!-- /.container -->
 
   </body>

@@ -12,10 +12,9 @@ libraryDependencies ++= Seq(
   cache,
   "org.webjars" %% "webjars-play" % "2.2.1-2",
   "org.webjars" % "bootstrap" % "3.1.1",
-  "com.typesafe.slick" %% "slick" % "2.0.1",
+  "com.typesafe.slick" %% "slick" % "2.0.1", //TODO revert to 2.0.1?
   "postgresql" % "postgresql" % "9.1-901.jdbc4",
   "com.typesafe.play" %% "play-slick" % "0.6.0.1",
-  "com.typesafe.slick" %% "slick" % "2.0.1",
   "org.slf4j" % "slf4j-nop" % "1.6.4",
   "com.balihoo" %% "play2-bootstrap3" % "2.2.1-SNAPSHOT",
   "joda-time" % "joda-time" % "2.3",

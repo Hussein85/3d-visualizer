@@ -25,12 +25,13 @@ case class User(uid: Option[Long] = None,
   oAuth1Info: Option[OAuth1Info],
   oAuth2Info: Option[OAuth2Info],
   passwordInfo: Option[PasswordInfo],
-  role: Role) extends Identity
+  role: Role,
+  organizationId: Int) extends Identity
 
 object UserFromIdentity {
   def apply(i: Identity): User = Tables.Users.findByIdentityId(i.identityId).getOrElse(
     User(None, i.identityId, i.firstName, i.lastName, i.fullName,
-      i.email, i.avatarUrl, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo, UnInitiated))
+      i.email, i.avatarUrl, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo, UnInitiated, 1))
 }
 
 class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag, "user") {
@@ -84,8 +85,11 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
   def password = column[Option[String]]("password")
   def salt = column[Option[String]]("salt")
 
-  // Authorization
+  // Extended to standard
   def role = column[String]("role")
+  def organizationId = column[Int]("ADDRESS_ID")
+  lazy val organizations = TableQuery[Organizations]
+  def organization = foreignKey("ORAGNIZATION", organizationId, organizations)(_.id)
 
   def * : ProvenShape[User] = {
     val shapedValue = (uid.?,
@@ -106,7 +110,8 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
       hasher,
       password,
       salt,
-      role).shaped
+      role,
+      organizationId).shaped
 
     shapedValue.<>({
       tuple =>
@@ -121,7 +126,8 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
           oAuth1Info = tuple2OAuth1Info(tuple._10, tuple._11),
           oAuth2Info = tuple2OAuth2Info(tuple._12, tuple._13, tuple._14, tuple._15),
           passwordInfo = tuple2PasswordInfo(tuple._16, tuple._17, tuple._18),
-          role = utils.Role.withName(tuple._19))
+          role = utils.Role.withName(tuple._19),
+          organizationId = tuple._20)
     }, {
       (u: User) =>
         Some {
@@ -144,7 +150,8 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
             u.passwordInfo.map(_.hasher),
             u.passwordInfo.map(_.password),
             u.passwordInfo.flatMap(_.salt),
-            u.role.toString())
+            u.role.toString(),
+            u.organizationId)
         }
     })
   }
@@ -215,7 +222,7 @@ object Tables extends WithDefaultSession {
       implicit session =>
         val q = for {
           token <- this
-          if token.uuid is tokenId
+          if token.uuid === tokenId
         } yield token
 
         q.firstOption
@@ -231,7 +238,7 @@ object Tables extends WithDefaultSession {
           case Some(existingToken) => {
             val tokenRow = for {
               t <- this
-              if t.uuid is existingToken.uuid
+              if t.uuid === existingToken.uuid
             } yield t
 
             val updatedToken = token.copy(uuid = existingToken.uuid)
@@ -245,7 +252,7 @@ object Tables extends WithDefaultSession {
       implicit session =>
         val q = for {
           t <- this
-          if t.uuid is uuid
+          if t.uuid === uuid
         } yield t
 
         q.delete
@@ -270,7 +277,7 @@ object Tables extends WithDefaultSession {
       implicit session =>
         val q = for {
           user <- this
-          if user.uid is id
+          if user.uid === id
         } yield user
 
         q.firstOption
@@ -280,7 +287,7 @@ object Tables extends WithDefaultSession {
       implicit session =>
         val q = for {
           user <- this
-          if (user.email is email) && (user.providerId is providerId)
+          if (user.email === email) && (user.providerId === providerId)
         } yield user
 
         q.firstOption
@@ -290,7 +297,7 @@ object Tables extends WithDefaultSession {
       implicit session =>
         val q = for {
           user <- this
-          if (user.userId is identityId.userId) && (user.providerId is identityId.providerId)
+          if (user.userId === identityId.userId) && (user.providerId === identityId.providerId)
         } yield user
 
         val user = q.firstOption
@@ -319,7 +326,7 @@ object Tables extends WithDefaultSession {
           case Some(existingUser) => {
             val userRow = for {
               u <- this
-              if u.uid is existingUser.uid
+              if u.uid === existingUser.uid
             } yield u
 
             val updatedUser = user.copy(uid = existingUser.uid)
@@ -330,4 +337,5 @@ object Tables extends WithDefaultSession {
     }
 
   }
+
 }
