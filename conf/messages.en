@@ -1,7 +1,7 @@
 title.add=Add art
 title.viewer=Viewer
 title.browser=Browser
-app.title=Archive
+app.title=Museum Archive
 error.4digityear=Enter the year with 4 digits
 error.inFuture=The year can''t be part of the future
 error.number=The field only accepts numbers
@@ -38,3 +38,4 @@ viewer.viewer.toogle-Y-panning=Toogle Y panning
 viewer.viewer.toogle-bounding-box=Toogle bounding box
 generic.id=ID
 user.id=User ID
+securesocial.appName=Museum Archive

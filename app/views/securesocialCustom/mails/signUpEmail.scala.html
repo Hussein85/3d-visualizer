@@ -1,0 +1,13 @@
+@(token: String)(implicit request: RequestHeader)
+@import securesocial.core.IdentityProvider
+<html>
+<body>
+<p>Hej</p>
+
+<p>Var god och följ denna
+    <a href="@securesocial.core.providers.utils.RoutesHelper.signUp(token).absoluteURL(IdentityProvider.sslEnabled)">länk</a> för att slutföra registreringen.
+</p>
+
+<p>Hälsnignar Museum arkivet</p>
+</body>
+</html>

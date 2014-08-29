@@ -1,7 +1,7 @@
 title.add=Ladda upp
 title.viewer=Visare
 title.browser=Utforskaren
-app.title=Arkiv
+app.title=Museum Arkiv
 error.4digityear=Året måste skrivas med 4 siffror t ex 1870
 error.inFuture=Året kan inte vara i framtiden
 error.number=Fältet godkänner bara ett heltal
@@ -103,3 +103,6 @@ mails.welcomeEmail.subject=Välkommen
 mails.passwordResetEmail.subject=Instruktioner för lösenordsåterställning
 mails.unknownEmail.subject=Återställ lösenord
 mails.passwordResetOk.subject=Bekräftelse för lösenordsåterställning
+
+constraint.required=Obligatorisk
+constraint.email=E-Post
