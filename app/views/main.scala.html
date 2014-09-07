@@ -8,6 +8,7 @@
 @import play.api._
 @import play.api.Play.current
 @import securesocial.core.SecureSocial
+@import play.api.cache.Cache
 
 @helper.javascriptRouter("jsRoutes")(
 		  routes.javascript.Application.language,
@@ -65,6 +66,9 @@
          <li @if(title==Messages("title.viewer")){class="active"}><a href="/">@Messages("title.viewer")</a></li>
          <li @if(title==Messages("title.browser")){class="active"}><a href="/model/all">@Messages("title.browser")</a></li>
          <li @if(title==Messages("title.add")){class="active"}><a href="@routes.Model.addForm">@Messages("title.add")</a></li>
+         @if(Cache.get(SecureSocial.currentUser.get.identityId.userId).get.asInstanceOf[User].role.toString() == "Admin"){
+         	<li if(title==Messages("title.admin")){class="active"}><a href="@routes.Admin.index">@Messages("title.admin")</a></li>
+         }
          @* <li @if(title=="Använda taggar"){class="active"}><a href="@routes.Application.tags">Taggar</a></li> *@ 
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -81,10 +85,7 @@
 </nav>
   
 
-    <div class="container">
-    @{if(SecureSocial.currentUser.isDefined) {
-	    SecureSocial.currentUser.get.fullName
-	}}
+    <div class="container">@Cache.get(SecureSocial.currentUser.get.identityId.userId).get.asInstanceOf[User].role
 	@content
     </div><!-- /.container -->
 

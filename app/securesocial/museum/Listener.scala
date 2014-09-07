@@ -14,14 +14,24 @@ import securesocial.core.EventListener
 import com.typesafe.plugin.MailerPlugin
 import com.typesafe.plugin.use
 import scala.slick.ast.GetOrElse
+import models.Models
+import models.Users
+import play.api.cache.Cache
+import models.Tables
 
 class Listener(app: play.api.Application) extends EventListener {
   override def id: String = "my_event_listener"
 
   def onEvent(event: Event, request: RequestHeader, session: Session): Option[Session] = {
     val eventName = event match {
-      case e: LoginEvent => "login"
-      case e: LogoutEvent => "logout"
+      case e: LoginEvent => {
+        Cache.set(e.user.identityId.userId, Tables.Users.findByIdentityId(e.user.identityId).get)
+        "login"
+      }
+      case e: LogoutEvent => {
+        Cache.remove(e.user.identityId.userId)
+        "logout"
+      }
       case e: SignUpEvent => {
         import com.typesafe.plugin._
         val mail = use[MailerPlugin].email

@@ -42,6 +42,7 @@ class Templates(application: play.Application) extends TemplatesPlugin {
     securesocial.views.html.notAuthorized()
   }
 
+  // Customized
   def getSignUpEmail(token: String)(implicit request: RequestHeader): (Option[Txt], Option[Html]) = {
     (None, Some(views.html.securesocialCustom.mails.signUpEmail(token)))
   }
@@ -50,8 +51,9 @@ class Templates(application: play.Application) extends TemplatesPlugin {
     (None, Some(securesocial.views.html.mails.alreadyRegisteredEmail(user)))
   }
 
+  // Customized
   def getWelcomeEmail(user: Identity)(implicit request: RequestHeader): (Option[Txt], Option[Html]) = {
-    (None, Some(securesocial.views.html.mails.welcomeEmail(user)))
+    (None, Some(views.html.securesocialCustom.mails.welcomeEmail(user)))
   }
 
   def getUnknownEmailNotice()(implicit request: RequestHeader): (Option[Txt], Option[Html]) = {

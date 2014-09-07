@@ -68,7 +68,7 @@ object Model extends Controller with securesocial.core.SecureSocial {
       "tags" -> nonEmptyText)(
         (name, material, location, text, year, tags) => Model(name, material, location, text, year, tags.split(",").map(tag => new Tag(None, tag)).toList))((m: Model) => Some(m.name, m.material, m.location, m.text, m.year, m.tags.map(tag => tag.name).mkString(","))))
 
-  def addForm = SecuredAction(Admin) { implicit request =>
+  def addForm = SecuredAction(Contributer) { implicit request =>
     Ok(views.html.model.addForm(modelForm))
   }
 

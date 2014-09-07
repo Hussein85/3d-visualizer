@@ -17,6 +17,9 @@ GET    /model/alltags         controllers.Model.allTags
 GET    /model/thumbnail/:id   controllers.Model.thumbnail(id: Int)
 GET    /model/all             controllers.Model.all
 
+# Admin
+GET    /admin                 controllers.Admin.index
+
 # Login page
 GET    /login                 securesocial.controllers.LoginPage.login
 GET    /logout                securesocial.controllers.LoginPage.logout
