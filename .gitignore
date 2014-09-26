@@ -20,4 +20,4 @@ server.pid
 RUNNING_PID
 uploads
 ec2Commands.txt
-
+public/bower_components

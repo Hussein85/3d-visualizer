@@ -21,7 +21,6 @@ import securesocial.museum.UserService
 import models.Tag
 import securesocial.museum.Normal
 import securesocial.museum.Contributer
-import securesocial.museum.Admin
 
 object Model extends Controller with securesocial.core.SecureSocial {
 

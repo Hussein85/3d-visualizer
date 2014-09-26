@@ -14,7 +14,6 @@ import scala.slick.driver.PostgresDriver.simple.{ Session => SlickSession }
 import play.api._
 import play.api.Play.current
 import securesocial.core.{Identity, Authorization}
-import securesocial.museum.Admin
 import securesocial.museum.Normal
 import securesocial.museum.Contributer
 

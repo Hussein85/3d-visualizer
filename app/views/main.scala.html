@@ -32,7 +32,7 @@
 		<script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))'></script>
 		<script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("js/bootstrap.min.js"))'></script>
 		<script type='text/javascript' src='@routes.Assets.at( "javascripts/jquery.cookie.js")'></script>	
-		<script type='text/javascript' src='@routes.Assets.at( "javascripts/angular.min.js")'></script>	
+		<script type='text/javascript' src='@routes.Assets.at( "javascripts/angular.js")'></script>	
 		<script type='text/javascript' src='@routes.Assets.at( "javascripts/museum/languageSelector.js")'></script>	
 		<script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>		
 		<script type='text/javascript' src='@routes.Assets.at( "javascripts/museum/museum-cookie.js")'></script>
@@ -85,7 +85,7 @@
 </nav>
   
 
-    <div class="container">@Cache.get(SecureSocial.currentUser.get.identityId.userId).get.asInstanceOf[User].role
+    <div class="container">
 	@content
     </div><!-- /.container -->
 

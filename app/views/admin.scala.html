@@ -1,8 +1,78 @@
-@(toBeAbleToCompile: String = "")(implicit request: play.api.mvc.Request[Any])
+@(usersWithOrganization: List[(User, Organization)])(implicit request: play.api.mvc.Request[Any])
+
+@import models._
 
 @defining(utils.Language.langCode(request)) { implicit langCode =>
-@main("Admin"){
-	HEJ
+@main("Admin"){		
+<script>
+  var myApp = angular.module('AdminApp', []);
+
+  myApp.controller('AdminController', [ '$scope', function($scope) {
+    $scope.users = function() {
+      alert("Hello " + name);
+    };
+    $scope.greet = function(name) {
+      alert("Hello " + name);
+    };
+  } ]);
+</script>
+<div ng-app="AdminApp" ng-controller="AdminController">
+<div class="panel panel-danger">
+  <div class="panel-heading text-center"><b>Användare som väntar på aktivering!</b></div>
+  <div class="panel-body">
+    <div class="row">
+  	  <div class="col-md-4">
+        <div class="panel panel-primary">
+        <div class="panel-heading text-center"><b>Välj Användare</b></div>
+          <div class="panel-body">
+      	    <div class="panel-group" id="accordion">
+      		 <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" 
+                      ng-repeat-start="user in users" ng-click="greet(user)">
+                    {{user.fullName}}
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseOne" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <dl>
+                    <dt>Förnamn</dt>
+                    <dd>{{user.firstName}}</dd>
+                  </dl>
+                  <dl>
+                    <dt>Efternamn</dt>
+                    <dd>{{user.lastName}}</dd>
+                  </dl> 
+                  <dl>
+                    <dt>E-Post</dt>
+                    <dd>{{user.email}}</dd>
+                  </dl> 
+                  <dl>
+                    <dt>Organisation</dt>
+                    <dd>{{organization.name}}</dd>
+                  </dl> 
+                  <dl>
+                    <dt>Roll</dt>
+                    <dd>{{user.role}}</dd>
+                  </dl>      
+                </div>
+              </div>
+            </div>	
+    	   </div> <!-- /panel-group -->
+         </div>
+       </div>
+  	 </div> <!-- /col -->
+	</div> <!-- /row -->
+  </div> <!-- /panel-body -->
+</div> <!-- /panel -->
+</div>
+<div class="panel panel-primary">
+  <div class="panel-heading text-center"><b>Användare</b></div>
+  <div class="panel-body">
+    User1
+  </div>
+</div>
 	
-}
-}
+}}

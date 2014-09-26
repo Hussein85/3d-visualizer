@@ -3,51 +3,54 @@
 # ~~~~
 
 # Home page
-GET    /                      controllers.Application.index
-GET    /tags                  controllers.Application.tags
-POST   /language              controllers.Application.language
+GET    /                         controllers.Application.index
+GET    /tags                     controllers.Application.tags
+POST   /language                 controllers.Application.language
 
 # Viewer
-GET    /viewer/:id            controllers.Application.viewer(id: Int)
+GET    /viewer/:id               controllers.Application.viewer(id: Int)
 
 # Model
-GET    /model/add             controllers.Model.addForm
-POST   /model/add             controllers.Model.upload
-GET    /model/alltags         controllers.Model.allTags
-GET    /model/thumbnail/:id   controllers.Model.thumbnail(id: Int)
-GET    /model/all             controllers.Model.all
+GET    /model/add                controllers.Model.addForm
+POST   /model/add                controllers.Model.upload
+GET    /model/alltags            controllers.Model.allTags
+GET    /model/thumbnail/:id      controllers.Model.thumbnail(id: Int)
+GET    /model/all                controllers.Model.all
 
 # Admin
-GET    /admin                 controllers.Admin.index
+GET    /admin                    controllers.Admin.index
 
 # Login page
-GET    /login                 securesocial.controllers.LoginPage.login
-GET    /logout                securesocial.controllers.LoginPage.logout
+GET    /login                    securesocial.controllers.LoginPage.login
+GET    /logout                   securesocial.controllers.LoginPage.logout
+
+# Users
+GET    /users                    controllers.Admin.users
 
 # User Registration and password handling 
-GET    /signup                securesocial.controllers.Registration.startSignUp
-POST   /signup                securesocial.controllers.Registration.handleStartSignUp
-GET    /signup/:token         securesocial.controllers.Registration.signUp(token)
-POST   /signup/:token         securesocial.controllers.Registration.handleSignUp(token)
-GET    /reset                 securesocial.controllers.Registration.startResetPassword
-POST   /reset                 securesocial.controllers.Registration.handleStartResetPassword
-GET    /reset/:token          securesocial.controllers.Registration.resetPassword(token)
-POST   /reset/:token          securesocial.controllers.Registration.handleResetPassword(token)
-GET    /password              securesocial.controllers.PasswordChange.page
-POST   /password              securesocial.controllers.PasswordChange.handlePasswordChange
+GET    /signup                   securesocial.controllers.Registration.startSignUp
+POST   /signup                   securesocial.controllers.Registration.handleStartSignUp
+GET    /signup/:token            securesocial.controllers.Registration.signUp(token)
+POST   /signup/:token            securesocial.controllers.Registration.handleSignUp(token)
+GET    /reset                    securesocial.controllers.Registration.startResetPassword
+POST   /reset                    securesocial.controllers.Registration.handleStartResetPassword
+GET    /reset/:token             securesocial.controllers.Registration.resetPassword(token)
+POST   /reset/:token             securesocial.controllers.Registration.handleResetPassword(token)
+GET    /password                 securesocial.controllers.PasswordChange.page
+POST   /password                 securesocial.controllers.PasswordChange.handlePasswordChange
 
 # Providers entry points
-GET     /authenticate/:provider     securesocial.controllers.ProviderController.authenticate(provider)
-POST    /authenticate/:provider     securesocial.controllers.ProviderController.authenticateByPost(provider)
-GET     /not-authorized             securesocial.controllers.ProviderController.notAuthorized
+GET    /authenticate/:provider   securesocial.controllers.ProviderController.authenticate(provider)
+POST   /authenticate/:provider   securesocial.controllers.ProviderController.authenticateByPost(provider)
+GET    /not-authorized           securesocial.controllers.ProviderController.notAuthorized
 
 # Map static resources from the /public folder to the /assets URL path
-GET    /assets/*file          controllers.Assets.at(path="/public", file)
+GET    /assets/*file             controllers.Assets.at(path="/public", file)
 
 # Map static resources from the /upload folder to the /uploads URL path
-GET    /uploads/*file         controllers.Application.getUploadedFile(file)
+GET    /uploads/*file            controllers.Application.getUploadedFile(file)
 
 # Enable webjar based resources to be returned
-GET    /webjars/*file         controllers.WebJarAssets.at(file)
+GET    /webjars/*file            controllers.WebJarAssets.at(file)
 
-GET    /javascriptRoutes      controllers.Application.javascriptRoutes
+GET    /javascriptRoutes         controllers.Application.javascriptRoutes
