@@ -1,19 +1,41 @@
-@(usersWithOrganization: List[(User, Organization)])(implicit request: play.api.mvc.Request[Any])
+@(toBeAbleToCompile: String = "")(implicit request: play.api.mvc.Request[Any])
 
 @import models._
 
 @defining(utils.Language.langCode(request)) { implicit langCode =>
 @main("Admin"){		
 <script>
-  var myApp = angular.module('AdminApp', []);
+  var myApp = angular.module('AdminApp', ['ngResource']);
 
-  myApp.controller('AdminController', [ '$scope', function($scope) {
-    $scope.users = function() {
-      alert("Hello " + name);
-    };
-    $scope.greet = function(name) {
-      alert("Hello " + name);
-    };
+  myApp.controller('AdminController', [ '$scope', '$resource', '$http' , function($scope, $resource, $http) {
+      $http.get('/user').success(function(data) {
+        $scope.users = data;
+       });
+      $http.get('/role').success(function(data) {
+        $scope.roles = data;
+       });
+      $scope.selectUser = function(user){
+        $scope.selectedUser = user;
+        $http.get('/organization').success(function(data) {
+          $scope.organizations = data;
+         });
+      }
+      $scope.selectOrganization = function(organization){
+        $scope.selectedOrganization = organization;
+      }
+      $scope.selectRole = function(role){
+        $scope.selectedRole = role;
+      }
+      $scope.updateUser = function(){
+        var User = $resource('/user/:email',
+            {
+                email: '@@email'
+            }, {
+             update: {method:'POST'}
+            });
+        var user = new User($scope.selectedUser.email);
+        user.$update({organizationId: $scope.selectedOrganization.id, role: $scope.selectedRole.name});
+      }
   } ]);
 </script>
 <div ng-app="AdminApp" ng-controller="AdminController">
@@ -23,19 +45,19 @@
     <div class="row">
   	  <div class="col-md-4">
         <div class="panel panel-primary">
-        <div class="panel-heading text-center"><b>Välj Användare</b></div>
+        <div class="panel-heading text-center"><b>{{selectedUser != null ? selectedUser.email : 'Välj användare'}}</b></div>
           <div class="panel-body">
-      	    <div class="panel-group" id="accordion">
-      		 <div class="panel panel-default">
+      	    <div class="panel-group" id="accordionUsers">
+      		 <div class="panel panel-default" ng-repeat="user in users | filter:{organizationId: 1}">
               <div class="panel-heading">
                 <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" 
-                      ng-repeat-start="user in users" ng-click="greet(user)">
+                  <a data-toggle="collapse" data-parent="#accordionUsers" href="#collapseUsers{{$index}}" 
+                       ng-click="selectUser(user)">
                     {{user.fullName}}
                   </a>
                 </h4>
               </div>
-              <div id="collapseOne" class="panel-collapse collapse">
+              <div id="collapseUsers{{$index}}" class="panel-collapse collapse">
                 <div class="panel-body">
                   <dl>
                     <dt>Förnamn</dt>
@@ -51,7 +73,7 @@
                   </dl> 
                   <dl>
                     <dt>Organisation</dt>
-                    <dd>{{organization.name}}</dd>
+                    <dd>{{user.organization}}</dd>
                   </dl> 
                   <dl>
                     <dt>Roll</dt>
@@ -64,12 +86,57 @@
          </div>
        </div>
   	 </div> <!-- /col -->
+     <div ng-show="selectedUser != null">
+     <div class="col-md-4">
+        <div class="panel panel-primary">
+        <div class="panel-heading text-center"><b>{{selectedOrganization != null ? selectedOrganization.name : 'Välj organisaition'}}</b></div>
+          <div class="panel-body">
+            <div class="panel-group" id="accordionOrganizations">
+           <div class="panel panel-default" ng-repeat="organization in organizations">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordionOrganizations" href="#collapseOrganizations{{$index}}" 
+                       ng-click="selectOrganization(organization)">
+                    {{organization.name}}
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseOrganizations{{$index}}" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <dl>
+                    <dt>Organization name</dt>
+                    <dd>{{organization.name}}</dd>
+                  </dl>    
+                </div>
+              </div>
+            </div>  
+         </div> <!-- /panel-group -->
+         </div>
+       </div>
+     </div> <!-- /col -->
+     </div>
+     <div ng-show="selectedOrganization != null">
+     <div class="col-md-4">
+        <div class="panel panel-primary">
+        <div class="panel-heading text-center"><b>{{selectedRole != null ? selectedRole.name : 'Välj roll'}}</b></div>
+          <div class="panel-body">
+          <div ng-repeat="role in roles" class="radio">
+            <label>
+              <input type="radio" name="selectRole" id="selectRole{{$index}}" ng-click="selectRole(role)">
+              {{role.name}}
+            </label>
+          </div>
+          <button type="button" class="btn btn-success" ng-click="updateUser()" ng-show="selectedRole != null">Spara</button>
+         </div>
+       </div>
+     </div> <!-- /col -->
+     </div>
 	</div> <!-- /row -->
   </div> <!-- /panel-body -->
 </div> <!-- /panel -->
 </div>
 <div class="panel panel-primary">
-  <div class="panel-heading text-center"><b>Användare</b></div>
+  <div class="panel-heading text-center"><b>Registrerade användare</b></div>
   <div class="panel-body">
     User1
   </div>

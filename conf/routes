@@ -25,7 +25,14 @@ GET    /login                    securesocial.controllers.LoginPage.login
 GET    /logout                   securesocial.controllers.LoginPage.logout
 
 # Users
-GET    /users                    controllers.Admin.users
+GET    /user                     controllers.Admin.users
+POST   /user/:email              controllers.Admin.updateUser(email, organizationId: Option[Int], role: Option[String])
+
+# Organizations
+GET    /organization             controllers.Admin.organizations
+
+#
+GET    /role                     controllers.Admin.roles
 
 # User Registration and password handling 
 GET    /signup                   securesocial.controllers.Registration.startSignUp

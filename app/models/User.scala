@@ -14,6 +14,24 @@ import securesocial.core.providers.Token
 import org.joda.time.DateTime
 import utils.Role._
 
+case class UserFrontEnd(
+  firstName: String,
+  lastName: String,
+  fullName: String,
+  email: String,
+  role: String,
+  organizationId: Int)
+
+class UsersFrontEnd(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[UserFrontEnd](tag, "user") {
+  def firstName = column[String]("firstName")
+  def lastName = column[String]("lastName")
+  def fullName = column[String]("fullName")
+  def email = column[String]("email")
+  def role = column[String]("role")
+  def organizationId = column[Int]("ADDRESS_ID")
+  def * = (email, firstName, lastName, fullName, role, organizationId) <> (UserFrontEnd.tupled, UserFrontEnd.unapply)
+}
+
 case class User(uid: Option[Long] = None,
   identityId: IdentityId,
   firstName: String,
@@ -90,6 +108,8 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
   def organizationId = column[Int]("ADDRESS_ID")
   lazy val organizations = TableQuery[Organizations]
   def organization = foreignKey("ORAGNIZATION", organizationId, organizations)(_.id)
+  
+  def email_index = index("idx_a", email, unique = true)
 
   def * : ProvenShape[User] = {
     val shapedValue = (uid.?,

@@ -9,6 +9,7 @@
 @import play.api.Play.current
 @import securesocial.core.SecureSocial
 @import play.api.cache.Cache
+@import utils.CacheWrapper
 
 @helper.javascriptRouter("jsRoutes")(
 		  routes.javascript.Application.language,
@@ -16,7 +17,7 @@
 		)
 
 <!DOCTYPE html>
-<html data-ng-app="">
+<html>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -33,6 +34,7 @@
 		<script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("js/bootstrap.min.js"))'></script>
 		<script type='text/javascript' src='@routes.Assets.at( "javascripts/jquery.cookie.js")'></script>	
 		<script type='text/javascript' src='@routes.Assets.at( "javascripts/angular.js")'></script>	
+        <script type='text/javascript' src='@routes.Assets.at( "bower_components/angular-resource/angular-resource.js")'></script> 
 		<script type='text/javascript' src='@routes.Assets.at( "javascripts/museum/languageSelector.js")'></script>	
 		<script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>		
 		<script type='text/javascript' src='@routes.Assets.at( "javascripts/museum/museum-cookie.js")'></script>
@@ -66,7 +68,7 @@
          <li @if(title==Messages("title.viewer")){class="active"}><a href="/">@Messages("title.viewer")</a></li>
          <li @if(title==Messages("title.browser")){class="active"}><a href="/model/all">@Messages("title.browser")</a></li>
          <li @if(title==Messages("title.add")){class="active"}><a href="@routes.Model.addForm">@Messages("title.add")</a></li>
-         @if(Cache.get(SecureSocial.currentUser.get.identityId.userId).get.asInstanceOf[User].role.toString() == "Admin"){
+         @if(CacheWrapper.user(SecureSocial.currentUser.get.identityId).role.toString() == "Admin"){
          	<li if(title==Messages("title.admin")){class="active"}><a href="@routes.Admin.index">@Messages("title.admin")</a></li>
          }
          @* <li @if(title=="Använda taggar"){class="active"}><a href="@routes.Application.tags">Taggar</a></li> *@ 
