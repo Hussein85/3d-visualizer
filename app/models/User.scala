@@ -12,9 +12,10 @@ import com.github.tototoshi.slick.PostgresJodaSupport._
 import securesocial.core.providers.Token
 
 import org.joda.time.DateTime
-import utils.Role._
 
-case class UserFrontEnd(
+import models.notInDB.Role
+
+/*case class UserFrontEnd(
   firstName: String,
   lastName: String,
   fullName: String,
@@ -30,7 +31,7 @@ class UsersFrontEnd(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[U
   def role = column[String]("role")
   def organizationId = column[Int]("ADDRESS_ID")
   def * = (email, firstName, lastName, fullName, role, organizationId) <> (UserFrontEnd.tupled, UserFrontEnd.unapply)
-}
+}*/
 
 case class User(uid: Option[Long] = None,
   identityId: IdentityId,
@@ -43,13 +44,13 @@ case class User(uid: Option[Long] = None,
   oAuth1Info: Option[OAuth1Info],
   oAuth2Info: Option[OAuth2Info],
   passwordInfo: Option[PasswordInfo],
-  role: Role,
+  role: String,
   organizationId: Int) extends Identity
 
 object UserFromIdentity {
   def apply(i: Identity): User = Tables.Users.findByIdentityId(i.identityId).getOrElse(
     User(None, i.identityId, i.firstName, i.lastName, i.fullName,
-      i.email, i.avatarUrl, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo, UnInitiated, 1))
+      i.email, i.avatarUrl, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo, Role.UnInitiated, 1))
 }
 
 class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag, "user") {
@@ -146,7 +147,7 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
           oAuth1Info = tuple2OAuth1Info(tuple._10, tuple._11),
           oAuth2Info = tuple2OAuth2Info(tuple._12, tuple._13, tuple._14, tuple._15),
           passwordInfo = tuple2PasswordInfo(tuple._16, tuple._17, tuple._18),
-          role = utils.Role.withName(tuple._19),
+          role = tuple._19,
           organizationId = tuple._20)
     }, {
       (u: User) =>

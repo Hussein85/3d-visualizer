@@ -26,7 +26,7 @@ GET    /logout                   securesocial.controllers.LoginPage.logout
 
 # Users
 GET    /user                     controllers.Admin.users
-POST   /user/:email              controllers.Admin.updateUser(email, organizationId: Option[Int], role: Option[String])
+PUT    /user/:email              controllers.Admin.updateUser(email)
 
 # Organizations
 GET    /organization             controllers.Admin.organizations

@@ -7,7 +7,14 @@
 <script>
   var myApp = angular.module('AdminApp', ['ngResource']);
 
-  myApp.controller('AdminController', [ '$scope', '$resource', '$http' , function($scope, $resource, $http) {
+  myApp.factory('User', ['$resource', function($resource) {
+    return $resource('/user/:email', null,
+        {
+            'update': { method:'PUT' }
+        });
+    }]);
+
+  myApp.controller('AdminController', [ '$scope', '$resource', '$http', 'User' , function($scope, $resource, $http, User) {
       $http.get('/user').success(function(data) {
         $scope.users = data;
        });
@@ -26,15 +33,10 @@
       $scope.selectRole = function(role){
         $scope.selectedRole = role;
       }
+      
       $scope.updateUser = function(){
-        var User = $resource('/user/:email',
-            {
-                email: '@@email'
-            }, {
-             update: {method:'POST'}
-            });
         var user = new User($scope.selectedUser.email);
-        user.$update({organizationId: $scope.selectedOrganization.id, role: $scope.selectedRole.name});
+        User.update({email:$scope.selectedUser.email}, {organizationId: $scope.selectedOrganization.id, role: $scope.selectedRole.name});
       }
   } ]);
 </script>

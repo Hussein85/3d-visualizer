@@ -22,8 +22,12 @@ import models.Organizations
 import models.Organization
 import play.api.libs.json._
 import models.User
-import utils.Role
 import utils.CacheWrapper
+import models.notInDB.Role
+import play.api.mvc._
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
+import models.User
 
 object Admin extends Controller with securesocial.core.SecureSocial {
 
@@ -79,12 +83,35 @@ object Admin extends Controller with securesocial.core.SecureSocial {
   }
 
   def roles = SecuredAction(securesocial.museum.Admin) { implicit request =>
-    Ok(Json.arr(Json.obj("name" -> Role.Contributer.toString), Json.obj("name" -> Role.Consumer)))
+    Ok(Json.arr(Json.obj("name" -> Role.Contributer), Json.obj("name" -> Role.Consumer)))
   }
-  
-  def updateUser(email: String, organizationId: Option[Int], role: Option[String]) = SecuredAction(securesocial.museum.Admin) { implicit request =>
-    Logger.info(s"email: $email, orgId: $organizationId, role: $role")
-    Ok("")
+
+  case class UpdateUser(organizationId: Int, role: String)
+
+  implicit val locationFormat: Format[UpdateUser] = (
+    (JsPath \ "organizationId").format[Int] and
+    (JsPath \ "role").format[String])(UpdateUser.apply, unlift(UpdateUser.unapply))
+
+  def updateUser(email: String) = SecuredAction(securesocial.museum.Admin)(BodyParsers.parse.json) { implicit request =>
+    val placeResult = request.body.validate[UpdateUser]
+    placeResult.fold(
+      errors => {
+        BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toFlatJson(errors)))
+      },
+      updateUser => {
+        DB.withSession { implicit session =>
+          val users = TableQuery[Users]
+	        val q = for { 
+	          u <- users if u.email === email 
+	        } yield (u.organizationId, u.role)
+			q.update(updateUser.organizationId, updateUser.role)
+			
+			val statement = q.updateStatement
+			val invoker = q.updateInvoker
+	
+	        Ok(Json.obj("status" -> "OK", "message" -> (s"User $email saved.")))
+        }
+      })
   }
 
 }
