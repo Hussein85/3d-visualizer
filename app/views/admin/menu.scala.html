@@ -1,0 +1,10 @@
+@(toBeAbleToCompile: String = "")(implicit request: play.api.mvc.Request[Any])
+
+@import models._
+
+@defining(utils.Language.langCode(request)) { implicit langCode =>
+<ul class="nav nav-pills nav-stacked" ng-controller="MenuController">
+  <li ng-class="{ active: isActive('/activateUser')}"><a href="/admin#/activateUser">Aktivera användare</a></li>
+  <li ng-class="{ active: isActive('/addOrganization')}"><a href="/admin#/addOrganization">Lägg till organisation</a></li>
+</ul>
+}
