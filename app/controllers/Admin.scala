@@ -32,7 +32,7 @@ import models.User
 object Admin extends Controller with securesocial.core.SecureSocial {
 
   def index = SecuredAction(securesocial.museum.Admin) { implicit request =>
-    Ok(views.html.admin())
+    Ok(views.html.admin.admin())
   }
 
   def users = SecuredAction(securesocial.museum.Admin) { implicit request =>

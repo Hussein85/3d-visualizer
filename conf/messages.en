@@ -1,6 +1,7 @@
 title.add=Add art
 title.viewer=Viewer
 title.browser=Browser
+title.admin=Admin
 app.title=Museum Archive
 error.4digityear=Enter the year with 4 digits
 error.inFuture=The year can''t be part of the future
