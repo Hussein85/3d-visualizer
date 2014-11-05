@@ -70,7 +70,7 @@ securesocial.signup.userNameAlreadyTaken=Användarnamn är redan taget
 securesocial.signup.passwordsDoNotMatch=Lösenorden stämmer inte överens
 securesocial.signup.thankYouCheckEmail=Tack. Kolla din e-post för vidare instruktioner
 securesocial.signup.invalidLink=Länken du klickade på är inte giltig
-securesocial.signup.signUpDone=Tack för att du registrerade dig. Du kan nu logga in
+securesocial.signup.signUpDone=Tack för att du registrerade dig. Du kan logga när ditt konto är aktiverat.
 securesocial.signup.invalidPassword=Ange åtminstone {0} tecken
 
 # Password reset
