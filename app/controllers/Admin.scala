@@ -46,8 +46,8 @@ object Admin extends Controller with securesocial.core.SecureSocial {
         organization <- organizations if user.organizationId === organization.id
       } yield (user, organization)
 
-      implicit val userWrites = new Writes[(User, Organization)] {
-        def writes(userOrganization: (User, Organization)) = {
+      implicit val userWrites = new Writes[(User, models.Organization)] {
+        def writes(userOrganization: (User, models.Organization)) = {
           val user = userOrganization._1
           val organization = userOrganization._2
           Json.obj(
@@ -62,22 +62,6 @@ object Admin extends Controller with securesocial.core.SecureSocial {
       }
 
       Ok(Json.toJson(usersWithOrganizationQuery.list))
-
-    }
-  }
-
-  def organizations = SecuredAction(securesocial.museum.Admin) { implicit request =>
-    DB.withSession { implicit session =>
-
-      val organizations = TableQuery[Organizations]
-
-      val organizationsQuery = for {
-        organization <- organizations
-      } yield organization
-
-      implicit val organizationWrites = Json.writes[Organization]
-
-      Ok(Json.toJson(organizationsQuery.list))
 
     }
   }

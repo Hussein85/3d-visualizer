@@ -1,1 +1,18 @@
-<h1>Lägg till en organization</h1>
+<form action="/organization" method="POST" enctype="multipart/form-data">
+  <div class="row">
+    <div class="col-md-4" id="addForm-column1">
+      <div class="alert alert-info">Ny Organization</div>
+      <div class="form-group  ">
+        <label for="name">Namn</label> <input class="form-control"
+          type="text" id="name" name="name" value=""
+          placeholder="Ange modellens namn">
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <button value="Send" type="submit" id="submit"
+        class="btn btn-success form-control">Spara</button>
+    </div>
+  </div>
+</form>

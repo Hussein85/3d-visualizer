@@ -29,7 +29,8 @@ GET    /user                     controllers.Admin.users
 PUT    /user/:email              controllers.Admin.updateUser(email)
 
 # Organizations
-GET    /organization             controllers.Admin.organizations
+GET    /organization             controllers.OrganizationController.organizations
+POST   /organization             controllers.OrganizationController.newOrganization
 
 #
 GET    /role                     controllers.Admin.roles
