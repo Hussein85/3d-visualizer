@@ -43,7 +43,7 @@ object Global extends GlobalSettings {
         Files.copyFile(Play.getFile("public/3dAssets/candleHolderSmal.png"), new File(Constants.uploadDir.getPath + "/static/candleHolderSmal.png"), true, true)
         Files.copyFile(Play.getFile("public/3dAssets/candleHolder.obj"), new File(Constants.uploadDir.getPath + "/static/candleHolder.obj"), true, true)
 
-        val dbModel = new models.Model(id = Some(1), name = "Exempel", userID = "System", date = new DateTime(1970, 1, 1, 0, 0, 0), material = "Kermaik", location = "Lund", text = "Ett exempel på hur ett föremål kan se ut.", pathObject = "static/candleHolder.obj", pathTexure = "static/candleHolderSmal.jpg", pathThumbnail = "static//candleHolderSmal.png")
+        val dbModel = new models.Model(id = Some(1), name = "Exempel", userID = "System", date = new DateTime(1970, 1, 1, 0, 0, 0), material = "Keramaik", location = "Lund", text = "Ett exempel på hur ett föremål kan se ut.", pathObject = "static/candleHolder.obj", pathTexure = "static/candleHolderSmal.jpg", pathThumbnail = "static//candleHolderSmal.png")
         Logger.info(s"model: $dbModel")
         DB.withSession { implicit session =>
           val modelID = Models.insert(dbModel)

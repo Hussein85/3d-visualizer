@@ -27,28 +27,28 @@ import models.User
 import play.api.data._
 import play.api.data.Forms._
 
-object OrganizationController extends Controller with securesocial.core.SecureSocial{
-  
+object OrganizationController extends Controller with securesocial.core.SecureSocial {
+
   case class OrganizationFormModel(name: String)
-  
-  val organizationForm: Form[OrganizationFormModel] = Form(
+
+  val organizationForm: Form[Organization] = Form(
     mapping(
       "name" -> nonEmptyText)(
-        (name) => OrganizationFormModel(name))(o => Some(o.name)))
+        (name) => Organization(None, name))(o => Some(o.name)))
 
-  
-  def newOrganization = SecuredAction(securesocial.museum.Admin)(parse.multipartFormData) { implicit request =>
+  def newOrganization = SecuredAction(securesocial.museum.Admin)(parse.json) { implicit request =>
     DB.withSession { implicit session =>
       organizationForm.bindFromRequest.fold(
-      formWithErrors => {
-        BadRequest(formWithErrors.errorsAsJson)
-      },
-      o => {
-        Ok(s"Recieved but not saved the following Organization: $o")
-      })
+        formWithErrors => {
+          BadRequest(formWithErrors.errorsAsJson)
+        },
+        o => {
+          Organizations.insert(o)
+          Ok("Saved")
+        })
     }
   }
-  
+
   def organizations = SecuredAction(securesocial.museum.Admin) { implicit request =>
     DB.withSession { implicit session =>
 
@@ -64,6 +64,5 @@ object OrganizationController extends Controller with securesocial.core.SecureSo
 
     }
   }
-  
 
 }

@@ -1,10 +1,10 @@
-<form action="/organization" method="POST" enctype="multipart/form-data">
+<form name="myForm" ng-submit="submitForm()" ng-controller="AdminOrganizationController">
   <div class="row">
     <div class="col-md-4" id="addForm-column1">
       <div class="alert alert-info">Ny Organization</div>
       <div class="form-group  ">
         <label for="name">Namn</label> <input class="form-control"
-          type="text" id="name" name="name" value=""
+          type="text" id="name" name="name" value="" ng-model="formData.name"
           placeholder="Ange modellens namn">
       </div>
     </div>
