@@ -29,6 +29,7 @@ GET    /user                     controllers.Admin.users
 PUT    /user/:email              controllers.Admin.updateUser(email)
 
 # Organizations
+GET    /api-docs/organization    controllers.ApiHelpController.getResource(path = "/organization")
 GET    /organization             controllers.OrganizationController.organizations
 POST   /organization             controllers.OrganizationController.newOrganization
 
@@ -51,6 +52,10 @@ POST   /password                 securesocial.controllers.PasswordChange.handleP
 GET    /authenticate/:provider   securesocial.controllers.ProviderController.authenticate(provider)
 POST   /authenticate/:provider   securesocial.controllers.ProviderController.authenticateByPost(provider)
 GET    /not-authorized           securesocial.controllers.ProviderController.notAuthorized
+
+# Swagger REST-API Documentation
+GET    /api-docs                 controllers.ApiHelpController.getResources
+GET    /swagger                  controllers.Default.redirect(to="assets/swagger/index.html")
 
 # Map static resources from the /public folder to the /assets URL path
 GET    /assets/*file             controllers.Assets.at(path="/public", file)

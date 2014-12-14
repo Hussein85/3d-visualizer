@@ -20,7 +20,9 @@ libraryDependencies ++= Seq(
   "joda-time" % "joda-time" % "2.3",
   "org.joda" % "joda-convert" % "1.5",
   "com.github.tototoshi" %% "slick-joda-mapper" % "1.1.0",
-  "ws.securesocial" %% "securesocial" % "2.1.3"
+  "ws.securesocial" %% "securesocial" % "2.1.3",
+  "com.wordnik" %% "swagger-play2" % "1.3.7" exclude("org.reflections", "reflections"),
+  "org.reflections" % "reflections" % "0.9.8" notTransitive () 
 )     
 
 play.Project.playScalaSettings

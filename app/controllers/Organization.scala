@@ -26,7 +26,13 @@ import play.api.libs.functional.syntax._
 import models.User
 import play.api.data._
 import play.api.data.Forms._
+import com.wordnik.swagger.annotations.Api
+import com.wordnik.swagger.core.util.ScalaJsonUtil
+import com.wordnik.swagger.annotations.ApiOperation
+import com.wordnik.swagger.annotations.ApiImplicitParams
+import com.wordnik.swagger.annotations._
 
+@Api(value = "/organization", description = "Operations about organizations")
 object OrganizationController extends Controller with securesocial.core.SecureSocial {
 
   case class OrganizationFormModel(name: String)
@@ -36,6 +42,14 @@ object OrganizationController extends Controller with securesocial.core.SecureSo
       "name" -> nonEmptyText)(
         (name) => Organization(None, name))(o => Some(o.name)))
 
+  @ApiOperation(
+      nickname = "New Organization", 
+      value = "Add a new organization", 
+      notes = "Adds a new organization", 
+      response = classOf[OrganizationFormModel], 
+      httpMethod = "POST")
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(value = "Organization object that will be creatd", required = true, dataType = "Organization", paramType = "body")))
   def newOrganization = SecuredAction(securesocial.museum.Admin)(parse.json) { implicit request =>
     DB.withSession { implicit session =>
       organizationForm.bindFromRequest.fold(
