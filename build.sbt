@@ -2,9 +2,12 @@ name := "m"
 
 version := "1.0-SNAPSHOT"
 
+EclipseKeys.withSource := true
+
 resolvers ++= Seq(
   "Sonatype Nexus Repository Manager Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-  "Spray IO Release Repo" at "http://repo.spray.io"
+  "Spray IO Release Repo" at "http://repo.spray.io",
+  "Rhinofly Internal Repository" at "http://maven-repository.rhinofly.net:8081/artifactory/libs-release-local"
 )
 
 libraryDependencies ++= Seq(
@@ -22,7 +25,8 @@ libraryDependencies ++= Seq(
   "com.github.tototoshi" %% "slick-joda-mapper" % "1.1.0",
   "ws.securesocial" %% "securesocial" % "2.1.3",
   "com.wordnik" %% "swagger-play2" % "1.3.7" exclude("org.reflections", "reflections"),
-  "org.reflections" % "reflections" % "0.9.8" notTransitive () 
+  "org.reflections" % "reflections" % "0.9.8" notTransitive (),
+  "nl.rhinofly" %% "play-s3" % "4.0.0" 
 )     
 
 play.Project.playScalaSettings

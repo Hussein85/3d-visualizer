@@ -11,6 +11,7 @@ import play.api.Play.current
 import models.Tag
 import models.Tags
 import utils.FormHelper.saveFormFile
+import utils.FormHelper.saveFormFileToS3
 import java.sql.Date
 import org.joda.time.DateTime
 import models.Models
@@ -94,9 +95,9 @@ object Model extends Controller with securesocial.core.SecureSocial {
         val userId: String = request.user.identityId.userId
         val dbModel = new models.Model(id = None, name = m.name, userID = userId, date = new DateTime(m.year, 1, 1, 0, 0, 0),
           material = m.material, location = m.location, text = m.text,
-          pathObject = saveFormFile(request, formObject),
-          pathTexure = saveFormFile(request, textureObject),
-          pathThumbnail = saveFormFile(request, thumbnailObject))
+          pathObject = saveFormFileToS3(request, formObject),
+          pathTexure = saveFormFileToS3(request, textureObject),
+          pathThumbnail = saveFormFileToS3(request, thumbnailObject))
         Logger.info(s"model: $dbModel")
         val modelID = DB.withSession { implicit session => Models.insert(dbModel) };
         Logger.info(s"Modellinfo: $modelID")
