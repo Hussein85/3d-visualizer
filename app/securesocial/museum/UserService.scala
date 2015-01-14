@@ -2,33 +2,33 @@ package securesocial.museum
 
 import play.api.{Logger, Application}
 import securesocial.core._
-import securesocial.core.providers.Token
-import securesocial.core.IdentityId
-import models.Tables
+import securesocial.core.providers._
+import securesocial.core.services._
+import models._
 import org.joda.time.DateTime
 
 
-class UserService(application: Application) extends UserServicePlugin(application) {
+class MyUserService extends UserService[User] {
 
-  def find(id: IdentityId): Option[Identity] = {
-    val identity = Tables.Users.findByIdentityId(id)
-    Logger.info("Identity: " + identity.getOrElse("No identity found").toString())
-    identity
+  def find(providerId: String, userId: String): Option[User] = {
+    val user = Tables.Users.find(providerId, userId)
+    Logger.info("Identity: " + user.getOrElse("No user found").toString())
+    user
   }
 
-  def findByEmailAndProvider(email: String, providerId: String): Option[Identity] = {
+  def findByEmailAndProvider(email: String, providerId: String): Option[User] = {
     Tables.Users.findByEmailAndProvider(email, providerId)
   }
 
-  def save(user: Identity): Identity = {
+  def save(user: User, mode: SaveMode) = {
     Tables.Users.save(user)
   }
 
-  def save(token: Token) {
+  def saveToken(token: MailToken) {
     Tables.Tokens.save(token)
   }
 
-  def findToken(token: String): Option[Token] = {
+  def findToken(token: String): Option[MailToken] = {
     Tables.Tokens.findById(token)
   }
 

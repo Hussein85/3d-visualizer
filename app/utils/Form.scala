@@ -12,7 +12,7 @@ import java.nio.file.Files
 
 object FormHelper {
 
-  def saveFormFile(request: Request[MultipartFormData[TemporaryFile]], requestName: String): String = {
+  def saveFormFileToDisc(request: Request[MultipartFormData[TemporaryFile]], requestName: String): String = {
     request.body.file(requestName).map { objectFile =>
       import java.io.File
       def uuid = java.util.UUID.randomUUID.toString
@@ -39,13 +39,12 @@ object FormHelper {
       implicit val awsCredentials = SimpleAwsCredentials(PlayConfiguration("aws.accessKeyId"), PlayConfiguration("aws.secretKey"))
       val bucket = S3("museum-dev")
       val file = Files.readAllBytes(objectFile.ref.file.toPath())
-      val fileSize = file.length
       val result = bucket + BucketFile(uniqeFilename, contentType.getOrElse("missing"), file, Some(PRIVATE))
       result.map { unit =>
         Logger.info(s"Saved file with name: $uniqeFilename")
       }
         .recover {
-          case S3Exception(status, code, message, originalXml) => Logger.info("Error: " + message)
+          case S3Exception(status, code, message, originalXml) => Logger.info(s"Error: $message; Status: $status; Message: $message; OriginalXml $originalXml")
         }
       uniqeFilename
     }.getOrElse {

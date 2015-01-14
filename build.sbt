@@ -1,6 +1,10 @@
 name := "m"
 
-version := "1.0-SNAPSHOT"
+version := "1.0.1-SNAPSHOT"
+
+lazy val root = (project in file(".")).enablePlugins(PlayScala)
+
+scalaVersion := "2.10.4"
 
 EclipseKeys.withSource := true
 
@@ -23,10 +27,8 @@ libraryDependencies ++= Seq(
   "joda-time" % "joda-time" % "2.3",
   "org.joda" % "joda-convert" % "1.5",
   "com.github.tototoshi" %% "slick-joda-mapper" % "1.1.0",
-  "ws.securesocial" %% "securesocial" % "2.1.3",
+  "ws.securesocial" %% "securesocial" % "master-SNAPSHOT",
   "com.wordnik" %% "swagger-play2" % "1.3.7" exclude("org.reflections", "reflections"),
   "org.reflections" % "reflections" % "0.9.8" notTransitive (),
   "nl.rhinofly" %% "play-s3" % "4.0.0" 
 )     
-
-play.Project.playScalaSettings

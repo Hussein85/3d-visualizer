@@ -39,9 +39,9 @@ object Global extends GlobalSettings {
       val exsist = DB.withSession { implicit session => Models.get("static/candleHolder.obj").isDefined }
       if (!exsist) {
         
-        Files.copyFile(Play.getFile("public/3dAssets/candleHolderSmal.jpg"), new File(Constants.uploadDir.getPath + "/static/candleHolderSmal.jpg"), true, true)
-        Files.copyFile(Play.getFile("public/3dAssets/candleHolderSmal.png"), new File(Constants.uploadDir.getPath + "/static/candleHolderSmal.png"), true, true)
-        Files.copyFile(Play.getFile("public/3dAssets/candleHolder.obj"), new File(Constants.uploadDir.getPath + "/static/candleHolder.obj"), true, true)
+        Files.copyFile(Play.getFile("public/3dAssets/candleHolderSmal.jpg"), new File(Constants.uploadDir.getPath + "/static/candleHolderSmal.jpg"), true)
+        Files.copyFile(Play.getFile("public/3dAssets/candleHolderSmal.png"), new File(Constants.uploadDir.getPath + "/static/candleHolderSmal.png"), true)
+        Files.copyFile(Play.getFile("public/3dAssets/candleHolder.obj"), new File(Constants.uploadDir.getPath + "/static/candleHolder.obj"), true)
 
         val dbModel = new models.Model(id = Some(1), name = "Exempel", userID = "System", date = new DateTime(1970, 1, 1, 0, 0, 0), material = "Keramaik", location = "Lund", text = "Ett exempel på hur ett föremål kan se ut.", pathObject = "static/candleHolder.obj", pathTexure = "static/candleHolderSmal.jpg", pathThumbnail = "static//candleHolderSmal.png")
         Logger.info(s"model: $dbModel")

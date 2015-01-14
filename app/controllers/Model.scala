@@ -10,7 +10,6 @@ import play.api.data.validation._
 import play.api.Play.current
 import models.Tag
 import models.Tags
-import utils.FormHelper.saveFormFile
 import utils.FormHelper.saveFormFileToS3
 import java.sql.Date
 import org.joda.time.DateTime

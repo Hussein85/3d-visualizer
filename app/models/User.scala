@@ -2,6 +2,7 @@ package models
 
 import _root_.java.sql.Date
 import securesocial.core._
+import securesocial.core.providers._
 
 import scala.slick.lifted.ProvenShape
 import play.api.{ Logger, Application }
@@ -9,32 +10,14 @@ import play.api.{ Logger, Application }
 import scala.slick.driver.PostgresDriver.simple._
 import com.github.tototoshi.slick.PostgresJodaSupport._
 
-import securesocial.core.providers.Token
 
 import org.joda.time.DateTime
 
 import models.notInDB.Role
 
-/*case class UserFrontEnd(
-  firstName: String,
-  lastName: String,
-  fullName: String,
-  email: String,
-  role: String,
-  organizationId: Int)
-
-class UsersFrontEnd(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[UserFrontEnd](tag, "user") {
-  def firstName = column[String]("firstName")
-  def lastName = column[String]("lastName")
-  def fullName = column[String]("fullName")
-  def email = column[String]("email")
-  def role = column[String]("role")
-  def organizationId = column[Int]("ADDRESS_ID")
-  def * = (email, firstName, lastName, fullName, role, organizationId) <> (UserFrontEnd.tupled, UserFrontEnd.unapply)
-}*/
-
 case class User(uid: Option[Long] = None,
-  identityId: IdentityId,
+  providerId: String,
+  userId: String,
   firstName: String,
   lastName: String,
   fullName: String,
@@ -45,13 +28,7 @@ case class User(uid: Option[Long] = None,
   oAuth2Info: Option[OAuth2Info],
   passwordInfo: Option[PasswordInfo],
   role: String,
-  organizationId: Int) extends Identity
-
-object UserFromIdentity {
-  def apply(i: Identity): User = Tables.Users.findByIdentityId(i.identityId).getOrElse(
-    User(None, i.identityId, i.firstName, i.lastName, i.fullName,
-      i.email, i.avatarUrl, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo, Role.UnInitiated, 1))
-}
+  organizationId: Int) extends GenericProfile
 
 class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag, "user") {
 
@@ -69,9 +46,6 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
     case _ => None
   }
 
-  implicit def tuple2IdentityId(tuple: (String, String)): IdentityId = tuple match {
-    case (userId, providerId) => IdentityId(userId, providerId)
-  }
 
   implicit def tuple2PasswordInfo(tuple: (Option[String], Option[String], Option[String])): Option[PasswordInfo] = tuple match {
     case (Some(hasher), Some(password), Some(salt)) => Some(PasswordInfo(hasher, password, Some(salt)))
@@ -137,7 +111,8 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
     shapedValue.<>({
       tuple =>
         User.apply(uid = tuple._1,
-          identityId = tuple2IdentityId(tuple._2, tuple._3),
+          userId = tuple._2,
+          providerId = tuple._3,
           firstName = tuple._4,
           lastName = tuple._5,
           fullName = tuple._6,
@@ -154,8 +129,8 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
         Some {
           (
             u.uid,
-            u.identityId.userId,
-            u.identityId.providerId,
+            u.userId,
+            u.providerId,
             u.firstName,
             u.lastName,
             u.fullName,
@@ -179,7 +154,7 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
 
 }
 
-class Tokens(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[Token](tag, "token") {
+class Tokens(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[MailToken](tag, "token") {
 
   def uuid = column[String]("uuid")
 
@@ -191,18 +166,18 @@ class Tokens(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[Token](t
 
   def isSignUp = column[Boolean]("isSignUp")
 
-  def * : ProvenShape[Token] = {
+  def * : ProvenShape[MailToken] = {
     val shapedValue = (uuid, email, creationTime, expirationTime, isSignUp).shaped
 
     shapedValue.<>({
       tuple =>
-        Token(uuid = tuple._1,
+        MailToken(uuid = tuple._1,
           email = tuple._2,
           creationTime = tuple._3,
           expirationTime = tuple._4,
           isSignUp = tuple._5)
     }, {
-      (t: Token) =>
+      (t: MailToken) =>
         Some {
           (t.uuid,
             t.email,
@@ -239,7 +214,7 @@ object Tables extends WithDefaultSession {
 
   val Tokens = new TableQuery[Tokens](new Tokens(_)) {
 
-    def findById(tokenId: String): Option[Token] = withSession {
+    def findById(tokenId: String): Option[MailToken] = withSession {
       implicit session =>
         val q = for {
           token <- this
@@ -249,7 +224,7 @@ object Tables extends WithDefaultSession {
         q.firstOption
     }
 
-    def save(token: Token): Token = withSession {
+    def save(token: MailToken): MailToken = withSession {
       implicit session =>
         findById(token.uuid) match {
           case None => {
@@ -314,11 +289,11 @@ object Tables extends WithDefaultSession {
         q.firstOption
     }
 
-    def findByIdentityId(identityId: IdentityId): Option[User] = withSession {
+    def find(providerId: String, userId: String): Option[User] = withSession {
       implicit session =>
         val q = for {
           user <- this
-          if (user.userId === identityId.userId) && (user.providerId === identityId.providerId)
+          if (user.userId === userId) && (user.providerId === providerId)
         } yield user
 
         val user = q.firstOption
@@ -335,11 +310,9 @@ object Tables extends WithDefaultSession {
         q.list
     }
 
-    def save(i: Identity): User = this.save(UserFromIdentity(i))
-
     def save(user: User): User = withSession {
       implicit session =>
-        findByIdentityId(user.identityId) match {
+        find(user.providerId, user.userId) match {
           case None => {
             val uid = this.autoInc.insert(user)
             user.copy(uid = Some(uid))
