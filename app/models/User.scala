@@ -18,9 +18,9 @@ import models.notInDB.Role
 case class User(uid: Option[Long] = None,
   providerId: String,
   userId: String,
-  firstName: String,
-  lastName: String,
-  fullName: String,
+  firstName: Option[String],
+  lastName: Option[String],
+  fullName: Option[String],
   email: Option[String],
   avatarUrl: Option[String],
   authMethod: AuthenticationMethod,
@@ -57,9 +57,9 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
   def userId = column[String]("userId")
   def providerId = column[String]("providerId")
   def email = column[Option[String]]("email")
-  def firstName = column[String]("firstName")
-  def lastName = column[String]("lastName")
-  def fullName = column[String]("fullName")
+  def firstName = column[Option[String]]("firstName")
+  def lastName = column[Option[String]]("lastName")
+  def fullName = column[Option[String]]("fullName")
   def authMethod = column[AuthenticationMethod]("authMethod")
   def avatarUrl = column[Option[String]]("avatarUrl")
 

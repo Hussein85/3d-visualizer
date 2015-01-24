@@ -1,4 +1,4 @@
-@(token: String)(implicit request: RequestHeader)
+@(mailToken: String)(implicit request: RequestHeader, lang: Lang)
 @import securesocial.core.IdentityProvider
 
 <!DOCTYPE html>
@@ -185,8 +185,8 @@
                           <w:anchorlock/>
                           <center>
                         <![endif]-->
-                            <a href="@securesocial.core.providers.utils.RoutesHelper.signUp(token).absoluteURL(IdentityProvider.sslEnabled)"
-                      style="background-color:#ac4d2f;border-radius:4px;color:#ffffff;display:inline-block;font-family: Helvetica, Arial, sans-serif;font-size:16px;font-weight:bold;line-height:50px;text-align:center;text-decoration:none;width:200px;-webkit-text-size-adjust:none;">Fortsätt</a>
+              @*              <a href="@securesocial.controllers.routes.Registration.signUp(mailToken).absoluteURL(IdentityProvider.sslEnabled)"
+               *@       style="background-color:#ac4d2f;border-radius:4px;color:#ffffff;display:inline-block;font-family: Helvetica, Arial, sans-serif;font-size:16px;font-weight:bold;line-height:50px;text-align:center;text-decoration:none;width:200px;-webkit-text-size-adjust:none;">Fortsätt</a>
                         <!--[if mso]>
                           </center>
                         </v:roundrect>

@@ -1,4 +1,4 @@
-@(modelsTags: List[(Model, List[Tag])])(implicit request: play.api.mvc.Request[Any])
+@(modelsTags: List[(models.Model, List[Tag])])(implicit request: play.api.mvc.Request[Any])
 
 @defining(utils.Language.langCode(request)) { implicit langCode =>
 @main(Messages("title.browser")) {

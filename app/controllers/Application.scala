@@ -4,7 +4,7 @@ import play.api._
 import play.api.mvc._
 import utils.Language
 import utils.Constants
-import models.Models
+import models._
 import play.api.db.slick.DBAction
 import play.api.db.slick._
 import play.api.db.DB._
@@ -13,11 +13,13 @@ import scala.slick.driver.PostgresDriver.simple._
 import scala.slick.driver.PostgresDriver.simple.{ Session => SlickSession }
 import play.api._
 import play.api.Play.current
-import securesocial.core.{Identity, Authorization}
+import securesocial.core.{Authorization}
 import securesocial.museum.Normal
 import securesocial.museum.Contributer
+import securesocial.core.RuntimeEnvironment
 
-object Application extends Controller with securesocial.core.SecureSocial {
+class Application(override implicit val env: RuntimeEnvironment[User])
+  extends securesocial.core.SecureSocial[User] {
 
   def index = SecuredAction(Normal) { implicit request =>
     DB.withSession { implicit session =>

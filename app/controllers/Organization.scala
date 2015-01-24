@@ -13,7 +13,7 @@ import scala.slick.driver.PostgresDriver.simple._
 import scala.slick.driver.PostgresDriver.simple.{ Session => SlickSession }
 import play.api._
 import play.api.Play.current
-import securesocial.core.{ Identity, Authorization }
+import securesocial.core.{ Authorization }
 import securesocial.museum._
 import models._
 import play.api.libs.json._
@@ -31,9 +31,11 @@ import com.wordnik.swagger.core.util.ScalaJsonUtil
 import com.wordnik.swagger.annotations.ApiOperation
 import com.wordnik.swagger.annotations.ApiImplicitParams
 import com.wordnik.swagger.annotations._
+import securesocial.core.RuntimeEnvironment
 
 @Api(value = "/organization", description = "Operations about organizations")
-object OrganizationController extends Controller with securesocial.core.SecureSocial {
+class OrganizationController(override implicit val env: RuntimeEnvironment[User])
+  extends securesocial.core.SecureSocial[User] {
 
   case class OrganizationFormModel(name: String)
 
@@ -43,11 +45,11 @@ object OrganizationController extends Controller with securesocial.core.SecureSo
         (name) => Organization(None, name))(o => Some(o.name)))
 
   @ApiOperation(
-      nickname = "New Organization", 
-      value = "Add a new organization", 
-      notes = "Adds a new organization", 
-      response = classOf[OrganizationFormModel], 
-      httpMethod = "POST")
+    nickname = "New Organization",
+    value = "Add a new organization",
+    notes = "Adds a new organization",
+    response = classOf[OrganizationFormModel],
+    httpMethod = "POST")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(value = "Organization object that will be creatd", required = true, dataType = "Organization", paramType = "body")))
   def newOrganization = SecuredAction(securesocial.museum.Admin)(parse.json) { implicit request =>

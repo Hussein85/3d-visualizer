@@ -16,6 +16,21 @@ import models.TagModel
 import utils.Constants
 import models.Organizations
 import models.Organization
+import java.lang.reflect.Constructor
+import securesocial.core.RuntimeEnvironment
+import securesocial.core.providers._
+import securesocial.core.providers.utils.{ Mailer, PasswordHasher, PasswordValidator }
+import securesocial.museum.MyUserService
+import models.User
+import scala.collection.immutable.ListMap
+import securesocial.museum.MyUserService
+import securesocial.controllers.ViewTemplates
+import play.api.data.Form
+import play.api.i18n.Lang
+import play.api.mvc.RequestHeader
+import play.twirl.api.{ Html, Txt }
+import securesocial.core.{ BasicProfile, RuntimeEnvironment }
+import securesocial.controllers.MailTemplates
 
 object Global extends GlobalSettings {
 
@@ -23,6 +38,33 @@ object Global extends GlobalSettings {
     Logger.info("Application has started")
     Insert.exampleModel
     Insert.inactiveUsersOrganization
+  }
+
+  /**
+   * Demo application's custom Runtime Environment
+   */
+  object DemoRuntimeEnvironment extends RuntimeEnvironment.Default[User] {
+    override lazy val userService: MyUserService = new MyUserService
+    override lazy val providers = ListMap(
+         include(new UsernamePasswordProvider[User](userService, avatarService, viewTemplates, passwordHashers)))
+    override lazy val mailTemplates: MailTemplates = new MailTemplates.Default(this)
+  }
+
+  /**
+   * Dependency injection on Controllers using Cake Pattern
+   *
+   * @param controllerClass
+   * @tparam A
+   * @return
+   */
+  override def getControllerInstance[A](controllerClass: Class[A]): A = {
+    val instance = controllerClass.getConstructors.find { c =>
+      val params = c.getParameterTypes
+      params.length == 1 && params(0) == classOf[RuntimeEnvironment[User]]
+    }.map {
+      _.asInstanceOf[Constructor[A]].newInstance(DemoRuntimeEnvironment)
+    }
+    instance.getOrElse(super.getControllerInstance(controllerClass))
   }
 
   object Insert {
@@ -38,7 +80,7 @@ object Global extends GlobalSettings {
     def exampleModel() = {
       val exsist = DB.withSession { implicit session => Models.get("static/candleHolder.obj").isDefined }
       if (!exsist) {
-        
+
         Files.copyFile(Play.getFile("public/3dAssets/candleHolderSmal.jpg"), new File(Constants.uploadDir.getPath + "/static/candleHolderSmal.jpg"), true)
         Files.copyFile(Play.getFile("public/3dAssets/candleHolderSmal.png"), new File(Constants.uploadDir.getPath + "/static/candleHolderSmal.png"), true)
         Files.copyFile(Play.getFile("public/3dAssets/candleHolder.obj"), new File(Constants.uploadDir.getPath + "/static/candleHolder.obj"), true)

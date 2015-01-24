@@ -21,8 +21,8 @@ import models.Tables
 
 class Listener(app: play.api.Application) extends EventListener {
   override def id: String = "my_event_listener"
-
-  def onEvent(event: Event, request: RequestHeader, session: Session): Option[Session] = {
+//TODO implement
+/*  def onEvent(event: Event, request: RequestHeader, session: Session): Option[Session] = {
     val eventName = event match {
       case e: LoginEvent => {
         Cache.set(e.user.identityId.userId, Tables.Users.findByIdentityId(e.user.identityId).get)
@@ -56,5 +56,5 @@ class Listener(app: play.api.Application) extends EventListener {
     }
     Logger.info("traced %s event for user %s".format(eventName, event.user.fullName))
     None
-  }
+  }*/
 }

@@ -13,7 +13,7 @@ import scala.slick.driver.PostgresDriver.simple._
 import scala.slick.driver.PostgresDriver.simple.{ Session => SlickSession }
 import play.api._
 import play.api.Play.current
-import securesocial.core.{ Identity, Authorization }
+import securesocial.core.{ Authorization }
 import securesocial.museum.Normal
 import securesocial.museum.Contributer
 import models.Tables
@@ -28,8 +28,10 @@ import play.api.mvc._
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import models.User
+import securesocial.core.RuntimeEnvironment
 
-object Admin extends Controller with securesocial.core.SecureSocial {
+class Admin(override implicit val env: RuntimeEnvironment[User])
+  extends securesocial.core.SecureSocial[User] {
 
   def index = SecuredAction(securesocial.museum.Admin) { implicit request =>
     Ok(views.html.admin.admin())
@@ -85,15 +87,15 @@ object Admin extends Controller with securesocial.core.SecureSocial {
       updateUser => {
         DB.withSession { implicit session =>
           val users = TableQuery[Users]
-	        val q = for { 
-	          u <- users if u.email === email 
-	        } yield (u.organizationId, u.role)
-			q.update(updateUser.organizationId, updateUser.role)
-			
-			val statement = q.updateStatement
-			val invoker = q.updateInvoker
-	
-	        Ok(Json.obj("status" -> "OK", "message" -> (s"User $email saved.")))
+          val q = for {
+            u <- users if u.email === email
+          } yield (u.organizationId, u.role)
+          q.update(updateUser.organizationId, updateUser.role)
+
+          val statement = q.updateStatement
+          val invoker = q.updateInvoker
+
+          Ok(Json.obj("status" -> "OK", "message" -> (s"User $email saved.")))
         }
       })
   }
