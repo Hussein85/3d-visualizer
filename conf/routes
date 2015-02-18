@@ -3,75 +3,75 @@
 # ~~~~
 
 # Home page
-GET    /                         @controllers.Application.index
-GET    /tags                     @controllers.Application.tags
-POST   /language                 @controllers.Application.language
+GET    /                             @controllers.Application.index
+GET    /tags                         @controllers.Application.tags
+POST   /language                     @controllers.Application.language
 
 # Viewer
-GET    /viewer/:id               @controllers.Application.viewer(id: Int)
+GET    /viewer/:id                   @controllers.Application.viewer(id: Int)
 
 # Model
-GET    /model/add                @controllers.Model.addForm
-POST   /model/add                @controllers.Model.upload
-GET    /model/alltags            @controllers.Model.allTags
-GET    /model/thumbnail/:id      @controllers.Model.thumbnail(id: Int)
-GET    /model/all                @controllers.Model.all
+GET    /model/add                    @controllers.Model.addForm
+POST   /model/add                    @controllers.Model.upload
+GET    /model/alltags                @controllers.Model.allTags
+GET    /model/thumbnail/:id          @controllers.Model.thumbnail(id: Int)
+GET    /model/all                    @controllers.Model.all
 
 # Admin
-GET    /admin                    @controllers.Admin.index
+GET    /admin                        @controllers.Admin.index
 
 # Users
-GET    /user                     @controllers.Admin.users
-PUT    /user/:email              @controllers.Admin.updateUser(email)
+GET    /user                         @controllers.Admin.users
+PUT    /user/:email                  @controllers.Admin.updateUser(email)
 
 # Organizations
-GET    /api-docs/organization    controllers.ApiHelpController.getResource(path = "/organization")
-GET    /organization             @controllers.OrganizationController.organizations
-POST   /organization             @controllers.OrganizationController.newOrganization
+GET    /api-docs/organization        controllers.ApiHelpController.getResource(path = "/organization")
+GET    /organization                 @controllers.OrganizationController.organizations
+POST   /organization                 @controllers.OrganizationController.newOrganization
 
 #
-GET    /role                     @controllers.Admin.roles
+GET    /role                         @controllers.Admin.roles
 
 # Swagger REST-API Documentation
-GET    /api-docs                 controllers.ApiHelpController.getResources
-GET    /swagger                  controllers.Default.redirect(to="assets/swagger/index.html")
+GET    /api-docs                     controllers.ApiHelpController.getResources
+GET    /swagger                      controllers.Default.redirect(to="assets/swagger/index.html")
 
 # Map static resources from the /public folder to the /assets URL path
-GET    /assets/*file             controllers.Assets.at(path="/public", file)
+GET    /assets/*file                 controllers.Assets.at(path="/public", file)
 
 # Map static resources from the /upload folder to the /uploads URL path
-GET    /uploads/*file            @controllers.Application.getUploadedFile(file)
+GET    /uploads/*file                @controllers.Application.getUploadedFile(file)
 
 # Enable webjar based resources to be returned
-GET    /webjars/*file            controllers.WebJarAssets.at(file)
+GET    /webjars/*file                controllers.WebJarAssets.at(file)
 
-GET    /javascriptRoutes         @controllers.Application.javascriptRoutes
+GET    /javascriptRoutes             @controllers.Application.javascriptRoutes
+
+GET    /assets/*file                 controllers.Assets.at(path="/public", file)
 
 # Login page
-GET         /login        @securesocial.controllers.LoginPage.login
-GET         /logout        @securesocial.controllers.LoginPage.logout
+GET    /login                        @securesocial.controllers.LoginPage.login
+GET    /logout                       @securesocial.controllers.LoginPage.logout
 
 # Registration routes
-GET         /signup        @securesocial.controllers.Registration.startSignUp
-POST        /signup        @securesocial.controllers.Registration.handleStartSignUp
-GET         /signup/:mailToken        @securesocial.controllers.Registration.signUp(mailToken)
-POST        /signup/:mailToken        @securesocial.controllers.Registration.handleSignUp(mailToken)
+GET    /signup                       @securesocial.controllers.Registration.startSignUp
+POST   /signup                       @securesocial.controllers.Registration.handleStartSignUp
+GET    /signup/:mailToken            @securesocial.controllers.Registration.signUp(mailToken)
+POST   /signup/:mailToken            @securesocial.controllers.Registration.handleSignUp(mailToken)
 
 # Reset password
-GET         /reset        @securesocial.controllers.PasswordReset.startResetPassword
-POST        /reset        @securesocial.controllers.PasswordReset.handleStartResetPassword
-GET         /reset/:mailToken        @securesocial.controllers.PasswordReset.resetPassword(mailToken)
-POST        /reset/:mailToken        @securesocial.controllers.PasswordReset.handleResetPassword(mailToken)
+GET    /reset                        @securesocial.controllers.PasswordReset.startResetPassword
+POST   /reset                        @securesocial.controllers.PasswordReset.handleStartResetPassword
+GET    /reset/:mailToken             @securesocial.controllers.PasswordReset.resetPassword(mailToken)
+POST   /reset/:mailToken             @securesocial.controllers.PasswordReset.handleResetPassword(mailToken)
 
 # Change Password
-GET         /password        @securesocial.controllers.PasswordChange.page
-POST        /password        @securesocial.controllers.PasswordChange.handlePasswordChange
+GET    /password                     @securesocial.controllers.PasswordChange.page
+POST   /password                     @securesocial.controllers.PasswordChange.handlePasswordChange
 
 
 # Authentication entry points for all providers
-GET         /authenticate/:provider        @securesocial.controllers.ProviderController.authenticate(provider, redirectTo: Option[String])
-POST        /authenticate/:provider        @securesocial.controllers.ProviderController.authenticateByPost(provider, redirectTo: Option[String])
+GET    /authenticate/:provider       @securesocial.controllers.ProviderController.authenticate(provider, redirectTo: Option[String])
+POST   /authenticate/:provider       @securesocial.controllers.ProviderController.authenticateByPost(provider, redirectTo: Option[String])
 
-POST        /api/authenticate/:provider    @securesocial.controllers.LoginApi.authenticate(provider, builder = "token")
-
-GET         /assets/*file        securesocial.controllers.Assets.at(path = "/public/securesocial", file)
+POST   /api/authenticate/:provider   @securesocial.controllers.LoginApi.authenticate(provider, builder = "token")
