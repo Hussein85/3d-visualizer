@@ -24,13 +24,12 @@ libraryDependencies ++= Seq(
   "postgresql" % "postgresql" % "9.1-901.jdbc4",
   "com.typesafe.play" %% "play-slick" % "0.8.1",
   "org.slf4j" % "slf4j-nop" % "1.6.4",
-  "com.balihoo" %% "play2-bootstrap3" % "2.2.1-SNAPSHOT" exclude("com.typesafe.akka", "akka-actor_2.10"),
   "joda-time" % "joda-time" % "2.4",
   "org.joda" % "joda-convert" % "1.6",
   "com.github.tototoshi" %% "slick-joda-mapper" % "1.2.0",
   "ws.securesocial" %% "securesocial" % "3.0-M3",
   "ws.securesocial" %% "securesocial" % "3.0-M3" classifier "assets",
-  "com.wordnik" %% "swagger-play2" % "1.3.7" exclude("org.reflections", "reflections"),
+  "com.wordnik" %% "swagger-play2" % "1.3.12" exclude("org.reflections", "reflections"),
   "org.reflections" % "reflections" % "0.9.8" notTransitive (),
-  "nl.rhinofly" %% "play-s3" % "4.0.0" 
+  "nl.rhinofly" %% "play-s3" % "5.0.2" 
 )     

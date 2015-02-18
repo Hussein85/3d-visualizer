@@ -1,7 +1,6 @@
 @(modelForm: Form[controllers.FormModel])(implicit request: play.api.mvc.Request[Any])
 @import helper._
-@import twirl.pimpForPlay._
-@implicitFieldConstructor = @{ FieldConstructor( views.html.helper.bootstrap3.basicForm.inputFieldConstructor.f ) }
+
 
 @errorForField(fieldName: String) = @{
 	val sb = new StringBuilder("")
