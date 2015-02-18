@@ -54,33 +54,33 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
   }
 
   def uid = column[Long]("id", O.PrimaryKey, O.AutoInc)
-  def userId = column[String]("userId")
-  def providerId = column[String]("providerId")
-  def email = column[Option[String]]("email")
-  def firstName = column[Option[String]]("firstName")
-  def lastName = column[Option[String]]("lastName")
-  def fullName = column[Option[String]]("fullName")
-  def authMethod = column[AuthenticationMethod]("authMethod")
-  def avatarUrl = column[Option[String]]("avatarUrl")
+  def userId = column[String]("USER_ID")
+  def providerId = column[String]("PROVIDER_ID")
+  def email = column[Option[String]]("EMAIL")
+  def firstName = column[Option[String]]("FIRST_NAME")
+  def lastName = column[Option[String]]("LAST_NAME")
+  def fullName = column[Option[String]]("FULL_NAME")
+  def authMethod = column[AuthenticationMethod]("AUTH_METHOD")
+  def avatarUrl = column[Option[String]]("AVATAR_URL")
 
   // oAuth 1
-  def token = column[Option[String]]("token")
-  def secret = column[Option[String]]("secret")
+  def token = column[Option[String]]("TOKEN")
+  def secret = column[Option[String]]("SECRET")
 
   // oAuth 2
-  def accessToken = column[Option[String]]("accessToken")
-  def tokenType = column[Option[String]]("tokenType")
-  def expiresIn = column[Option[Int]]("expiresIn")
-  def refreshToken = column[Option[String]]("refreshToken")
+  def accessToken = column[Option[String]]("ACCESS_TOKEN")
+  def tokenType = column[Option[String]]("TOKEN_TYPE")
+  def expiresIn = column[Option[Int]]("EXPIRES_IN")
+  def refreshToken = column[Option[String]]("REFRESH_TOKEN")
 
   // passwordInfo 
-  def hasher = column[Option[String]]("hasher")
-  def password = column[Option[String]]("password")
-  def salt = column[Option[String]]("salt")
+  def hasher = column[Option[String]]("HASHER")
+  def password = column[Option[String]]("PASSWORD")
+  def salt = column[Option[String]]("SALT")
 
   // Extended to standard
-  def role = column[String]("role")
-  def organizationId = column[Int]("ADDRESS_ID")
+  def role = column[String]("ROLE")
+  def organizationId = column[Int]("ORGANIZATION_ID")
   lazy val organizations = TableQuery[Organizations]
   def organization = foreignKey("ORAGNIZATION", organizationId, organizations)(_.id)
   
@@ -244,7 +244,8 @@ object Tables extends WithDefaultSession {
         }
     }
 
-    def delete(uuid: String) = withSession {
+    def delete(uuid: String): Option[MailToken] = withSession {
+      val oldToken = findById(uuid);
       implicit session =>
         val q = for {
           t <- this
@@ -252,6 +253,7 @@ object Tables extends WithDefaultSession {
         } yield t
 
         q.delete
+        oldToken
     }
 
     def deleteExpiredTokens(currentDate: DateTime) = withSession {

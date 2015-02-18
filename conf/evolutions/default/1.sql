@@ -10,9 +10,9 @@ create unique index "IDX_NAME" on "TAG" ("NAME");
 create table "TAG_MODEL" ("TAG_ID" INTEGER NOT NULL,"MODEL_ID" INTEGER NOT NULL);
 create unique index "IDX_MODEL_TAG" on "TAG_MODEL" ("TAG_ID","MODEL_ID");
 create table "token" ("uuid" VARCHAR(254) NOT NULL,"email" VARCHAR(254) NOT NULL,"creationTime" TIMESTAMP NOT NULL,"expirationTime" TIMESTAMP NOT NULL,"isSignUp" BOOLEAN NOT NULL);
-create table "user" ("id" BIGSERIAL NOT NULL PRIMARY KEY,"userId" VARCHAR(254) NOT NULL,"providerId" VARCHAR(254) NOT NULL,"firstName" VARCHAR(254),"lastName" VARCHAR(254),"fullName" VARCHAR(254),"email" VARCHAR(254),"avatarUrl" VARCHAR(254),"authMethod" VARCHAR(254) NOT NULL,"token" VARCHAR(254),"secret" VARCHAR(254),"accessToken" VARCHAR(254),"tokenType" VARCHAR(254),"expiresIn" INTEGER,"refreshToken" VARCHAR(254),"hasher" VARCHAR(254),"password" VARCHAR(254),"salt" VARCHAR(254),"role" VARCHAR(254) NOT NULL,"ADDRESS_ID" INTEGER NOT NULL);
-create unique index "idx_a" on "user" ("email");
-alter table "user" add constraint "ORAGNIZATION" foreign key("ADDRESS_ID") references "ORGANIZATION"("ID") on update NO ACTION on delete NO ACTION;
+create table "user" ("id" BIGSERIAL NOT NULL PRIMARY KEY,"USER_ID" VARCHAR(254) NOT NULL,"PROVIDER_ID" VARCHAR(254) NOT NULL,"FIRST_NAME" VARCHAR(254),"LAST_NAME" VARCHAR(254),"FULL_NAME" VARCHAR(254),"EMAIL" VARCHAR(254),"AVATAR_URL" VARCHAR(254),"AUTH_METHOD" VARCHAR(254) NOT NULL,"TOKEN" VARCHAR(254),"SECRET" VARCHAR(254),"ACCESS_TOKEN" VARCHAR(254),"TOKEN_TYPE" VARCHAR(254),"EXPIRES_IN" INTEGER,"REFRESH_TOKEN" VARCHAR(254),"HASHER" VARCHAR(254),"PASSWORD" VARCHAR(254),"SALT" VARCHAR(254),"ROLE" VARCHAR(254) NOT NULL,"ORGANIZATION_ID" INTEGER NOT NULL);
+create unique index "idx_a" on "user" ("EMAIL");
+alter table "user" add constraint "ORAGNIZATION" foreign key("ORGANIZATION_ID") references "ORGANIZATION"("ID") on update NO ACTION on delete NO ACTION;
 
 # --- !Downs
 
