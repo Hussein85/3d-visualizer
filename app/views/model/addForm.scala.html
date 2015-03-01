@@ -1,143 +1,29 @@
-@(modelForm: Form[controllers.FormModel])(implicit request: play.api.mvc.Request[Any])
-@import helper._
-
-
-@errorForField(fieldName: String) = @{
-	val sb = new StringBuilder("")
-	if(modelForm.hasErrors) {
-	    if(modelForm.errors.size > 0) {
-	        for(formError <- modelForm.errors) {
-                if(formError.key.contains(fieldName)){	                  
-                  sb.append("<p class='help-block'></p>")
-                  sb.append("<p class='help-block' style='color: #a94442'>")
-                  sb.append(Messages(formError.message.toString)(utils.Language.langCode(request)))
-                  sb.append("</p>")
-                }
-	        }
-	    }
-	}
-	Html(sb.toString)
-}
+@(toBeAbleToCompile: String = "")(implicit request: play.api.mvc.Request[Any])
 
 @defining(utils.Language.langCode(request)) { implicit langCode =>
 @main(Messages("title.add")) {
-	<link rel="stylesheet" media="screen" href="@routes.Assets.at( "stylesheets/bootstrap-tagsinput.css")">
-	<link rel="stylesheet" media="screen" href="@routes.Assets.at( "stylesheets/bootstrap-fileupload.css")">
-	<script type='text/javascript' src='@routes.Assets.at( "javascripts/typeahead/bootstrap3-typeahead.js")'></script>
-	<script type='text/javascript' src='@routes.Assets.at( "javascripts/typeahead/bloodhound.js")'></script>
-	<script type='text/javascript' src='@routes.Assets.at( "javascripts/bootstrap-tagsinput.js")'></script>
-	<script type='text/javascript' src='@routes.Assets.at( "javascripts/bootstrap-fileupload.js")'></script>
-	<script type='text/javascript' src='@routes.Assets.at( "javascripts/museum/input-tags.js")'></script>
-	<script type='text/javascript' src='@routes.Assets.at( "javascripts/tinymce/tinymce.min.js")'></script>
-	<script type='text/javascript' src='@routes.Assets.at( "javascripts/museum/tinymce-modelform.js")'></script>	
-
-	@if(modelForm.hasErrors) {
-		<div class="alert alert-danger">@Messages("error.pressent")</div>
-	}
-	
-	
-	
-	@form(action = routes.Model.upload, 'enctype -> "multipart/form-data") {
-		<div class="row">
-		  <div class="col-md-4" id="addForm-column1">
-		  	<div class="alert alert-info">@Messages("form.model.heading.info")</div>
-		  	@* _help -> "" is used to suppress the Required field pre Post, the error after submit will still work. *@
-		  	@helper.inputText(modelForm("name"), 
-		  		'_label -> Messages("model.name"), 
-		  		'placeholder -> Messages("form.model.name.enter"),
-		  		'_help -> ""
-		  	)
-		  	@helper.inputText(modelForm("material"), 
-		  		'_label -> Messages("model.material"), 
-		  		'placeholder -> Messages("form.model.material.enter"),
-		  		'_help -> ""	
-		  	)
-		  	@helper.inputText(modelForm("location"), 
-		  		'_label -> Messages("model.location"), 
-		  		'placeholder -> Messages("form.model.location.enter"),
-		  		'_help -> ""	
-		  	)
-		  	@helper.inputText(modelForm("year"), 
-		  		'_label -> Messages("model.year"), 
-		  		'placeholder -> Messages("form.model.year.enter"),
-		  		'_help -> ""	
-		  	)	
-		  	@helper.inputText(modelForm("tags"), 
-		  		'_label -> Messages("tags"), 
-		  		'placeholder -> Messages("form.tags.enter"),
-		  		'_help -> ""	
-		  	)	
-		  	<div class="alert alert-info">@Messages("form.model.heading.file")</div>
-				<div class="form-group">
-					<label>@Messages("form.model.file.object")</label>
-				    <div class="fileupload fileupload-new" data-provides="fileupload">
-				        <div class="input-group">
-				            <div class="form-control uneditable-input"><i class="icon-file fileupload-exists"></i> 
-				                <span class="fileupload-preview"></span>
-				            </div>
-				            <div class="input-group-btn">
-				                <div class="btn btn-default btn-file">
-				                    <span class="fileupload-new">@Messages("form.model.file.select")</span>
-				                    <span class="fileupload-exists">@Messages("form.model.file.select")</span>
-				                    <input type="file" class="file-input" name="object-file"/></div>
-				            </div>
-				        </div>
-				        @errorForField("object-file")
-				    </div>
-				</div>
-				<div class="form-group">
-					<label>@Messages("form.model.file.texture")</label>
-				    <div class="fileupload fileupload-new" data-provides="fileupload">
-				        <div class="input-group">
-				            <div class="form-control uneditable-input"><i class="icon-file fileupload-exists"></i> 
-				                <span class="fileupload-preview"></span>
-				            </div>
-				            <div class="input-group-btn">
-				                <div class="btn btn-default btn-file">
-				                    <span class="fileupload-new">@Messages("form.model.file.select")</span>
-				                    <span class="fileupload-exists">@Messages("form.model.file.select")</span>
-				                    <input type="file" class="file-input" name="texture-file"/></div>
-				            </div>          
-				        </div>
-				        @errorForField("texture-file")
-				    </div>
-				</div>
-				<div class="form-group">
-					<label>@Messages("form.model.file.thumbnail")</label>
-				    <div class="fileupload fileupload-new" data-provides="fileupload">
-				        <div class="input-group">
-				            <div class="form-control uneditable-input"><i class="icon-file fileupload-exists"></i> 
-				                <span class="fileupload-preview"></span>
-				            </div>
-				            <div class="input-group-btn">
-				                <div class="btn btn-default btn-file">
-				                    <span class="fileupload-new">@Messages("form.model.file.select")</span>
-				                    <span class="fileupload-exists">@Messages("form.model.file.select")</span>
-				                    <input type="file" class="file-input" name="thumbnail-file"/></div>
-				            </div>          
-				        </div>
-				        @errorForField("thumbnail-file")
-				    </div>
-				</div>
-				<div class="checkbox">
-				    <label>
-				      <input type="checkbox" name="password">@Messages("form.model.password")
-				    </label>
-				 </div>
-		  </div>		  
-		  <div class="col-md-8" id="addForm-text">
-		    <div class="alert alert-info">@Messages("form.model.heading.text")</div>
-		    <div class="form-group">
-				<input type="text" class="form-control" id="text" name="text" placeholder=@Messages("form.model.text.enter")>
-			</div>		
-		  </div>
-		</div>
-		<div class="row">
-		  <div class="col-md-12">
-		    <button value="Send" type="submit" id="submit" class="btn btn-success form-control">@Messages("form.model.upload")</button>
-		  </div>
-		</div>
-	} 
+	<link rel="stylesheet" media="screen"
+	href="/assets/stylesheets/bootstrap-tagsinput.css">
+<link rel="stylesheet" media="screen"
+	href="/assets/stylesheets/bootstrap-fileupload.css">
+<script type="text/javascript"
+	src="/assets/javascripts/typeahead/bootstrap3-typeahead.js"></script>
+<script type="text/javascript"
+	src="/assets/javascripts/typeahead/bloodhound.js"></script>
+<script type="text/javascript"
+	src="/assets/javascripts/bootstrap-tagsinput.js"></script>
+<script type="text/javascript"
+	src="/assets/javascripts/bootstrap-fileupload.js"></script>
+<script type="text/javascript"
+	src="/assets/javascripts/tinymce/tinymce.min.js"></script>
+<script type="text/javascript"
+	src="/assets/javascripts/museum/tinymce-modelform.js"></script>
+<script type="text/javascript"
+	src="/assets/javascripts/museum/input-tags.js"></script>
+<script type="text/javascript"
+	src="/assets/javascripts/museum/model/app.js"></script>
+	<div ng-app="ModelApp" ng-view>
+	</div>
 }
 }
   

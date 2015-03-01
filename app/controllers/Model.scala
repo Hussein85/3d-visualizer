@@ -77,7 +77,7 @@ class Model(override implicit val env: RuntimeEnvironment[User])
 
   
   def addForm = SecuredAction(Contributer) { implicit request =>
-    Ok(views.html.model.addForm(Model.modelForm))
+    Ok(views.html.model.addForm())
   }
 
   def upload = SecuredAction(Contributer)(parse.multipartFormData) { implicit request =>
@@ -97,7 +97,7 @@ class Model(override implicit val env: RuntimeEnvironment[User])
     }
     Model.modelForm.bindFromRequest.fold(
       formWithErrors => {
-        BadRequest(views.html.model.addForm(addFileMissingErrorsToForm(formWithErrors, filesMissing)))
+        BadRequest(views.html.model.addForm())
       },
       m => {
         val userId: String = request.user.userId

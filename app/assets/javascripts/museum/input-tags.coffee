@@ -1,5 +1,5 @@
-$(document).ready ->
-  tagId = "#tags"
+museum.initTagsInput = ->
+  tagId = "#model-add-tags-group"
   tags = $.get jsRoutes.controllers.Model.allTags().url
   $(tagId).tagsinput typeahead:
     source: -> tags

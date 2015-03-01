@@ -1,0 +1,2 @@
+Implement change password.
+Enable customer email templates.

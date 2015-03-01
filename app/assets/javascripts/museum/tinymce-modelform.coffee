@@ -1,4 +1,4 @@
-$(document).ready ->
+museum.initTinyMCE = ->
   tinymce.init
     selector: "#text"
     statusbar: true

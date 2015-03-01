@@ -1,0 +1,24 @@
+{
+	"form":{
+		"email":"E-Postadress",
+		"enter":"Ange",
+		"model":{
+			"file":{
+				"object":"Objektfilen",
+				"select":"Väljfil",
+				"texture":"Texturfilen",
+				"thumbnail":"Tumnagelfilen"
+			},
+			"heading":{
+				"file":"Modellfiler",
+				"info":"Allmäninformationommodellen",
+				"text":"Textommodellen"
+			},
+			"location":{
+				"enter":"Angemodellensursprungsplats"
+			}
+			
+		}
+		
+	}
+}
