@@ -21,13 +21,12 @@
 				<label for="model.add.year">model.year</label> <input type="text"
 					class="form-control" id="model.add.year"
 					placeholder="form.model.year.enter">
-			</div>
+			</div>  
 			<label>model.tags</label>
-			<div class="form-group" id="model-add-tags-group">
-				<input type="text" class="form-control" id="model.add.tags"
-					placeholder="form.tags.enter">
+			<tags-input ng-model="tags" id="model.add.tags"></tags-input>
+			<div class="form-group">				
 			</div>
-			<div class="alert alert-info" translate>form.model.heading.file<p>{{FOO}}</p></div>
+			<div class="alert alert-info" translate>form.model.heading.file</div>
 			<div class="form-group">
 				<label translate>form.model.file.object</label>
 				<div class="fileupload fileupload-new" data-provides="fileupload">

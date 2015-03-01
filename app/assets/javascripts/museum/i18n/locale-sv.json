@@ -11,11 +11,11 @@
 			},
 			"heading":{
 				"file":"Modellfiler",
-				"info":"Allmäninformationommodellen",
+				"info":"Allmän information om modellen",
 				"text":"Textommodellen"
 			},
 			"location":{
-				"enter":"Angemodellensursprungsplats"
+				"enter":"Ange modellens ursprungsplats"
 			}
 			
 		}

@@ -1,4 +1,4 @@
-var myApp = angular.module('ModelApp', [ 'ngResource', 'ngRoute', 'pascalprecht.translate' ]);
+var myApp = angular.module('ModelApp', [ 'ngResource', 'ngRoute', 'ngTagsInput', 'ui.bootstrap', 'pascalprecht.translate' ]);
 
 myApp.config([ '$routeProvider', '$translateProvider', function($routeProvider, $translateProvider) {
 	$routeProvider.when('/', {
@@ -22,13 +22,13 @@ myApp.factory('Model', [ '$resource', function($resource) {
 myApp.controller('ModelAddController', [ '$scope', '$resource', '$http', '$translate',
 		'Model', function($scope, $resource, $http, $translate, Model) {
 			_this = this;
-			$translate('FOO').then(function (paragraph) {
-			    $scope.FOO = paragraph;
-			  });
 			_this.translated = 
 			_this.init = function(){
-			museum.initTagsInput();
-			museum.initTinyMCE();
+
+			   // tags = $.get(jsRoutes.controllers.Model.allTags().url);
+			   
+		//	museum.initTagsInput();
+		//	museum.initTinyMCE();
 			}
 		} ]);
 
