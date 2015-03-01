@@ -28,7 +28,7 @@ myApp.controller('ModelAddController', [ '$scope', '$resource', '$http', '$trans
 			   // tags = $.get(jsRoutes.controllers.Model.allTags().url);
 			   
 		//	museum.initTagsInput();
-		//	museum.initTinyMCE();
+			museum.initTinyMCE();
 			}
 		} ]);
 
