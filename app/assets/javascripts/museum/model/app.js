@@ -24,11 +24,10 @@ myApp.controller('ModelAddController', [ '$scope', '$resource', '$http', '$trans
 			_this = this;
 			_this.translated = 
 			_this.init = function(){
-
-			   // tags = $.get(jsRoutes.controllers.Model.allTags().url);
-			   
-		//	museum.initTagsInput();
-			museum.initTinyMCE();
+				museum.initTinyMCE();
 			}
+			_this.loadTags = function($query) {
+	            return $http.get('/tags?query='+$query);
+	          };
 		} ]);
 

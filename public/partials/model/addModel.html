@@ -23,7 +23,12 @@
 					placeholder="form.model.year.enter">
 			</div>  
 			<label>model.tags</label>
-			<tags-input ng-model="tags" id="model.add.tags"></tags-input>
+			<tags-input ng-model="tags" id="model.add.tags">
+				<auto-complete
+					source="ctrl.loadTags($query)"
+					min-length="1">
+				</auto-complete>
+			</tags-input>
 			<div class="form-group">				
 			</div>
 			<div class="alert alert-info" translate>form.model.heading.file</div>

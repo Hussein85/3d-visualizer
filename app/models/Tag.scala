@@ -16,29 +16,36 @@ class Tags(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[Tag](tag, 
 
 object Tags {
 
-  val tags = TableQuery[Tags]
+  val tagsTable = TableQuery[Tags]
   val tagModels = TableQuery[TagModels]
 
   def insert(tag: Tag)(implicit s: Session): Int = {
     try {
-      (tags returning tags.map(_.id)) += tag
+      (tagsTable returning tagsTable.map(_.id)) += tag
     } catch {
       case e: PSQLException => {
         Logger.info("Tag found in db.")
-        tags.filter(_.name === tag.name).first.id.get
+        tagsTable.filter(_.name === tag.name).first.id.get
       }
     }
   }
-  
+
   def tags(model: Model)(implicit s: Session): List[Tag] = {
-		val implicitInnerJoin = for {
-		  tm <- tagModels if tm.modelID === model.id
-		  tag <- tags if tag.id === tm.tagID
-		} yield (tag)		
-		implicitInnerJoin.list
+    val implicitInnerJoin = for {
+      tm <- tagModels if tm.modelID === model.id
+      tag <- tagsTable if tag.id === tm.tagID
+    } yield (tag)
+    implicitInnerJoin.list
   }
 
   def all(implicit s: Session): List[Tag] = {
+    tagsTable.list
+  }
+
+  def tag(query: String)(implicit s: Session): List[Tag] = {
+    val tags = for {
+      tag <- tagsTable if tag.name.toLowerCase like "%" + query.toLowerCase + "%"
+    } yield (tag)
     tags.list
   }
 

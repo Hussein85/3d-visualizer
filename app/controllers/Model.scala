@@ -121,5 +121,9 @@ class Model(override implicit val env: RuntimeEnvironment[User])
   def allTags = SecuredAction(Normal) { implicit request =>
     Ok(Json.toJson(DB.withSession { implicit session => Tags.all.map(_.name) }))
   }
+ 
+  def tags(query: String) = SecuredAction(Normal) { implicit request =>
+    Ok(Json.toJson(DB.withSession { implicit session => Tags.tag(query).map(_.name) }))
+  }
 
 }
