@@ -12,12 +12,32 @@
 			"heading":{
 				"file":"Modellfiler",
 				"info":"Allmän information om modellen",
-				"text":"Textommodellen"
+				"text":"Text om modellen"
 			},
 			"location":{
 				"enter":"Ange modellens ursprungsplats"
-			}
-			
+			},
+			"name":{
+				"label":"Namn",
+				"placeholder":"Ange modellens namn"
+			},
+			"year":{
+				"label":"Årtal",
+				"placeholder":"Ange modellens ursprungsår"
+			},
+			"material":{
+				"label":"Material",
+				"placeholder":"Ange vilket material modellen är gjord av"
+			},
+			"location":{
+				"label":"Geografisk plats",
+				"placeholder":"Ange modellens geografiska ursprungsplats"
+			},
+			"tags":{
+				"label":"Taggar",
+				"placeholder":"Lägg in taggar, tryck enter per tag"
+			},
+			"upload":"Spara"
 		}
 		
 	}

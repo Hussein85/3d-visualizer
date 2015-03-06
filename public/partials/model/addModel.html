@@ -1,109 +1,109 @@
-<div ng-controller="ModelAddController as ctrl"><form ng-init="ctrl.init()">
-	<div class="row">
-		<div class="col-md-4" id="addForm-column1">
-			<div class="alert alert-info" translate>form.model.heading.info</div>
-			<div class="form-group">
-				<label for="model.add.name">model.name</label> <input type="email"
-					class="form-control" id="model.add.name"
-					placeholder="form.model.name.enter">
-			</div>
-			<div class="form-group">
-				<label for="model.add.material">model.material</label> <input
-					type="text" class="form-control" id="model.add.material"
-					placeholder="form.model.material.enter">
-			</div>
-			<div class="form-group">
-				<label for="model.add.location">model.location</label> <input
-					type="text" class="form-control" id=""
-					model.add.location"" placeholder="form.model.location.enter">
-			</div>
-			<div class="form-group">
-				<label for="model.add.year">model.year</label> <input type="text"
-					class="form-control" id="model.add.year"
-					placeholder="form.model.year.enter">
-			</div>  
-			<label>model.tags</label>
-			<tags-input ng-model="tags" id="model.add.tags">
-				<auto-complete
-					source="ctrl.loadTags($query)"
-					min-length="1">
-				</auto-complete>
-			</tags-input>
-			<div class="form-group">				
-			</div>
-			<div class="alert alert-info" translate>form.model.heading.file</div>
-			<div class="form-group">
-				<label translate>form.model.file.object</label>
-				<div class="fileupload fileupload-new" data-provides="fileupload">
-					<div class="input-group">
-						<div class="form-control uneditable-input">
-							<i class="icon-file fileupload-exists"></i> <span
-								class="fileupload-preview"></span>
+<div ng-controller="ModelAddController as ctrl">
+<alert ng-repeat="alert in ctrl.alerts" type="{{alert.type}}" close="ctrl.closeAlert($index)">{{alert.msg}}</alert>
+	<form name="ctrl.form" ng-init="ctrl.init()">
+		<div class="row">
+			<div class="col-md-4" id="addForm-column1">
+				<div class="alert alert-info" translate>form.model.heading.info</div>
+				<div class="form-group">
+					<label for="model.add.name" translate>form.model.name.label</label>
+					<input type="text" name="name" ng-model="ctrl.model.name"
+						class="form-control" id="model.add.name"
+						placeholder="{{'form.model.name.placeholder' | translate}}">
+				</div>
+				<div class="form-group">
+					<label for="model.add.material" translate>form.model.material.label</label>
+					<input type="text" class="form-control" id="model.add.material"
+						ng-model="ctrl.model.material"
+						placeholder="{{'form.model.material.placeholder' | translate}}">
+				</div>
+				<div class="form-group">
+					<label for="model.add.location" translate>form.model.location.label</label>
+					<input type="text" class="form-control" id="model.add.location"
+						ng-model="ctrl.model.location"
+						placeholder="{{'form.model.material.placeholder' | translate}}">
+				</div>
+				<div class="form-group">
+					<label for="model.add.year" translate>form.model.year.label</label>
+					<input type="text" class="form-control" id="model.add.year"
+						ng-model="ctrl.model.year"
+						placeholder="{{'form.model.year.placeholder' | translate}}">
+				</div>
+				<label translate>form.model.tags.label</label>
+				<tags-input ng-model="ctrl.model.tags" id="model.add.tags"
+					placeholder="{{'form.model.tags.placeholder' | translate}}">
+				<auto-complete source="ctrl.loadTags($query)" min-length="1">
+				</auto-complete> </tags-input>
+				<div class="form-group"></div>
+				<div class="alert alert-info" translate>form.model.heading.file</div>
+				<div class="form-group">
+					<label translate>form.model.file.object</label>
+					<div class="fileupload fileupload-new" data-provides="fileupload">
+						<div class="input-group">
+							<div class="form-control uneditable-input">
+								<i class="icon-file fileupload-exists"></i> <span
+									class="fileupload-preview"></span>
+							</div>
+							<div class="input-group-btn">
+								<div class="btn btn-default btn-file">
+									<span class="fileupload-new" translate>form.model.file.select</span>
+									<span class="fileupload-exists" translate>form.model.file.select</span>
+									<input type="file" class="file-input" name="object-file" />
+								</div>
+							</div>
 						</div>
-						<div class="input-group-btn">
-							<div class="btn btn-default btn-file">
-								<span class="fileupload-new" translate>form.model.file.select</span>
-								<span class="fileupload-exists" translate>form.model.file.select</span>
-								<input type="file" class="file-input" name="object-file" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label translate>form.model.file.texture</label>
+					<div class="fileupload fileupload-new" data-provides="fileupload">
+						<div class="input-group">
+							<div class="form-control uneditable-input">
+								<i class="icon-file fileupload-exists"></i> <span
+									class="fileupload-preview"></span>
+							</div>
+							<div class="input-group-btn">
+								<div class="btn btn-default btn-file">
+									<span class="fileupload-new" translate>form.model.file.select</span>
+									<span class="fileupload-exists" translate>form.model.file.select</span>
+									<input type="file" class="file-input" name="texture-file" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label translate>form.model.file.thumbnail</label>
+					<div class="fileupload fileupload-new" data-provides="fileupload">
+						<div class="input-group">
+							<div class="form-control uneditable-input">
+								<i class="icon-file fileupload-exists"></i> <span
+									class="fileupload-preview"></span>
+							</div>
+							<div class="input-group-btn">
+								<div class="btn btn-default btn-file">
+									<span class="fileupload-new" translate>form.model.file.select</span>
+									<span class="fileupload-exists" translate>form.model.file.select</span>
+									<input type="file" class="file-input" name="thumbnail-file" />
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="form-group">
-				<label translate>form.model.file.texture</label>
-				<div class="fileupload fileupload-new" data-provides="fileupload">
-					<div class="input-group">
-						<div class="form-control uneditable-input">
-							<i class="icon-file fileupload-exists"></i> <span
-								class="fileupload-preview"></span>
-						</div>
-						<div class="input-group-btn">
-							<div class="btn btn-default btn-file">
-								<span class="fileupload-new" translate>form.model.file.select</span> <span
-									class="fileupload-exists" translate>form.model.file.select</span> <input
-									type="file" class="file-input" name="texture-file" />
-							</div>
-						</div>
-					</div>
+			<div class="col-md-8" id="addForm-text">
+				<div class="alert alert-info" translate>form.model.heading.text</div>
+				<div class="form-group">
+					<input type="text" class="form-control" id="text" name="text"
+						ng-model="ctrl.model.text" placeholder="form.model.text.enter")>
 				</div>
 			</div>
-			<div class="form-group">
-				<label translate>form.model.file.thumbnail</label>
-				<div class="fileupload fileupload-new" data-provides="fileupload">
-					<div class="input-group">
-						<div class="form-control uneditable-input">
-							<i class="icon-file fileupload-exists"></i> <span
-								class="fileupload-preview"></span>
-						</div>
-						<div class="input-group-btn">
-							<div class="btn btn-default btn-file">
-								<span class="fileupload-new" translate>form.model.file.select</span>
-								<span class="fileupload-exists" translate>form.model.file.select</span>
-								<input type="file" class="file-input" name="thumbnail-file" />
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="checkbox">
-				<label> <input type="checkbox" name="password" translate>form.model.password
-				</label>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<button value="Send" type="submit" id="submit"
+					class="btn btn-success form-control" ng-click="ctrl.submit()"
+					translate>form.model.upload</button>
 			</div>
 		</div>
-		<div class="col-md-8" id="addForm-text">
-			<div class="alert alert-info" translate>form.model.heading.text</div>
-			<div class="form-group">
-				<input type="text" class="form-control" id="text" name="text"
-					placeholder="form.model.text.enter")>
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12">
-			<button value="Send" type="submit" id="submit"
-				class="btn btn-success form-control" translate>form.model.upload</button>
-		</div>
-	</div>
-</form>
+	</form>
 </div>
