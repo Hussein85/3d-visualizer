@@ -50,14 +50,16 @@
 	
 	tinymce.init({
       selector: "#text",
-      statusbar: true,
       language: museumCookie["languageCode"] === "en" ? "en" : "sv_SE",
       height: "300px",
       entity_encoding: "raw",
       menubar:false,
       statusbar: false,
+      toolbar: false,
+      readonly: true,
       setup : function(editor) {
     	editor.on('init', function() {
+    	  $(".mce-panel").css({ 'border-width': '0px'});
       	  tinymce.editors[0].setContent($('<textarea />').html("@Html(model.text)").text().replace(/\n/ig,"<br>"));
    		});
     	}
