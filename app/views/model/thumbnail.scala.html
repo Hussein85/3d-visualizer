@@ -2,7 +2,7 @@
 @defining(utils.Language.langCode(request)) { implicit langCode =>
 
 <div class="thumbnail">
-	<a href="@routes.Application.viewer(model.id.get)"><img src="@routes.Application.getUploadedFile(model.pathThumbnail)"></a>
+	<a href="@routes.Application.viewer(model.id.get)"><img src="@routes.Application.getUploadedFile(model.pathThumbnail.getOrElse(""))"></a>
 	@info(model, tags)
 </div>
 

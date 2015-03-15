@@ -1,7 +1,9 @@
 package controllers
 
 import play.api._
-import play.api.libs.json._
+import play.api.libs.json._ // JSON library
+import play.api.libs.json.Writes._
+import play.api.libs.functional.syntax._ // Combinator syntax
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
@@ -25,13 +27,15 @@ import securesocial.core.RuntimeEnvironment
 case class FormModel(name: String, material: String, location: String, text: String, year: Int, tags: List[Tag])
 
 object Model {
-  
-   val fourDigitYearConstraint: Constraint[Int] = Constraint("constraints.4digityear") {
+
+  val fourDigitYearConstraint: Constraint[Int] = Constraint("constraints.4digityear") {
     case i if i > DateTime.now.year.get => Invalid("error.inFuture")
-    case i if i.toString.length == 4 => Valid
-    case _ => Invalid("error.4digityear")
+    case i if i.toString.length == 4    => Valid
+    case _                              => Invalid("error.4digityear")
   }
   val fourDigitYearCheck: Mapping[Int] = number.verifying(fourDigitYearConstraint)
+
+  //TODO: Refactor to use JSON read instead of FORM
   
   def modelForm: Form[FormModel] = Form(
     mapping(
@@ -40,15 +44,15 @@ object Model {
       "location" -> text,
       "text" -> text,
       "year" -> fourDigitYearCheck,
-      "tags" -> nonEmptyText)(
-        (name, material, location, text, year, tags) => FormModel(name, material, location, text, year, tags.split(",").map(tag => new Tag(None, tag)).toList))((m: FormModel) => Some(m.name, m.material, m.location, m.text, m.year, m.tags.map(tag => tag.name).mkString(","))))
+      "tags" -> play.api.data.Forms.list(mapping(
+        "text" -> text)((text) =>
+          new Tag(None, text))((tag: Tag) => Some(tag.name))))(FormModel.apply)(FormModel.unapply))
 
 }
 
 class Model(override implicit val env: RuntimeEnvironment[User])
-  extends securesocial.core.SecureSocial[User]{
+  extends securesocial.core.SecureSocial[User] {
 
-  
   def all = SecuredAction(Normal) { implicit request =>
     val models = DB.withSession { implicit session => Models.all }
     val modelsTags = models.map { model =>
@@ -73,39 +77,45 @@ class Model(override implicit val env: RuntimeEnvironment[User])
   val textureObject = "texture-file"
   val thumbnailObject = "thumbnail-file"
 
- 
-
-  
   def addForm = SecuredAction(Contributer) { implicit request =>
     Ok(views.html.model.addForm())
   }
 
-  def upload = SecuredAction(Contributer)(parse.multipartFormData) { implicit request =>
-    val filesMissing: List[(String, String)] =
-      ((request.body.file(formObject) match {
-        case None => Some(formObject -> "error.required")
-        case Some(x) => None
-      }) +: (request.body.file(textureObject) match {
-        case None => Some(textureObject -> "error.required")
-        case Some(x) => None
-      }) +: Nil).flatten
-    def addFileMissingErrorsToForm(form: play.api.data.Form[FormModel], filesMissing: List[(String, String)]): play.api.data.Form[FormModel] = {
-      filesMissing match {
-        case Nil => form
-        case head :: tail => addFileMissingErrorsToForm(form.withError(head._1, head._2), tail)
+  implicit val modelWrites: Writes[models.Model] = (
+    (JsPath \ "id").write[Option[Int]] and
+    (JsPath \ "name").write[String] and
+    (JsPath \ "userId").write[String] and
+    (JsPath \ "date").write[DateTime] and
+    (JsPath \ "material").write[String] and
+    (JsPath \ "location").write[String] and
+    (JsPath \ "text").write[String] and
+    (JsPath \ "f1").write[Option[String]] and
+    (JsPath \ "f2").write[Option[String]] and 
+    (JsPath \ "f3").write[Option[String]])(unlift(models.Model.unapply))
+
+  def get(id: Int) = SecuredAction(Normal) { implicit request =>
+    DB.withSession { implicit session =>
+      Models.get(id) match {
+        case None => NotFound("The requested model is either not in the db or you lack access to it.")
+        case Some(model) => {
+          Ok(Json.toJson(model))
+        }
       }
     }
+  }
+
+  def upload = SecuredAction(Contributer)(parse.json) { implicit request =>
     Model.modelForm.bindFromRequest.fold(
       formWithErrors => {
-        BadRequest(views.html.model.addForm())
+        BadRequest(formWithErrors.errorsAsJson)
       },
       m => {
         val userId: String = request.user.userId
         val dbModel = new models.Model(id = None, name = m.name, userID = userId, date = new DateTime(m.year, 1, 1, 0, 0, 0),
           material = m.material, location = m.location, text = m.text,
-          pathObject = saveFormFileToS3(request, formObject),
-          pathTexure = saveFormFileToS3(request, textureObject),
-          pathThumbnail = saveFormFileToS3(request, thumbnailObject))
+          pathObject = None,
+          pathTexure = None,
+          pathThumbnail = None)
         Logger.info(s"model: $dbModel")
         val modelID = DB.withSession { implicit session => Models.insert(dbModel) };
         Logger.info(s"Modellinfo: $modelID")
@@ -121,7 +131,7 @@ class Model(override implicit val env: RuntimeEnvironment[User])
   def allTags = SecuredAction(Normal) { implicit request =>
     Ok(Json.toJson(DB.withSession { implicit session => Tags.all.map(_.name) }))
   }
- 
+
   def tags(query: String) = SecuredAction(Normal) { implicit request =>
     Ok(Json.toJson(DB.withSession { implicit session => Tags.tag(query).map(_.name) }))
   }

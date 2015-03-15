@@ -21,13 +21,17 @@ myApp.factory('Model', [ '$resource', function($resource) {
   return $resource('/model', null);
 } ]);
 
-myApp.controller('ModelAddController', [ '$scope', '$resource', '$http',
-    '$translate', 'Model',
+myApp.controller('ModelAddController', [
+    '$scope',
+    '$resource',
+    '$http',
+    '$translate',
+    'Model',
     function($scope, $resource, $http, $translate, Model) {
       _this = this;
 
       _this.model = {};
-      _this.alerts = [];
+      _this.alerts = []; 
 
       _this.init = function() {
         museum.initTinyMCE();
@@ -37,10 +41,23 @@ myApp.controller('ModelAddController', [ '$scope', '$resource', '$http',
       };
 
       _this.submit = function() {
-        $http.post('/model', _this.model).success(function(data, status, headers, config) {
-          _this.addAlert({msg:'Save successfull', type:'success'});
-        }).error(function(data, status, headers, config) {
-          _this.addAlert({msg:'Save unsuccessfull', type:'danger'});
+        if(_this.model.tags.length === 0){
+          delete _this.model.tags;
+        }
+        
+        _this.model.text = tinymce.DOM.encode(tinymce.editors[0].getContent().replace(new RegExp('\r?\n','g'), ''));
+        
+        $http.post('/model', _this.model).success(
+            function(data, status, headers, config) {
+              _this.addAlert({
+                msg : data,
+                type : 'success'
+              });
+            }).error(function(data, status, headers, config) {
+          _this.addAlert({
+            msg : data,
+            type : 'danger'
+          });
         });
         ;
       }

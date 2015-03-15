@@ -7,7 +7,7 @@ import java.sql.Date
 import org.joda.time.DateTime
 import com.github.tototoshi.slick.PostgresJodaSupport._
 
-case class Model(id: Option[Int], name: String, userID: String, date: DateTime, material: String, location: String, text: String, pathObject: String, pathTexure: String, pathThumbnail: String)
+case class Model(id: Option[Int], name: String, userID: String, date: DateTime, material: String, location: String, text: String, pathObject: Option[String], pathTexure: Option[String], pathThumbnail: Option[String])
 
 class Models(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[Model](tag, "MODEL") {
   def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
@@ -17,9 +17,9 @@ class Models(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[Model](t
   def material = column[String]("MATERIAL")
   def location = column[String]("LOCATION")
   def text = column[String]("TEXT")
-  def pathObject = column[String]("PATH_OBJECT")
-  def pathTexure = column[String]("PATH_TEXTURE")
-  def pathThumbnail = column[String]("PATH_THUMBNAIL")
+  def pathObject = column[Option[String]]("PATH_OBJECT")
+  def pathTexure = column[Option[String]]("PATH_TEXTURE")
+  def pathThumbnail = column[Option[String]]("PATH_THUMBNAIL")
   def * = (id.?, name, userID, date, material, location, text, pathObject, pathTexure, pathThumbnail) <> (Model.tupled, Model.unapply _)
 }
 

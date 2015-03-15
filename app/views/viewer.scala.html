@@ -25,15 +25,15 @@
 	  	@views.html.model.info(model, tags)
 	  	<br/><br/>
 	  	<div class="alert alert-info">@Messages("viewer.information.heading.text")</div>
-	  	<div id="model-text"></div>
+	  	<textarea id="text"></textarea>
 	  </div>
 	</div>
    
   <script>
   $( document ).ready(function() { 
   	viewer = new Viewer("#canvas-place-holder",
-  		  	"@routes.Application.getUploadedFile(model.pathObject)", 
-  		  	"@routes.Application.getUploadedFile(model.pathTexure)");
+  		  	"@routes.Application.getUploadedFile(model.pathObject.getOrElse(""))", 
+  		  	"@routes.Application.getUploadedFile(model.pathTexure.getOrElse(""))");
   	viewer.initCanvas();
   	
 	$( "#reset-view" ).click(function() {
@@ -48,9 +48,21 @@
 	 	 viewer.tooglePanY();
 	});
 	
-	var html = $.parseHTML("@Html(model.text)");
-	
-	$("#model-text").append(html);
+	tinymce.init({
+      selector: "#text",
+      statusbar: true,
+      language: museumCookie["languageCode"] === "en" ? "en" : "sv_SE",
+      height: "300px",
+      entity_encoding: "raw",
+      menubar:false,
+      statusbar: false,
+      setup : function(editor) {
+    	editor.on('init', function() {
+      	  tinymce.editors[0].setContent($('<textarea />').html("@Html(model.text)").text().replace(/\n/ig,"<br>"));
+   		});
+    	}
+    	
+      });
 	});
   	
   </script>
