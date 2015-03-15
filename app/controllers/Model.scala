@@ -124,7 +124,7 @@ class Model(override implicit val env: RuntimeEnvironment[User])
           val tagID = DB.withSession { implicit session => Tags.insert(tag) }
           DB.withSession { implicit session => TagModels.insert(TagModel(tagID, modelID)) }
         })
-        Redirect(routes.Model.all)
+        Ok(Json.toJson(modelID))
       })
   }
 
