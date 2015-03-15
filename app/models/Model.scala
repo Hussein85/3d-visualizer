@@ -16,7 +16,7 @@ class Models(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[Model](t
   def date = column[DateTime]("DATE")
   def material = column[String]("MATERIAL")
   def location = column[String]("LOCATION")
-  def text = column[String]("TEXT")
+  def text = column[String]("TEXT", O.DBType("TEXT"))
   def pathObject = column[Option[String]]("PATH_OBJECT")
   def pathTexure = column[Option[String]]("PATH_TEXTURE")
   def pathThumbnail = column[Option[String]]("PATH_THUMBNAIL")
