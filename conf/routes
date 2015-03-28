@@ -7,15 +7,17 @@ GET    /                             @controllers.Application.index
 # Rewrite to CRUD
 GET   /tags                          @controllers.Model.tags(query: String)
 GET   /tags                          @controllers.Application.tags
+GET   /tags/model/:modelId           @controllers.TagController.tag(modelId: Int)
 POST   /language                     @controllers.Application.language
 
 # Viewer
 GET    /viewer/:id                   @controllers.Application.viewer(id: Int)
 
 # Model
+GET    /model                        @controllers.Model.all
 GET    /model/add                    @controllers.Model.addForm
 POST   /model                        @controllers.Model.upload
-GET    /model/all                    @controllers.Model.all
+GET    /model/all                    @controllers.Model.HTMLall
 GET    /model/:id          			 @controllers.Model.get(id: Int)
 GET    /model/alltags                @controllers.Model.allTags
 GET    /model/thumbnail/:id          @controllers.Model.thumbnail(id: Int)

@@ -53,7 +53,7 @@ object Model {
 class Model(override implicit val env: RuntimeEnvironment[User])
   extends securesocial.core.SecureSocial[User] {
 
-  def all = SecuredAction(Normal) { implicit request =>
+  def HTMLall = SecuredAction(Normal) { implicit request =>
     val models = DB.withSession { implicit session => Models.all }
     val modelsTags = models.map { model =>
       val tags = DB.withSession { implicit session => Tags.tags(model) }
@@ -61,6 +61,13 @@ class Model(override implicit val env: RuntimeEnvironment[User])
     }
     Ok(views.html.model.browser(modelsTags))
   }
+  
+  def all = SecuredAction(Normal) { implicit request =>
+    val models = DB.withSession { implicit session => Models.all }
+    Ok(Json.toJson(models))
+  }
+  
+  
 
   def thumbnail(id: Int) = SecuredAction(Normal) { implicit request =>
     DB.withSession { implicit session =>

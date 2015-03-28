@@ -1,0 +1,32 @@
+<div class="row" ng-controller="BrowserAppController as ctrl"
+	ng-init="ctrl.init()">
+	<div ng-repeat="modelGroup in ctrl.models | groupBy:3">
+		<div class="col-md-4" ng-repeat="model in modelGroup" ng-init='ctrl.loadTags(model.id)'>
+			<div class="thumbnail">
+				<a href="/viewer/{{model.id}}"> <img
+					ng-src="/uploads/{{model.f2}}" />
+				</a>
+				<br/>
+				<dl class="dl-horizontal">
+					<dt translate>THUMBNAIL.ID</dt>
+					<dd>{{model.id}}</dd>
+					<dt translate>THUMBNAIL.MODEL_NAME</dt>
+					<dd>{{model.name}}</dd>
+					<dt translate>THUMBNAIL.USER_ID</dt>
+					<dd>{{model.userId}}</dd>
+					<dt translate>THUMBNAIL.MODEL_MATERIAL</dt>
+					<dd>{{model.material}}</dd>
+					<dt translate>THUMBNAIL.MODEL_LOCATION</dt>
+					<dd>{{model.location}}</dd>
+					<dt translate>THUMBNAIL.MODEL_YEAR</dt>
+					<dd>{{model.date}}</dd>
+				</dl>
+				<div class="model-tags">
+					<h4>					 
+						<span style="margin-left: 5px" class="label label-info" ng-repeat="tag in ctrl.tags[model.id]">{{tag.text}}</span>
+					</h4>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

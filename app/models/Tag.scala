@@ -37,6 +37,14 @@ object Tags {
     } yield (tag)
     implicitInnerJoin.list
   }
+  
+  def tags(modelId: Int)(implicit s: Session): List[Tag] = {
+    val implicitInnerJoin = for {
+      tm <- tagModels if tm.modelID === modelId
+      tag <- tagsTable if tag.id === tm.tagID
+    } yield (tag)
+    implicitInnerJoin.list
+  }
 
   def all(implicit s: Session): List[Tag] = {
     tagsTable.list

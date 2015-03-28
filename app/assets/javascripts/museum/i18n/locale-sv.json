@@ -1,4 +1,12 @@
 {
+	"THUMBNAIL": {
+		"ID": "ID",
+		"USER_ID": "Användar-ID",
+		"MODEL_NAME": "Namn",
+		"MODEL_MATERIAL": "Material",
+		"MODEL_LOCATION": "Plats",
+		"MODEL_YEAR": "År"
+	},
 	"form":{
 		"email":"E-Postadress",
 		"enter":"Ange",
