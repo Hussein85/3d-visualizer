@@ -66,19 +66,6 @@ class Model(override implicit val env: RuntimeEnvironment[User])
     val models = DB.withSession { implicit session => Models.all }
     Ok(Json.toJson(models))
   }
-  
-  
-
-  def thumbnail(id: Int) = SecuredAction(Normal) { implicit request =>
-    DB.withSession { implicit session =>
-      Models.get(id) match {
-        case None => NotFound("The requested model is either not in the db or you lack access to it.")
-        case Some(model) => {
-          Ok(views.html.model.thumbnail(model, Tags.tags(model)))
-        }
-      }
-    }
-  }
 
   val formObject = "object-file"
   val textureObject = "texture-file"

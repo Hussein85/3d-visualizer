@@ -1,9 +1,0 @@
-@(model: models.Model, tags: List[Tag])(implicit request: play.api.mvc.Request[Any])
-@defining(utils.Language.langCode(request)) { implicit langCode =>
-
-<div class="thumbnail">
-	<a href="@routes.Application.viewer(model.id.get)"><img src="@routes.Application.getUploadedFile(model.pathThumbnail.getOrElse(""))"></a>
-	@info(model, tags)
-</div>
-
-}

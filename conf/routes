@@ -20,7 +20,6 @@ POST   /model                        @controllers.Model.upload
 GET    /model/all                    @controllers.Model.HTMLall
 GET    /model/:id          			 @controllers.Model.get(id: Int)
 GET    /model/alltags                @controllers.Model.allTags
-GET    /model/thumbnail/:id          @controllers.Model.thumbnail(id: Int)
 
 # Admin
 GET    /admin                        @controllers.Admin.index
