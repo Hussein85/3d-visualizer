@@ -1,0 +1,40 @@
+<div ng-controller="ViewerController as ctrl" ng-init="ctrl.init()">
+	<div class="row">
+		<div class="col-md-8" id="model-viewer">
+			<div class="alert alert-success" translate>VIEWER.VIEWER.HEADER</div>
+			<div id="canvas-place-holder"></div>
+			<div id="camera-control">
+				<button type="button" class="btn btn-primary" id="reset-view" translate>VIEWER.VIEWER.CONTROLLS.RESET</button>
+				<button type="button" class="btn btn-primary"
+					id="toogle-bounding-box" translate>VIEWER.VIEWER.CONTROLLS.TOGGLE_Y_PANNING</button>
+				<button type="button" class="btn btn-primary" id="toogle-pan-Y" translate>VIEWER.VIEWER.CONTROLLS.TOOGLE_BOUNDING_BOX</button>
+			</div>
+		</div>
+		<div class="col-md-4" id="model-info">
+			<div class="alert alert-info" translate>VIEWER.INFORMATION.HEADER.INFO</div>
+<!-- 			TODO: Similar code as browser window refactor to share code. -->
+			<dl class="dl-horizontal">
+					<dt translate>THUMBNAIL.ID</dt>
+					<dd>{{ctrl.model.id}}</dd>
+					<dt translate>THUMBNAIL.MODEL_NAME</dt>
+					<dd>{{ctrl.model.name}}</dd>
+					<dt translate>THUMBNAIL.USER_ID</dt>
+					<dd>{{ctrl.model.userId}}</dd>
+					<dt translate>THUMBNAIL.MODEL_MATERIAL</dt>
+					<dd>{{ctrl.model.material}}</dd>
+					<dt translate>THUMBNAIL.MODEL_LOCATION</dt>
+					<dd>{{ctrl.model.location}}</dd>
+					<dt translate>THUMBNAIL.MODEL_YEAR</dt>
+					<dd>{{ctrl.model.date}}</dd>
+				</dl>
+				<div class="model-tags">
+					<h4>					 
+						<span style="margin-left: 5px" class="label label-info" ng-repeat="tag in ctrl.tags">{{tag.text}}</span>
+					</h4>
+				</div>
+			<br />
+			<div class="alert alert-info" translate>VIEWER.INFORMATION.HEADER.TEXT</div>
+			<textarea id="text"></textarea>
+		</div>
+	</div>
+</div>

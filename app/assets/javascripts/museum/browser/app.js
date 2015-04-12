@@ -20,6 +20,8 @@ myApp.config([ '$routeProvider', '$translateProvider',
 myApp.controller('BrowserAppController', [ '$scope', '$resource', '$http',
     '$translate', function($scope, $resource, $http, $translate) {
       _this = this;
+      
+      // TODO: Similar code as viewer break out some to service
 
       _this.models = [];
       _this.tags = [];

@@ -31,8 +31,7 @@ class Application(override implicit val env: RuntimeEnvironment[User])
   def viewer(id: Int) = SecuredAction(Normal)  { implicit request => 
     DB.withSession { implicit session =>
       Logger.info(play.api.Play.current.configuration.getString("uploadPath").get.replace("~", System.getProperty("user.home")))
-      val model = Models.get(id).get
-      Ok(views.html.viewer(model, Tags.tags(model)))
+      Ok(views.html.viewer())
     }
   }
 

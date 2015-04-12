@@ -1,4 +1,20 @@
 {
+	"VIEWER": {
+		"VIEWER": {
+			"HEADER": "Modelvisare",
+			"CONTROLLS":{
+				"RESET":"Återställ vyn",
+				"TOGGLE_Y_PANNING":"Skifta Y panorering",
+				"TOOGLE_BOUNDING_BOX":"Skifta bounding box"				
+			}
+		},
+		"INFORMATION":{
+			"HEADER":{
+				"INFO":"Modellinformation",
+				"TEXT":"Text kring modellen"
+			}
+		}
+	},
 	"THUMBNAIL": {
 		"ID": "ID",
 		"USER_ID": "Användar-ID",
