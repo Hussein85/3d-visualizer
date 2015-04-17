@@ -22,21 +22,7 @@ class Application(override implicit val env: RuntimeEnvironment[User])
   extends securesocial.core.SecureSocial[User] {
 
   def index = SecuredAction(Normal) { implicit request =>
-    DB.withSession { implicit session =>
-      val model = Models.get("static/candleHolder.obj").get
-      Redirect(controllers.routes.Application.viewer(model.id.get))
-    }
-  }
-
-  def viewer(id: Int) = SecuredAction(Normal)  { implicit request => 
-    DB.withSession { implicit session =>
-      Logger.info(play.api.Play.current.configuration.getString("uploadPath").get.replace("~", System.getProperty("user.home")))
-      Ok(views.html.viewer())
-    }
-  }
-
-  def tags = SecuredAction(Normal) { implicit request =>
-    Ok(views.html.tags())
+    Ok(views.html.main())
   }
 
   def language = SecuredAction(Normal)(parse.urlFormEncoded) { implicit request =>

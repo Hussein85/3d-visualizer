@@ -1,20 +1,4 @@
-@(title: String)(content: Html)(implicit req: RequestHeader, langCode: Lang)
-
-@import play.api.db.slick.DBAction
-@import play.api.db.slick._
-@import play.api.db.DB._
-@import scala.slick.driver.PostgresDriver.simple._
-@import scala.slick.driver.PostgresDriver.simple.{ Session => SlickSession }
-@import play.api._
-@import play.api.Play.current
-@import securesocial.core._
-@import play.api.cache.Cache
-@import utils._
-
-@helper.javascriptRouter("jsRoutes")(
-		  routes.javascript.Application.language,
-		  routes.javascript.Model.allTags
-		)
+@(toBeAbleToCompile: String = "")(implicit request: play.api.mvc.Request[Any])
 
 <!DOCTYPE html>
 <html>
@@ -26,12 +10,12 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
 
-    <title>@title</title>      
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at( "images/favicon.png")">
+    <title>Översätt Title</title>      
+        <link rel="shortcut icon" type="image/png" href="/assets/images/favicon.png">
         <link rel="stylesheet" href="/assets/bower_components/bootstrap/dist/css/bootstrap.css">  		
         <link rel="stylesheet" href="/assets/bower_components/ng-tags-input/ng-tags-input.css">  		
         <link rel="stylesheet" href="/assets/bower_components/ng-tags-input/ng-tags-input.bootstrap.css">  		
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at( "stylesheets/main.css")">     
+        <link rel="stylesheet" media="screen" href="/assets/stylesheets/main.css">     
         <link rel="stylesheet" media="screen" href="/assets/stylesheets/bootstrap-tagsinput.css">
         <link rel="stylesheet" media="screen" href="/assets/stylesheets/bootstrap-fileupload.css">
         <script type='text/javascript' src="/assets/bower_components/jquery/dist/jquery.js"></script>
@@ -47,8 +31,7 @@
         <script type='text/javascript' src="/assets/bower_components/angular-bootstrap/ui-bootstrap.js"></script>
         <script type='text/javascript' src="/assets/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
         <script type="text/javascript" src="/assets/javascripts/museum/init.js"></script>
-		<script type='text/javascript' src="/assets/javascripts/museum/languageSelector.js"></script>	
-		<script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>		
+		<script type='text/javascript' src="/assets/javascripts/museum/languageSelector.js"></script>		
 		<script type='text/javascript' src="/assets/javascripts/museum/museum-cookie.js"></script>
 		<script type='text/javascript' src="/assets/javascripts/holder.js"></script>
 		<script type="text/javascript" src="/assets/javascripts/tinymce/tinymce.min.js"></script>
@@ -83,26 +66,22 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">@Messages("app.title")</a>
+      <a class="navbar-brand" href="#">Översätt app.title</a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-         <li @if(title==Messages("title.viewer")){class="active"}><a href="/">@Messages("title.viewer")</a></li>
-         <li @if(title==Messages("title.browser")){class="active"}><a href="/model/all">@Messages("title.browser")</a></li>
-         <li @if(title==Messages("title.add")){class="active"}><a href="@routes.Model.addForm">@Messages("title.add")</a></li>
-         @* @if(CacheWrapper.user(request.user.providerId, request.user.userId).role.toString() == "Admin"){
-         	<li if(title==Messages("title.admin")){class="active"}><a href="@routes.Admin.index">@Messages("title.admin")</a></li>
-         }
-          <li @if(title=="Använda taggar"){class="active"}><a href="@routes.Application.tags">Taggar</a></li> *@ 
+         <li><a href="#/">Översätt title.viewer</a></li>
+         <li><a href="#/browser">Översätt title.browser</a></li>
+         <li><a href="#/model/add">Översätt title.add</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">@Messages("navbar.language")<b class="caret"></b></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Översätt navbar.language<b class="caret"></b></a>
           <ul class="dropdown-menu">
-            <li id="language-sweden"><a href="#"><img src="@routes.Assets.at( "images/flags/flags/shiny/64/Sweden.png")"></img>Svenska</a></li>
-            <li id="language-us"><a href="#"><img src="@routes.Assets.at( "images/flags/flags/shiny/64/United-States.png")"></img>English</a></li>
+            <li id="language-sweden"><a href="#"><img src="/assets/images/flags/flags/shiny/64/Sweden.png"></img>Svenska</a></li>
+            <li id="language-us"><a href="#"><img src="/assets/images/flags/flags/shiny/64/United-States.png"></img>English</a></li>
           </ul>
         </li>
       </ul>
@@ -112,7 +91,10 @@
   
 
     <div class="container">
-	@content
+		<script type="text/javascript"
+	src="/assets/javascripts/museum/viewer/app.js"></script>
+	<div ng-app="ViewerApp" ng-view>
+	</div>
     </div><!-- /.container -->
 
   </body>

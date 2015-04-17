@@ -52,15 +52,6 @@ object Model {
 
 class Model(override implicit val env: RuntimeEnvironment[User])
   extends securesocial.core.SecureSocial[User] {
-
-  def HTMLall = SecuredAction(Normal) { implicit request =>
-    val models = DB.withSession { implicit session => Models.all }
-    val modelsTags = models.map { model =>
-      val tags = DB.withSession { implicit session => Tags.tags(model) }
-      (model, tags)
-    }
-    Ok(views.html.model.browser(modelsTags))
-  }
   
   def all = SecuredAction(Normal) { implicit request =>
     val models = DB.withSession { implicit session => Models.all }
@@ -70,10 +61,6 @@ class Model(override implicit val env: RuntimeEnvironment[User])
   val formObject = "object-file"
   val textureObject = "texture-file"
   val thumbnailObject = "thumbnail-file"
-
-  def addForm = SecuredAction(Contributer) { implicit request =>
-    Ok(views.html.model.addForm())
-  }
 
   implicit val modelWrites: Writes[models.Model] = (
     (JsPath \ "id").write[Option[Int]] and
