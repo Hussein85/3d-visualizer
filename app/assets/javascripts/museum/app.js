@@ -1,7 +1,7 @@
-var myApp = angular.module('ViewerApp', [ 'angular.filter', 'ngResource',
+var app = angular.module('App', [ 'angular.filter', 'ngResource',
     'ngRoute', 'ngTagsInput', 'ui.bootstrap', 'pascalprecht.translate' ]);
 
-myApp.config([ '$routeProvider', '$translateProvider',
+app.config([ '$routeProvider', '$translateProvider',
     function($routeProvider, $translateProvider) {
       $routeProvider.when('/model/add', {
         templateUrl : '/assets/partials/model/addModel.html',
@@ -23,7 +23,7 @@ myApp.config([ '$routeProvider', '$translateProvider',
       $translateProvider.preferredLanguage('sv');
     } ]);
 
-myApp.controller('ViewerController', [
+app.controller('ViewerController', [
     '$scope',
     '$resource',
     '$http',
@@ -60,7 +60,9 @@ myApp.controller('ViewerController', [
                 viewer.tooglePanY();
               });
 
-              tinymce.init({
+              tinyMCE.remove();
+              
+              var tiny = tinymce.init({
                 selector : "#text",
                 language : museumCookie["languageCode"] === "en" ? "en"
                     : "sv_SE",
@@ -81,6 +83,7 @@ myApp.controller('ViewerController', [
                 }
 
               });
+              console.log(tiny);
             });
 
       };
@@ -89,7 +92,7 @@ myApp.controller('ViewerController', [
 
 ]);
 
-myApp.controller('BrowserAppController', [ '$scope', '$resource', '$http',
+app.controller('BrowserAppController', [ '$scope', '$resource', '$http',
     '$translate', function($scope, $resource, $http, $translate) {
       _this = this;
 
@@ -114,7 +117,7 @@ myApp.controller('BrowserAppController', [ '$scope', '$resource', '$http',
 
 ]);
 
-myApp.controller('ModelAddController', [
+app.controller('ModelAddController', [
     '$scope',
     '$resource',
     '$http',
@@ -126,6 +129,7 @@ myApp.controller('ModelAddController', [
       _this.alerts = [];
 
       _this.init = function() {
+        tinyMCE.remove();
         museum.initTinyMCE();
       }
       _this.loadTags = function($query) {
