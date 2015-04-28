@@ -33,10 +33,6 @@ import securesocial.core.RuntimeEnvironment
 class Admin(override implicit val env: RuntimeEnvironment[User])
   extends securesocial.core.SecureSocial[User] {
 
-  def index = SecuredAction(securesocial.museum.Admin) { implicit request =>
-    Ok(views.html.admin.admin())
-  }
-
   def users = SecuredAction(securesocial.museum.Admin) { implicit request =>
     DB.withSession { implicit session =>
 

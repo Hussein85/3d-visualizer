@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="../../securedassets/ico/favicon.ico">
+
+    <title>Översätt Title</title>      
+        <link rel="shortcut icon" type="image/png" href="/securedassets/images/favicon.png">
+        <link rel="stylesheet" href="/securedassets/bower_components/bootstrap/dist/css/bootstrap.css">  		
+        <link rel="stylesheet" href="/securedassets/bower_components/ng-tags-input/ng-tags-input.css">  		
+        <link rel="stylesheet" href="/securedassets/bower_components/ng-tags-input/ng-tags-input.bootstrap.css">  	   
+        <link rel="stylesheet" media="screen" href="/securedassets/stylesheets/bootstrap-tagsinput.css">
+        <link rel="stylesheet" media="screen" href="/securedassets/stylesheets/bootstrap-fileupload.css">
+        <link rel="stylesheet" media="screen" href="/securedassets/stylesheets/main.css">
+        <script type='text/javascript' src="/securedassets/bower_components/jquery/dist/jquery.js"></script>
+		<script type='text/javascript' src="/securedassets/javascripts/jquery.cookie.js"></script>	
+		<script type='text/javascript' src="/securedassets/javascripts/angular.js"></script>	
+        <script type='text/javascript' src="/securedassets/bower_components/angular-resource/angular-resource.js"></script>
+        <script type='text/javascript' src="/securedassets/bower_components/angular-route/angular-route.js"></script>
+        <script type='text/javascript' src="/securedassets/bower_components/ng-tags-input/ng-tags-input.js"></script>
+        <script type='text/javascript' src="/securedassets/bower_components/angular-filter/dist/angular-filter.js"></script>        
+        <script type='text/javascript' src="/securedassets/bower_components/angular-translate/angular-translate.js"></script>
+        <script type='text/javascript' src="/securedassets/bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
+        <script type='text/javascript' src="/securedassets/bower_components/bootstrap/dist/js/bootstrap.js"></script>
+        <script type='text/javascript' src="/securedassets/bower_components/angular-bootstrap/ui-bootstrap.js"></script>
+        <script type='text/javascript' src="/securedassets/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+		<script type='text/javascript' src="/securedassets/javascripts/museum/languageSelector.js"></script>		
+		<script type='text/javascript' src="/securedassets/javascripts/museum/museum-cookie.js"></script>
+		<script type='text/javascript' src="/securedassets/javascripts/holder.js"></script>
+		<script type="text/javascript" src="/securedassets/javascripts/tinymce/tinymce.min.js"></script>
+	    <script type="text/javascript" src="/securedassets/javascripts/typeahead/bootstrap3-typeahead.js"></script>
+		<script type="text/javascript" src="/securedassets/javascripts/typeahead/bloodhound.js"></script>
+		<script type="text/javascript" src="/securedassets/javascripts/bootstrap-tagsinput.js"></script>
+		<script type="text/javascript" src="/securedassets/javascripts/bootstrap-fileupload.js"></script>
+		<script type='text/javascript' src="/securedassets/javascripts/3dViewer/three.min.js"></script>
+		<script type='text/javascript' src="/securedassets/javascripts/3dViewer/TrackballControls.js"></script>
+		<script type='text/javascript' src="/securedassets/javascripts/3dViewer/OBJLoader.js"></script>
+		<script type='text/javascript' src="/securedassets/javascripts/3dViewer/Detector.js"></script>	
+		<script type='text/javascript' src="/securedassets/javascripts/3dViewer/BoundingBoxHelper.js"></script>
+		<script type='text/javascript' src="/securedassets/javascripts/museum/Viewer.js"></script>
+		
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+  
+  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Översätt app.title</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+         <li><a href="#/">Översätt title.viewer</a></li>
+         <li><a href="#/browser">Översätt title.browser</a></li>
+         <li><a href="#/model/add">Översätt title.add</a></li>
+         <li><a href="#/admin">Översätt title.admin</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Översätt navbar.language<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li id="language-sweden"><a href="#"><img src="/securedassets/images/flags/flags/shiny/64/Sweden.png"></img>Svenska</a></li>
+            <li id="language-us"><a href="#"><img src="/securedassets/images/flags/flags/shiny/64/United-States.png"></img>English</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+  
+
+    <div class="container">
+		<script type="text/javascript"
+	src="/securedassets/javascripts/museum/app.js"></script>
+	<div ng-app="App" ng-view>
+	</div>
+    </div><!-- /.container -->
+
+  </body>
+</html>

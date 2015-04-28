@@ -13,7 +13,7 @@ import scala.slick.driver.PostgresDriver.simple._
 import scala.slick.driver.PostgresDriver.simple.{ Session => SlickSession }
 import play.api._
 import play.api.Play.current
-import securesocial.core.{Authorization}
+import securesocial.core.{ Authorization }
 import securesocial.museum.Normal
 import securesocial.museum.Contributer
 import securesocial.core.RuntimeEnvironment
@@ -22,7 +22,7 @@ class Application(override implicit val env: RuntimeEnvironment[User])
   extends securesocial.core.SecureSocial[User] {
 
   def index = SecuredAction(Normal) { implicit request =>
-    Ok(views.html.main())
+    Ok.sendFile(Play.getFile("protected/index.html"), inline = true)
   }
 
   def language = SecuredAction(Normal)(parse.urlFormEncoded) { implicit request =>
@@ -42,6 +42,11 @@ class Application(override implicit val env: RuntimeEnvironment[User])
 
   def getUploadedFile(file: String) = SecuredAction(Normal) {
     Ok.sendFile(new java.io.File(Constants.uploadDir, file))
+  }
+  
+  // TODO refactor to use normal assets controller that may set all headers etc.
+  def securedAsset(file: String) = SecuredAction(Normal) {
+    Ok.sendFile(Play.getFile("protected/" + file), inline = true)
   }
 
 }

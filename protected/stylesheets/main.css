@@ -1,0 +1,24 @@
+body {
+  padding-top: 70px;
+}
+.file-input {
+  height: 100%;
+}
+.model-tags {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 10px;
+}
+.model-tags span.label {
+  line-height: 2em;
+}
+.link {
+  cursor: hand;
+}
+#camera-control {
+  margin-top: 20px;
+}
+tags-input .host,
+tags-input .tags {
+  height: auto !important;
+}

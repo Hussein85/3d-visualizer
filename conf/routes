@@ -15,9 +15,6 @@ POST   /model                        @controllers.Model.upload
 GET    /model/:id                    @controllers.Model.get(id: Int)
 GET    /model/alltags                @controllers.Model.allTags
 
-# Admin
-GET    /admin                        @controllers.Admin.index
-
 # Users
 GET    /user                         @controllers.Admin.users
 PUT    /user/:email                  @controllers.Admin.updateUser(email)
@@ -36,6 +33,7 @@ GET    /swagger                      controllers.Default.redirect(to="assets/swa
 
 # Map static resources from the /public folder to the /assets URL path
 GET    /assets/*file                 controllers.Assets.at(path="/public", file)
+GET    /securedassets/*file                 @controllers.Application.securedAsset(file)
 
 # Map static resources from the /upload folder to the /uploads URL path
 GET    /uploads/*file                @controllers.Application.getUploadedFile(file)
