@@ -31,5 +31,5 @@ libraryDependencies ++= Seq(
   "ws.securesocial" %% "securesocial" % "3.0-M3" classifier "assets",
   "com.wordnik" %% "swagger-play2" % "1.3.12" exclude("org.reflections", "reflections"),
   "org.reflections" % "reflections" % "0.9.8" notTransitive (),
-  "nl.rhinofly" %% "play-s3" % "5.0.2" 
+  "nl.rhinofly" %% "play-s3" % "local-SNAPSHOT" 
 )     

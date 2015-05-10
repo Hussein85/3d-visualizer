@@ -12,7 +12,6 @@ import play.api.data.validation._
 import play.api.Play.current
 import models.Tag
 import models.Tags
-import utils.FormHelper.saveFormFileToS3
 import java.sql.Date
 import org.joda.time.DateTime
 import models._
@@ -23,6 +22,8 @@ import models.Tag
 import securesocial.museum.Normal
 import securesocial.museum.Contributer
 import securesocial.core.RuntimeEnvironment
+import fly.play.s3._
+import fly.play.aws._
 
 case class FormModel(name: String, material: String, location: String, text: String, year: Int, tags: List[Tag])
 
@@ -92,11 +93,20 @@ class Model(override implicit val env: RuntimeEnvironment[User])
       },
       m => {
         val userId: String = request.user.userId
+        val expiryTime = 36000
+        val bucket = S3("museum-dev")
+        val pathObject = java.util.UUID.randomUUID.toString
+        val pathTexure = java.util.UUID.randomUUID.toString
+        val pathThumbnail = java.util.UUID.randomUUID.toString
+        val queryString = Map.empty[String, Seq[String]]
+        val urlObject = bucket.putUrl(pathObject, expiryTime)
+        val urlTexture = bucket.putUrl(pathTexure, expiryTime)
+        val urlThumbnail = bucket.putUrl(pathTexure, expiryTime)
         val dbModel = new models.Model(id = None, name = m.name, userID = userId, date = new DateTime(m.year, 1, 1, 0, 0, 0),
           material = m.material, location = m.location, text = m.text,
-          pathObject = None,
-          pathTexure = None,
-          pathThumbnail = None)
+          pathObject = Some(pathObject),
+          pathTexure = Some(pathTexure),
+          pathThumbnail = Some(pathThumbnail))
         Logger.info(s"model: $dbModel")
         val modelID = DB.withSession { implicit session => Models.insert(dbModel) };
         Logger.info(s"Modellinfo: $modelID")
@@ -105,7 +115,15 @@ class Model(override implicit val env: RuntimeEnvironment[User])
           val tagID = DB.withSession { implicit session => Tags.insert(tag) }
           DB.withSession { implicit session => TagModels.insert(TagModel(tagID, modelID)) }
         })
-        Ok(Json.toJson(modelID))
+        
+        val json: JsValue = Json.obj(
+            "id" -> modelID,
+            "urlObject" -> urlObject,
+            "urlTexture" -> urlTexture,
+            "urlThumbnail" -> urlThumbnail
+        )
+        
+        Ok(Json.toJson(json))
       })
   }
 
