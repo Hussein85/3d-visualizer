@@ -1,5 +1,5 @@
 var app = angular.module('App', [ 'angular.filter', 'ngResource', 'ngRoute',
-    'ngTagsInput', 'ui.bootstrap', 'pascalprecht.translate', 'ngFileUpload' ]);
+    'ngTagsInput', 'ui.bootstrap', 'pascalprecht.translate' ]);
 
 app.config([ '$routeProvider', '$translateProvider',
     function($routeProvider, $translateProvider) {
@@ -140,8 +140,7 @@ app.controller('ModelAddController', [
     '$resource',
     '$http',
     '$translate',
-    'Upload',
-    function($scope, $resource, $http, $translate, Upload) {
+    function($scope, $resource, $http, $translate) {
       _this = this;
 
       _this.model = {};
@@ -175,9 +174,9 @@ app.controller('ModelAddController', [
 
         $http.post('/model', _this.model).success(
             function(data, status, headers, config) {
-              _this.uploadFile(_this.objectFile, data.urlObject);
-              _this.uploadFile(_this.textureFile, data.urlTexture);
-              _this.uploadFile(_this.thumbnailFile, data.urlThumbnail);
+              _this.uploadFile(document.getElementById('object-file').files[0], data.urlObject);
+              _this.uploadFile(document.getElementById('texture-file').files[0], data.urlTexture);
+              _this.uploadFile(document.getElementById('thumbnail-file').files[0], data.urlThumbnail);
               _this.addAlert({
                 msg : data,
                 type : 'success'
@@ -204,24 +203,6 @@ app.controller('ModelAddController', [
         
       }
       
-      /*_this.addFile = function(inputId, uploadUrl) {
-        var f = document.getElementById(inputId).files[0], 
-        ar = new FileReader();
-        r.onloadend = function(e) {
-          var data = e.target.result;
-          r.readAsArrayBuffer(f);
-          console.log(data);
-          $http.put(uploadUrl, data).success(
-              function(data, status, headers, config) {
-                console.log("data" + data, "status" + status, "headers"
-                    + headers, "config" + config);
-              }).error(function(data, status, headers, config) {
-                console.log("data" + data, "status" + status, "headers"
-                    + headers, "config" + config);
-          });
-        }                
-      }*/
-
       _this.addAlert = function(alert) {
         _this.alerts.push(alert);
       };

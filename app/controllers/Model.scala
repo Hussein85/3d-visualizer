@@ -101,7 +101,7 @@ class Model(override implicit val env: RuntimeEnvironment[User])
         val queryString = Map.empty[String, Seq[String]]
         val urlObject = bucket.putUrl(pathObject, expiryTime)
         val urlTexture = bucket.putUrl(pathTexure, expiryTime)
-        val urlThumbnail = bucket.putUrl(pathTexure, expiryTime)
+        val urlThumbnail = bucket.putUrl(pathThumbnail, expiryTime)
         val dbModel = new models.Model(id = None, name = m.name, userID = userId, date = new DateTime(m.year, 1, 1, 0, 0, 0),
           material = m.material, location = m.location, text = m.text,
           pathObject = Some(pathObject),
