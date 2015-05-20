@@ -1,109 +1,151 @@
 <div ng-controller="ModelAddController as ctrl">
-<alert ng-repeat="alert in ctrl.alerts" type="{{alert.type}}" close="ctrl.closeAlert($index)">{{alert.msg}}</alert>
-	<form name="ctrl.form" ng-init="ctrl.init()">
-		<div class="row">
-			<div class="col-md-4" id="addForm-column1">
-				<div class="alert alert-info" translate>form.model.heading.info</div>
-				<div class="form-group">
-					<label for="model.add.name" translate>form.model.name.label</label>
-					<input type="text" name="name" ng-model="ctrl.model.name"
-						class="form-control" id="model.add.name"
-						placeholder="{{'form.model.name.placeholder' | translate}}">
-				</div>
-				<div class="form-group">
-					<label for="model.add.material" translate>form.model.material.label</label>
-					<input type="text" class="form-control" id="model.add.material"
-						ng-model="ctrl.model.material"
-						placeholder="{{'form.model.material.placeholder' | translate}}">
-				</div>
-				<div class="form-group">
-					<label for="model.add.location" translate>form.model.location.label</label>
-					<input type="text" class="form-control" id="model.add.location"
-						ng-model="ctrl.model.location"
-						placeholder="{{'form.model.material.placeholder' | translate}}">
-				</div>
-				<div class="form-group">
-					<label for="model.add.year" translate>form.model.year.label</label>
-					<input type="text" class="form-control" id="model.add.year"
-						ng-model="ctrl.model.year"
-						placeholder="{{'form.model.year.placeholder' | translate}}">
-				</div>
-				<label translate>form.model.tags.label</label>
-				<tags-input ng-model="ctrl.model.tags" id="model.add.tags"
-					placeholder="{{'form.model.tags.placeholder' | translate}}">
-				<auto-complete source="ctrl.loadTags($query)" min-length="1">
-				</auto-complete> </tags-input>
-				<div class="form-group"></div>
-				<div class="alert alert-info" translate>form.model.heading.file</div>
-				<div class="form-group">
-					<label translate>form.model.file.object</label>
-					<div class="fileupload fileupload-new" data-provides="fileupload">
-						<div class="input-group">
-							<div class="form-control uneditable-input">
-								<i class="icon-file fileupload-exists"></i> <span
-									class="fileupload-preview"></span>
-							</div>
-							<div class="input-group-btn">
-								<div class="btn btn-default btn-file">
-									<span class="fileupload-new" translate>form.model.file.select</span>
-									<span class="fileupload-exists" translate>form.model.file.select</span>
-									<input type="file" class="file-input" id="object-file" name="object-file"/>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<label translate>form.model.file.texture</label>
-					<div class="fileupload fileupload-new" data-provides="fileupload">
-						<div class="input-group">
-							<div class="form-control uneditable-input">
-								<i class="icon-file fileupload-exists"></i> <span
-									class="fileupload-preview"></span>
-							</div>
-							<div class="input-group-btn">
-								<div class="btn btn-default btn-file">
-									<span class="fileupload-new" translate>form.model.file.select</span>
-									<span class="fileupload-exists" translate>form.model.file.select</span>
-									<input type="file" class="file-input" id="texture-file" name="texture-file"/>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<label translate>form.model.file.thumbnail</label>
-					<div class="fileupload fileupload-new" data-provides="fileupload">
-						<div class="input-group">
-							<div class="form-control uneditable-input">
-								<i class="icon-file fileupload-exists"></i> <span
-									class="fileupload-preview"></span>
-							</div>
-							<div class="input-group-btn">
-								<div class="btn btn-default btn-file">
-									<span class="fileupload-new" translate>form.model.file.select</span>
-									<span class="fileupload-exists" translate>form.model.file.select</span>
-									<input type="file" class="file-input" id="thumbnail-file" name="thumbnail-file"/>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-8" id="addForm-text">
-				<div class="alert alert-info" translate>form.model.heading.text</div>
-				<div class="form-group">
-					<input type="text" class="form-control" id="text" name="text"
-						ng-model="ctrl.model.text" placeholder="form.model.text.enter")>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<button value="Send" type="submit" id="submit"
-					class="btn btn-success form-control" ng-click="ctrl.submit()"
-					translate>form.model.upload</button>
-			</div>
-		</div>
-	</form>
+    <alert ng-repeat="alert in ctrl.alerts" type="{{alert.type}}" close="ctrl.closeAlert($index)">{{alert.msg}}</alert>
+    <form name="form" ng-submit="ctrl.submit()" novalidate ng-init="ctrl.init()">
+        <div class="row">
+            <div class="col-md-4" id="addForm-column1">
+                <div class="alert alert-info" translate>form.model.heading.info</div>
+                <div class="form-group" ng-class="{ 'has-error' : form.name.$invalid && !form.name.$pristine }">
+                    <label for="model.add.name" translate>form.model.name.label</label>
+                    <input type="text"
+                           name="name"
+                           ng-model="ctrl.model.name"
+                           class="form-control"
+                           id="model.add.name"
+                           required
+                           placeholder="{{'form.model.name.placeholder' | translate}}">
+
+                    <p class="help-block"
+                       ng-show="form.name.$invalid && !form.name.$pristine"
+                       translate="VALIDATION.REQUIRED"></p>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error' : form.material.$invalid && !form.material.$pristine }">
+                    <label for="model.add.material" translate>form.model.material.label</label>
+                    <input type="text"
+                           name="material"
+                           class="form-control"
+                           id="model.add.material"
+                           ng-model="ctrl.model.material"
+                           required
+                           placeholder="{{'form.model.material.placeholder' | translate}}">
+
+                    <p class="help-block"
+                       ng-show="form.material.$invalid && !form.material.$pristine"
+                       translate="VALIDATION.REQUIRED"></p>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error' : form.location.$invalid && !form.location.$pristine }">
+                    <label for="model.add.location" translate>form.model.location.label</label>
+                    <input type="text"
+                           name="location"
+                           class="form-control"
+                           id="model.add.location"
+                           ng-model="ctrl.model.location"
+                           required
+                           placeholder="{{'form.model.material.placeholder' | translate}}">
+
+                    <p class="help-block"
+                       ng-show="form.location.$invalid && !form.location.$pristine"
+                       translate="VALIDATION.REQUIRED"></p>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error' : form.year.$invalid && !form.year.$pristine }">
+                    <label for="model.add.year" translate>form.model.year.label</label>
+                    <input type="text"
+                           pattern="^[0-9]{1,4}$"
+                           name="year"
+                           class="form-control"
+                           id="model.add.year"
+                           ng-model="ctrl.model.year"
+                           required
+                           placeholder="{{'form.model.year.placeholder' | translate}}">
+
+                    <p class="help-block"
+                       ng-show="form.year.$invalid && !form.year.$pristine"
+                       translate="VALIDATION.REQUIRED"></p>
+                </div>
+                <label translate>form.model.tags.label</label>
+                <tags-input ng-model="ctrl.model.tags" id="model.add.tags"
+                            placeholder="{{'form.model.tags.placeholder' | translate}}">
+                    <auto-complete source="ctrl.loadTags($query)" min-length="1">
+                    </auto-complete>
+                </tags-input>
+                <div class="form-group"></div>
+                <div class="alert alert-info" translate>form.model.heading.file</div>
+
+                <div class="form-group">
+                    <label translate>form.model.file.object</label>
+
+                    <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                        <div class="form-control" data-trigger="fileinput">
+                            <i class="glyphicon glyphicon-file fileinput-exists"></i>
+                            <span class="fileinput-filename"></span>
+                        </div>
+                    <span class="input-group-addon btn btn-default btn-file">
+                        <span class="fileinput-new" translate>form.model.file.select</span>
+                        <span class="fileinput-exists" translate>form.model.file.change</span>
+                        <input type="file"
+                               name="object-file"
+                               id="object-file"
+                               required>
+                    </span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label translate>form.model.file.texture</label>
+
+                    <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                        <div class="form-control" data-trigger="fileinput">
+                            <i class="glyphicon glyphicon-file fileinput-exists"></i>
+                            <span class="fileinput-filename"></span>
+                        </div>
+                    <span class="input-group-addon btn btn-default btn-file">
+                        <span class="fileinput-new" translate>form.model.file.select</span>
+                        <span class="fileinput-exists" translate>form.model.file.change</span>
+                        <input type="file"
+                               name="texture-file"
+                               id="texture-file"
+                               required>
+                    </span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label translate>form.model.file.thumbnail</label>
+
+                    <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                        <div class="form-control" data-trigger="fileinput">
+                            <i class="glyphicon glyphicon-file fileinput-exists"></i>
+                            <span class="fileinput-filename"></span>
+                        </div>
+                    <span class="input-group-addon btn btn-default btn-file">
+                        <span class="fileinput-new" translate>form.model.file.select</span>
+                        <span class="fileinput-exists" translate>form.model.file.change</span>
+                        <input type="file"
+                               name="thumbnail-file"
+                               id="thumbnail-file"
+                               required>
+                    </span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-8" id="addForm-text">
+                <div class="alert alert-info" translate>form.model.heading.text</div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="text" name="text"
+                           ng-model="ctrl.model.text" placeholder="form.model.text.enter" )>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <button value="Send"
+                        type="submit"
+                        id="submit"
+                        class="btn btn-success form-control"
+                        ng-disabled="!ctrl.valid(form.$valid)"
+                        translate>form.model.upload
+                </button>
+            </div>
+        </div>
+    </form>
 </div>

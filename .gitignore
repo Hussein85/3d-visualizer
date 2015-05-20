@@ -21,3 +21,4 @@ RUNNING_PID
 uploads
 ec2Commands.txt
 public/bower_components
+protected/bower_components

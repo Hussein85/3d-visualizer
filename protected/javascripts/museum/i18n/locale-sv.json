@@ -1,68 +1,71 @@
 {
-	"VIEWER": {
-		"VIEWER": {
-			"HEADER": "Modelvisare",
-			"CONTROLLS":{
-				"RESET":"Återställ vyn",
-				"TOGGLE_Y_PANNING":"Skifta Y panorering",
-				"TOOGLE_BOUNDING_BOX":"Skifta bounding box"				
-			}
-		},
-		"INFORMATION":{
-			"HEADER":{
-				"INFO":"Modellinformation",
-				"TEXT":"Text kring modellen"
-			}
-		}
-	},
-	"THUMBNAIL": {
-		"ID": "ID",
-		"USER_ID": "Användar-ID",
-		"MODEL_NAME": "Namn",
-		"MODEL_MATERIAL": "Material",
-		"MODEL_LOCATION": "Plats",
-		"MODEL_YEAR": "År"
-	},
-	"form":{
-		"email":"E-Postadress",
-		"enter":"Ange",
-		"model":{
-			"file":{
-				"object":"Objektfilen",
-				"select":"Väljfil",
-				"texture":"Texturfilen",
-				"thumbnail":"Tumnagelfilen"
-			},
-			"heading":{
-				"file":"Modellfiler",
-				"info":"Allmän information om modellen",
-				"text":"Text om modellen"
-			},
-			"location":{
-				"enter":"Ange modellens ursprungsplats"
-			},
-			"name":{
-				"label":"Namn",
-				"placeholder":"Ange modellens namn"
-			},
-			"year":{
-				"label":"Årtal",
-				"placeholder":"Ange modellens ursprungsår"
-			},
-			"material":{
-				"label":"Material",
-				"placeholder":"Ange vilket material modellen är gjord av"
-			},
-			"location":{
-				"label":"Geografisk plats",
-				"placeholder":"Ange modellens geografiska ursprungsplats"
-			},
-			"tags":{
-				"label":"Taggar",
-				"placeholder":"Lägg in taggar, tryck enter per tag"
-			},
-			"upload":"Spara"
-		}
-		
-	}
+  "VIEWER": {
+    "VIEWER": {
+      "HEADER": "Modelvisare",
+      "CONTROLLS": {
+        "RESET": "Återställ vyn",
+        "TOGGLE_Y_PANNING": "Skifta Y panorering",
+        "TOOGLE_BOUNDING_BOX": "Skifta bounding box"
+      }
+    },
+    "INFORMATION": {
+      "HEADER": {
+        "INFO": "Modellinformation",
+        "TEXT": "Text kring modellen"
+      }
+    }
+  },
+  "THUMBNAIL": {
+    "ID": "ID",
+    "USER_ID": "Användar-ID",
+    "MODEL_NAME": "Namn",
+    "MODEL_MATERIAL": "Material",
+    "MODEL_LOCATION": "Plats",
+    "MODEL_YEAR": "År"
+  },
+  "VALIDATION": {
+    "REQUIRED": "Obligatoriskt fält"
+  },
+  "form": {
+    "email": "E-Postadress",
+    "enter": "Ange",
+    "model": {
+      "file": {
+        "object": "Objektfilen",
+        "select": "Välj fil",
+        "change": "Ändra",
+        "texture": "Texturfilen",
+        "thumbnail": "Tumnagelfilen"
+      },
+      "heading": {
+        "file": "Modellfiler",
+        "info": "Allmän information om modellen",
+        "text": "Text om modellen"
+      },
+      "location": {
+        "enter": "Ange modellens ursprungsplats"
+      },
+      "name": {
+        "label": "Namn",
+        "placeholder": "Ange modellens namn"
+      },
+      "year": {
+        "label": "Årtal",
+        "placeholder": "Ange modellens ursprungsår"
+      },
+      "material": {
+        "label": "Material",
+        "placeholder": "Ange vilket material modellen är gjord av"
+      },
+      "location": {
+        "label": "Geografisk plats",
+        "placeholder": "Ange modellens geografiska ursprungsplats"
+      },
+      "tags": {
+        "label": "Taggar",
+        "placeholder": "Lägg in taggar, tryck enter per tag"
+      },
+      "upload": "Spara"
+    }
+  }
 }
