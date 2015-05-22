@@ -3,8 +3,8 @@
 	<div ng-repeat="modelGroup in ctrl.models | groupBy:3">
 		<div class="col-md-4" ng-repeat="model in modelGroup" ng-init='ctrl.loadTags(model.id)'>
 			<div class="thumbnail">
-				<a href="/viewer/{{model.id}}"> <img
-					ng-src="/uploads/{{model.f2}}" />
+				<a href="#/model/{{model.id}}"> <img
+					ng-src="{{model.f3}}" />
 				</a>
 				<br/>
 				<dl class="dl-horizontal">

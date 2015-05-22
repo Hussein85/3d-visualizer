@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="App">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="../../securedassets/ico/favicon.ico">
 
-    <title>Översätt Title</title>      
+    <title translate="APP_NAME"></title>
         <link rel="shortcut icon" type="image/png" href="/securedassets/images/favicon.png">
         <link rel="stylesheet" href="/securedassets/bower_components/bootstrap/dist/css/bootstrap.css">  		
         <link rel="stylesheet" href="/securedassets/bower_components/ng-tags-input/ng-tags-input.css">  		
@@ -63,20 +63,20 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">Översätt app.title</a>
+      <a class="navbar-brand" href="#" translate="APP_NAME"></a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-         <li><a href="#/">Översätt title.viewer</a></li>
-         <li><a href="#/browser">Översätt title.browser</a></li>
-         <li><a href="#/model/add">Översätt title.add</a></li>
-         <li><a href="#/admin">Översätt title.admin</a></li>
+         <li><a href="#/" translate="NAVBAR.VIEWER"></a></li>
+         <li><a href="#/browser"translate="NAVBAR.BROWSER"></a></li>
+         <li><a href="#/model/add"translate="NAVBAR.ADD"></a></li>
+         <li><a href="#/admin"translate="NAVBAR.ADMIN"></a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Översätt navbar.language<b class="caret"></b></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" translate="NAVBAR.LANGUAGE"><b class="caret"></b></a>
           <ul class="dropdown-menu">
             <li id="language-sweden"><a href="#"><img src="/securedassets/images/flags/flags/shiny/64/Sweden.png"></img>Svenska</a></li>
             <li id="language-us"><a href="#"><img src="/securedassets/images/flags/flags/shiny/64/United-States.png"></img>English</a></li>
@@ -91,7 +91,7 @@
     <div class="container">
 		<script type="text/javascript"
 	src="/securedassets/javascripts/museum/app.js"></script>
-	<div ng-app="App" ng-view>
+	<div ng-view>
 	</div>
     </div><!-- /.container -->
 

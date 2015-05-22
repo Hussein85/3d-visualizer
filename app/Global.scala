@@ -36,7 +36,7 @@ object Global extends GlobalSettings {
 
   override def onStart(app: Application) {
     Logger.info("Application has started")
-    Insert.exampleModel
+    // Insert.exampleModel
     Insert.inactiveUsersOrganization
   }
 

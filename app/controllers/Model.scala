@@ -37,7 +37,7 @@ object Model {
   val fourDigitYearCheck: Mapping[Int] = number.verifying(fourDigitYearConstraint)
 
   //TODO: Refactor to use JSON read instead of FORM
-  
+
   def modelForm: Form[FormModel] = Form(
     mapping(
       "name" -> nonEmptyText,
@@ -53,11 +53,6 @@ object Model {
 
 class Model(override implicit val env: RuntimeEnvironment[User])
   extends securesocial.core.SecureSocial[User] {
-  
-  def all = SecuredAction(Normal) { implicit request =>
-    val models = DB.withSession { implicit session => Models.all }
-    Ok(Json.toJson(models))
-  }
 
   val formObject = "object-file"
   val textureObject = "texture-file"
@@ -72,18 +67,31 @@ class Model(override implicit val env: RuntimeEnvironment[User])
     (JsPath \ "location").write[String] and
     (JsPath \ "text").write[String] and
     (JsPath \ "f1").write[Option[String]] and
-    (JsPath \ "f2").write[Option[String]] and 
+    (JsPath \ "f2").write[Option[String]] and
     (JsPath \ "f3").write[Option[String]])(unlift(models.Model.unapply))
+
+  def all = SecuredAction(Normal) { implicit request =>
+    val models = DB.withSession { implicit session => Models.all }
+    Ok(Json.toJson(models map s3Model))
+  }
 
   def get(id: Int) = SecuredAction(Normal) { implicit request =>
     DB.withSession { implicit session =>
       Models.get(id) match {
         case None => NotFound("The requested model is either not in the db or you lack access to it.")
         case Some(model) => {
-          Ok(Json.toJson(model))
+          Ok(Json.toJson(s3Model(model)))
         }
       }
     }
+  }
+
+  def s3Model(model: models.Model) = {
+    val bucket = S3("museum-dev")
+    model.copy(
+      pathObject = Some(bucket.url(model.pathObject.get, 60)),
+      pathTexure = Some(bucket.url(model.pathTexure.get, 60)),
+      pathThumbnail = Some(bucket.url(model.pathThumbnail.get, 60)))
   }
 
   def upload = SecuredAction(Contributer)(parse.json) { implicit request =>
@@ -93,7 +101,7 @@ class Model(override implicit val env: RuntimeEnvironment[User])
       },
       m => {
         val userId: String = request.user.userId
-        val expiryTime = 36000
+        val expiryTime = 3600
         val bucket = S3("museum-dev")
         val pathObject = java.util.UUID.randomUUID.toString
         val pathTexure = java.util.UUID.randomUUID.toString
@@ -115,14 +123,13 @@ class Model(override implicit val env: RuntimeEnvironment[User])
           val tagID = DB.withSession { implicit session => Tags.insert(tag) }
           DB.withSession { implicit session => TagModels.insert(TagModel(tagID, modelID)) }
         })
-        
+
         val json: JsValue = Json.obj(
-            "id" -> modelID,
-            "urlObject" -> urlObject,
-            "urlTexture" -> urlTexture,
-            "urlThumbnail" -> urlThumbnail
-        )
-        
+          "id" -> modelID,
+          "urlObject" -> urlObject,
+          "urlTexture" -> urlTexture,
+          "urlThumbnail" -> urlThumbnail)
+
         Ok(Json.toJson(json))
       })
   }

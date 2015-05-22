@@ -49,8 +49,8 @@ app.controller('ViewerController', [
                         _this.tags = result.data;
                     });
 
-                    var viewer = new Viewer("#canvas-place-holder", "/uploads/"
-                        + _this.model.f1, "/uploads/" + _this.model.f2);
+                    var viewer = new Viewer("#canvas-place-holder",
+                        _this.model.f1, _this.model.f2);
                     viewer.initCanvas();
 
                     $("#reset-view").click(function () {
@@ -147,7 +147,9 @@ app.controller('ModelAddController', [
         _this.alerts = [];
 
         _this.init = function () {
+
             tinyMCE.remove();
+
             tinymce.init({
                 selector: "#text",
                 statusbar: true,
@@ -157,18 +159,24 @@ app.controller('ModelAddController', [
                 remove_linebreaks: true,
                 language: museumCookie["languageCode"] === "en" ? "en" : "sv_SE",
                 height: "300px",
-                entity_encoding: "raw"
+                entity_encoding: "raw",
+                setup: function (editor) {
+                    editor.on('init', function () {
+                        tinymce.editors[0].setContent($('<textarea />').html(
+                            '').text());
+                    });
+                }
             });
 
-            $("#object-file").on('change', function() {
+            $("#object-file").on('change', function () {
                 $scope.$apply();
             });
 
-            $("#texture-file").on('change', function() {
+            $("#texture-file").on('change', function () {
                 $scope.$apply();
             });
 
-            $("#thumbnail-file").on('change', function() {
+            $("#thumbnail-file").on('change', function () {
                 $scope.$apply();
             });
 
@@ -217,7 +225,7 @@ app.controller('ModelAddController', [
         }
 
         _this.uploadFile = function (file, url) {
-            $http.put(url, file.pop().slice()).success(
+            $http.put(url, file.slice()).success(
                 function (data, status, headers, config) {
                     console.log("data" + data, "status" + status, "headers"
                         + headers, "config" + config);

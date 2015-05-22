@@ -1,4 +1,12 @@
 {
+  "APP_NAME": "Treasure Cage",
+  "NAVBAR": {
+    "VIEWER": "Visaren",
+    "BROWSER": "Utforskaren",
+    "ADD": "Ladda upp ny modell",
+    "ADMIN": "Admin",
+    "LANGUAGE": "Välj språk"
+  },
   "VIEWER": {
     "VIEWER": {
       "HEADER": "Modelvisare",
