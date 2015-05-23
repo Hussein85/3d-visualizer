@@ -58,20 +58,9 @@ class Model(override implicit val env: RuntimeEnvironment[User])
   val textureObject = "texture-file"
   val thumbnailObject = "thumbnail-file"
 
-  implicit val modelWrites: Writes[models.Model] = (
-    (JsPath \ "id").write[Option[Int]] and
-    (JsPath \ "name").write[String] and
-    (JsPath \ "userId").write[String] and
-    (JsPath \ "date").write[DateTime] and
-    (JsPath \ "material").write[String] and
-    (JsPath \ "location").write[String] and
-    (JsPath \ "text").write[String] and
-    (JsPath \ "f1").write[Option[String]] and
-    (JsPath \ "f2").write[Option[String]] and
-    (JsPath \ "f3").write[Option[String]])(unlift(models.Model.unapply))
-
   def all = SecuredAction(Normal) { implicit request =>
     val models = DB.withSession { implicit session => Models.all }
+  
     Ok(Json.toJson(models map s3Model))
   }
 
