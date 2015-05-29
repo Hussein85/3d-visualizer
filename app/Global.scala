@@ -36,7 +36,6 @@ object Global extends GlobalSettings {
 
   override def onStart(app: Application) {
     Logger.info("Application has started")
-    // Insert.exampleModel
     Insert.inactiveUsersOrganization
   }
 
@@ -46,7 +45,7 @@ object Global extends GlobalSettings {
   object DemoRuntimeEnvironment extends RuntimeEnvironment.Default[User] {
     override lazy val userService: MyUserService = new MyUserService
     override lazy val providers = ListMap(
-         include(new UsernamePasswordProvider[User](userService, avatarService, viewTemplates, passwordHashers)))
+      include(new UsernamePasswordProvider[User](userService, avatarService, viewTemplates, passwordHashers)))
     override lazy val mailTemplates: MailTemplates = new MailTemplates.Default(this)
   }
 
@@ -73,34 +72,6 @@ object Global extends GlobalSettings {
       DB.withSession { implicit session =>
         if (Organizations.get(1).isEmpty) {
           Organizations.insert(new Organization(Some(1), "Inactive Users"))
-        }
-      }
-    }
-
-    def exampleModel() = {
-      val exsist = DB.withSession { implicit session => Models.get("static/candleHolder.obj").isDefined }
-      if (!exsist) {
-
-        Files.copyFile(Play.getFile("public/3dAssets/candleHolderSmal.jpg"), new File(Constants.uploadDir.getPath + "/static/candleHolderSmal.jpg"), true)
-        Files.copyFile(Play.getFile("public/3dAssets/candleHolderSmal.png"), new File(Constants.uploadDir.getPath + "/static/candleHolderSmal.png"), true)
-        Files.copyFile(Play.getFile("public/3dAssets/candleHolder.obj"), new File(Constants.uploadDir.getPath + "/static/candleHolder.obj"), true)
-
-        val dbModel = new models.Model(id = Some(1), name = "Exempel", userID = "System", date = new DateTime(1970, 1, 1, 0, 0, 0), 
-            material = "Keramaik", location = "Lund", text = "Ett exempel på hur ett föremål kan se ut.", 
-            pathObject = Some("static/candleHolder.obj"), pathTexure = Some("static/candleHolderSmal.jpg"), pathThumbnail = Some("static//candleHolderSmal.png"))
-        Logger.info(s"model: $dbModel")
-        DB.withSession { implicit session =>
-          val modelID = Models.insert(dbModel)
-          Logger.info(s"Modellinfo: $modelID")
-          val tags = List(Tag(None, "Keramik"), Tag(None, "Ljusstake"))
-          tags.foreach(tag => {
-            Logger.info(s"tag: $tag")
-
-            DB.withSession { implicit session =>
-              val tagID = Tags.insert(tag)
-              TagModels.insert(TagModel(tagID, modelID))
-            }
-          }) 
         }
       }
     }

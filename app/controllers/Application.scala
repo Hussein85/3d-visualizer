@@ -37,7 +37,7 @@ class Application(override implicit val env: RuntimeEnvironment[User])
     Ok(
       Routes.javascriptRouter("jsRoutes")(
         routes.javascript.Application.language,
-        routes.javascript.Model.allTags)).as("text/javascript")
+        routes.javascript.ModelController.allTags)).as("text/javascript")
   }
 
   def getUploadedFile(file: String) = SecuredAction(Normal) {

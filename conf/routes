@@ -5,18 +5,22 @@
 # Home page
 GET    /                             @controllers.Application.index
 # Rewrite to CRUD
-GET    /tags                         @controllers.Model.tags(query: String)
+GET    /tags                         @controllers.ModelController.tags(query: String)
 GET    /tags/model/:modelId          @controllers.TagController.tag(modelId: Int)
 POST   /language                     @controllers.Application.language
 
 # Model
-GET    /model                        @controllers.Model.all
-POST   /model                        @controllers.Model.upload
-GET    /model/:id                    @controllers.Model.get(id: Int)
-GET    /model/alltags                @controllers.Model.allTags
+GET    /model                        @controllers.ModelController.all
+POST   /model                        @controllers.ModelController.upload
+GET    /model/:id                    @controllers.ModelController.get(id: Int)
+GET    /model/alltags                @controllers.ModelController.allTags
+
+# Files
+#Add files endpoint
 
 # Users
 GET    /user                         @controllers.Admin.users
+GET    /user/logedIn                 @controllers.UserController.loggedIn
 PUT    /user/:email                  @controllers.Admin.updateUser(email)
 
 # Organizations
@@ -33,7 +37,7 @@ GET    /swagger                      controllers.Default.redirect(to="assets/swa
 
 # Map static resources from the /public folder to the /assets URL path
 GET    /assets/*file                 controllers.Assets.at(path="/public", file)
-GET    /securedassets/*file                 @controllers.Application.securedAsset(file)
+GET    /securedassets/*file          @controllers.Application.securedAsset(file)
 
 # Map static resources from the /upload folder to the /uploads URL path
 GET    /uploads/*file                @controllers.Application.getUploadedFile(file)

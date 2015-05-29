@@ -10,7 +10,8 @@ import java.sql.Date
 import org.joda.time.DateTime
 import com.github.tototoshi.slick.PostgresJodaSupport._
 
-case class Model(id: Option[Int], name: String, userID: String, date: DateTime, material: String, location: String, text: String, pathObject: Option[String], pathTexure: Option[String], pathThumbnail: Option[String])
+case class Model(id: Option[Int], name: String, userID: String, date: DateTime, 
+    material: String, location: String, text: String, timestamp: DateTime)
 
 object Model {
 
@@ -24,9 +25,7 @@ object Model {
     (JsPath \ "material").write[String] and
     (JsPath \ "location").write[String] and
     (JsPath \ "text").write[String] and
-    (JsPath \ "f1").write[Option[String]] and
-    (JsPath \ "f2").write[Option[String]] and
-    (JsPath \ "f3").write[Option[String]])(unlift(models.Model.unapply))
+    (JsPath \ "timeStamp").writeNullable[DateTime].contramap((_: DateTime) => None))(unlift(models.Model.unapply))
     
 }
 
@@ -38,10 +37,8 @@ class Models(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[Model](t
   def material = column[String]("MATERIAL")
   def location = column[String]("LOCATION")
   def text = column[String]("TEXT", O.DBType("TEXT"))
-  def pathObject = column[Option[String]]("PATH_OBJECT")
-  def pathTexure = column[Option[String]]("PATH_TEXTURE")
-  def pathThumbnail = column[Option[String]]("PATH_THUMBNAIL")
-  def * = (id.?, name, userID, date, material, location, text, pathObject, pathTexure, pathThumbnail) <>
+  def timestamp = column[DateTime]("TIMESTAMP")
+  def * = (id.?, name, userID, date, material, location, text, timestamp) <>
     ((Model.apply _).tupled, Model.unapply _)
 }
 
@@ -61,8 +58,5 @@ object Models {
     models.filter(_.id === id).firstOption
   }
 
-  def get(pathObject: String)(implicit s: Session): Option[Model] = {
-    models.filter(_.pathObject === pathObject).firstOption
-  }
 
 }

@@ -27,7 +27,7 @@ import fly.play.aws._
 
 case class FormModel(name: String, material: String, location: String, text: String, year: Int, tags: List[Tag])
 
-object Model {
+object ModelController {
 
   val fourDigitYearConstraint: Constraint[Int] = Constraint("constraints.4digityear") {
     case i if i > DateTime.now.year.get => Invalid("error.inFuture")
@@ -51,7 +51,7 @@ object Model {
 
 }
 
-class Model(override implicit val env: RuntimeEnvironment[User])
+class ModelController(override implicit val env: RuntimeEnvironment[User])
   extends securesocial.core.SecureSocial[User] {
 
   val formObject = "object-file"
@@ -78,13 +78,14 @@ class Model(override implicit val env: RuntimeEnvironment[User])
   def s3Model(model: models.Model) = {
     val bucket = S3("museum-dev")
     model.copy(
-      pathObject = Some(bucket.url(model.pathObject.get, 60)),
-      pathTexure = Some(bucket.url(model.pathTexure.get, 60)),
-      pathThumbnail = Some(bucket.url(model.pathThumbnail.get, 60)))
+//      pathObject = Some(bucket.url(model.pathObject.get, 60)),
+//      pathTexure = Some(bucket.url(model.pathTexure.get, 60)),
+//      pathThumbnail = Some(bucket.url(model.pathThumbnail.get, 60))
+        )
   }
 
   def upload = SecuredAction(Contributer)(parse.json) { implicit request =>
-    Model.modelForm.bindFromRequest.fold(
+    ModelController.modelForm.bindFromRequest.fold(
       formWithErrors => {
         BadRequest(formWithErrors.errorsAsJson)
       },
@@ -100,10 +101,7 @@ class Model(override implicit val env: RuntimeEnvironment[User])
         val urlTexture = bucket.putUrl(pathTexure, expiryTime)
         val urlThumbnail = bucket.putUrl(pathThumbnail, expiryTime)
         val dbModel = new models.Model(id = None, name = m.name, userID = userId, date = new DateTime(m.year, 1, 1, 0, 0, 0),
-          material = m.material, location = m.location, text = m.text,
-          pathObject = Some(pathObject),
-          pathTexure = Some(pathTexure),
-          pathThumbnail = Some(pathThumbnail))
+          material = m.material, location = m.location, text = m.text, timestamp = new DateTime)
         Logger.info(s"model: $dbModel")
         val modelID = DB.withSession { implicit session => Models.insert(dbModel) };
         Logger.info(s"Modellinfo: $modelID")
