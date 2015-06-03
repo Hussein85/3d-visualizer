@@ -16,7 +16,7 @@ GET    /model/:id                    @controllers.ModelController.get(id: Int)
 GET    /model/alltags                @controllers.ModelController.allTags
 
 # Files
-#Add files endpoint
+# Add files endpoint
 
 # Users
 GET    /user                         @controllers.Admin.users
