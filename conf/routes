@@ -16,7 +16,10 @@ GET    /model/:id                    @controllers.ModelController.get(id: Int)
 GET    /model/alltags                @controllers.ModelController.allTags
 
 # Files
-# Add files endpoint
+GET    /file/:id                     @controllers.FileController.get(id: String)
+POST   /file                         @controllers.FileController.post
+GET    /file/model/:modelId          @controllers.FileController.getModelFiles(modelId: Int)
+PUT    /file/acc/:id                 @controllers.FileController.acc(id: String)
 
 # Users
 GET    /user                         @controllers.Admin.users

@@ -45,25 +45,40 @@ app.controller('ViewerController', [
                 function (result) {
                     _this.model = result.data;
 
+
+                    $http.get('/file/model/' + _this.model.id).then(function (result) {
+                        var objectPredicate = function (file) {
+                            return file.type === 'object';
+                        };
+
+                        var texturePredicate = function (file) {
+                            return file.type === 'texture';
+                        };
+
+                        _this.model.object = result.data.filter(objectPredicate)[0].getUrl;
+                        _this.model.texture = result.data.filter(texturePredicate)[0].getUrl;
+
+                        var viewer = new Viewer("#canvas-place-holder",
+                            _this.model.object, _this.model.texture);
+                        viewer.initCanvas();
+
+                        $("#reset-view").click(function () {
+                            viewer.resetView();
+                        });
+
+                        $("#toogle-bounding-box").click(function () {
+                            viewer.toogleBoundingBox();
+                        });
+
+                        $("#toogle-pan-Y").click(function () {
+                            viewer.tooglePanY();
+                        });
+                    });
+
                     $http.get('/tags/model/' + _this.model.id).then(function (result) {
                         _this.tags = result.data;
                     });
 
-                    var viewer = new Viewer("#canvas-place-holder",
-                        _this.model.f1, _this.model.f2);
-                    viewer.initCanvas();
-
-                    $("#reset-view").click(function () {
-                        viewer.resetView();
-                    });
-
-                    $("#toogle-bounding-box").click(function () {
-                        viewer.toogleBoundingBox();
-                    });
-
-                    $("#toogle-pan-Y").click(function () {
-                        viewer.tooglePanY();
-                    });
 
                     tinyMCE.remove();
 
@@ -88,7 +103,6 @@ app.controller('ViewerController', [
                         }
 
                     });
-                    console.log(tiny);
                 });
 
         };
@@ -120,8 +134,19 @@ app.controller('BrowserAppController', ['$scope', '$resource', '$http',
         _this.tags = [];
 
         _this.init = function () {
+            var assignModelAndGetFiles = function (model) {
+                _this.models[model.id] = model;
+                $http.get('/file/model/' + model.id).then(function (result) {
+                    var thumbnailPredicate = function (file) {
+                        return file.type === 'thumbnail';
+                    };
+
+                    _this.models[model.id].thumbnail = result.data.filter(thumbnailPredicate)[0].getUrl;
+                });
+            };
+
             $http.get('/model').then(function (result) {
-                _this.models = result.data;
+                result.data.forEach(assignModelAndGetFiles);
             });
         };
 
@@ -208,9 +233,9 @@ app.controller('ModelAddController', [
 
             $http.post('/model', _this.model).success(
                 function (data, status, headers, config) {
-                    _this.uploadFile(document.getElementById('object-file').files[0], data.urlObject);
-                    _this.uploadFile(document.getElementById('texture-file').files[0], data.urlTexture);
-                    _this.uploadFile(document.getElementById('thumbnail-file').files[0], data.urlThumbnail);
+                    _this.uploadFile(document.getElementById('object-file').files[0], data.id, 'object');
+                    _this.uploadFile(document.getElementById('texture-file').files[0], data.id, 'texture');
+                    _this.uploadFile(document.getElementById('thumbnail-file').files[0], data.id, 'thumbnail');
                     _this.addAlert({
                         msg: data,
                         type: 'success'
@@ -224,17 +249,31 @@ app.controller('ModelAddController', [
             ;
         }
 
-        _this.uploadFile = function (file, url) {
-            $http.put(url, file.slice()).success(
-                function (data, status, headers, config) {
-                    console.log("data" + data, "status" + status, "headers"
-                        + headers, "config" + config);
+        _this.uploadFile = function (file, modelId, type) {
+
+            var sendToS3 = function (model) {
+                $http.put(model.putUrl, file.slice()).success(
+                    function (data, status, headers, config) {
+                        console.log("Uploaded to s3: " + model.id)
+                    }).error(function (data, status, headers, config) {
+                        console.log("data" + data, "status" + status, "headers"
+                            + headers, "config" + config);
+                    });
+            };
+
+            var filePost = {
+                modelId: modelId,
+                type: type
+            };
+
+
+            $http.post("/file", filePost).success(
+                function (model, status, headers, config) {
+                    sendToS3(model);
                 }).error(function (data, status, headers, config) {
                     console.log("data" + data, "status" + status, "headers"
                         + headers, "config" + config);
                 });
-
-
         }
 
         _this.addAlert = function (alert) {

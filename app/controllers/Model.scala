@@ -60,8 +60,7 @@ class ModelController(override implicit val env: RuntimeEnvironment[User])
 
   def all = SecuredAction(Normal) { implicit request =>
     val models = DB.withSession { implicit session => Models.all }
-  
-    Ok(Json.toJson(models map s3Model))
+    Ok(Json.toJson(models))
   }
 
   def get(id: Int) = SecuredAction(Normal) { implicit request =>
@@ -69,19 +68,10 @@ class ModelController(override implicit val env: RuntimeEnvironment[User])
       Models.get(id) match {
         case None => NotFound("The requested model is either not in the db or you lack access to it.")
         case Some(model) => {
-          Ok(Json.toJson(s3Model(model)))
+          Ok(Json.toJson(model))
         }
       }
     }
-  }
-
-  def s3Model(model: models.Model) = {
-    val bucket = S3("museum-dev")
-    model.copy(
-//      pathObject = Some(bucket.url(model.pathObject.get, 60)),
-//      pathTexure = Some(bucket.url(model.pathTexure.get, 60)),
-//      pathThumbnail = Some(bucket.url(model.pathThumbnail.get, 60))
-        )
   }
 
   def upload = SecuredAction(Contributer)(parse.json) { implicit request =>
@@ -91,15 +81,7 @@ class ModelController(override implicit val env: RuntimeEnvironment[User])
       },
       m => {
         val userId: String = request.user.userId
-        val expiryTime = 3600
-        val bucket = S3("museum-dev")
-        val pathObject = java.util.UUID.randomUUID.toString
-        val pathTexure = java.util.UUID.randomUUID.toString
-        val pathThumbnail = java.util.UUID.randomUUID.toString
         val queryString = Map.empty[String, Seq[String]]
-        val urlObject = bucket.putUrl(pathObject, expiryTime)
-        val urlTexture = bucket.putUrl(pathTexure, expiryTime)
-        val urlThumbnail = bucket.putUrl(pathThumbnail, expiryTime)
         val dbModel = new models.Model(id = None, name = m.name, userID = userId, date = new DateTime(m.year, 1, 1, 0, 0, 0),
           material = m.material, location = m.location, text = m.text, timestamp = new DateTime)
         Logger.info(s"model: $dbModel")
@@ -111,11 +93,7 @@ class ModelController(override implicit val env: RuntimeEnvironment[User])
           DB.withSession { implicit session => TagModels.insert(TagModel(tagID, modelID)) }
         })
 
-        val json: JsValue = Json.obj(
-          "id" -> modelID,
-          "urlObject" -> urlObject,
-          "urlTexture" -> urlTexture,
-          "urlThumbnail" -> urlThumbnail)
+        val json: JsValue = Json.obj("id" -> modelID)
 
         Ok(Json.toJson(json))
       })
