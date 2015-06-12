@@ -48,11 +48,11 @@ app.controller('ViewerController', [
 
                     $http.get('/file/model/' + _this.model.id).then(function (result) {
                         var objectPredicate = function (file) {
-                            return file.type === 'object';
+                            return file.type === 'object' && file.finished;
                         };
 
                         var texturePredicate = function (file) {
-                            return file.type === 'texture';
+                            return file.type === 'texture' && file.finished;
                         };
 
                         _this.model.object = result.data.filter(objectPredicate)[0].getUrl;
@@ -138,7 +138,7 @@ app.controller('BrowserAppController', ['$scope', '$resource', '$http',
                 _this.models[model.id] = model;
                 $http.get('/file/model/' + model.id).then(function (result) {
                     var thumbnailPredicate = function (file) {
-                        return file.type === 'thumbnail';
+                        return file.type === 'thumbnail' && file.finished;
                     };
 
                     _this.models[model.id].thumbnail = result.data.filter(thumbnailPredicate)[0].getUrl;
@@ -254,7 +254,7 @@ app.controller('ModelAddController', [
             var sendToS3 = function (model) {
                 $http.put(model.putUrl, file.slice()).success(
                     function (data, status, headers, config) {
-                        console.log("Uploaded to s3: " + model.id)
+                        $http.put('/file/acc/' + model.id, {});
                     }).error(function (data, status, headers, config) {
                         console.log("data" + data, "status" + status, "headers"
                             + headers, "config" + config);

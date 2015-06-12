@@ -47,7 +47,6 @@ Viewer.prototype.initCanvas = function () {
 
     var renderer;
 
-    var cross;
     var size = {
         width: $(that.id).width(),
         height: 400
