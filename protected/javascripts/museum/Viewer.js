@@ -63,7 +63,7 @@ Viewer.prototype.initCanvas = function () {
         // You can set the color of the ambient light to any value.
         // I have chose a completely white light because I want to paint
         // all the shading into my texture. You propably want something darker.
-        var ambient = new THREE.AmbientLight(0xffffff);
+        var ambient = new THREE.AmbientLight(0xBBBBBB);
         // lights
         that.scene.add(ambient);
 
@@ -72,21 +72,25 @@ Viewer.prototype.initCanvas = function () {
         manager.onProgress = function (item, loaded, total) {
             console.log(item, loaded, total);
         };
-        var texture = new THREE.Texture();
+        var texture = undefined;
         var loader = new THREE.ImageLoader(manager);
         loader.crossOrigin = '';
 
-        // You can set the texture properties in this function.
-        // The string has to be the path to your texture file.
-        loader.load(that.texturePath, function (image) {
-            texture.image = image;
-            texture.needsUpdate = true;
-            // I wanted a nearest neighbour filtering for my low-poly character,
-            // so that every pixel is crips and sharp. You can delete this lines
-            // if have a larger texture and want a smooth linear filter.
-            texture.magFilter = THREE.NearestFilter;
-            texture.minFilter = THREE.NearestMipMapLinearFilter;
-        });
+
+        if (that.texturePath !== undefined) {
+            texture = new THREE.Texture();
+            // You can set the texture properties in this function.
+            // The string has to be the path to your texture file.
+            loader.load(that.texturePath, function (image) {
+                texture.image = image;
+                texture.needsUpdate = true;
+                // I wanted a nearest neighbour filtering for my low-poly character,
+                // so that every pixel is crips and sharp. You can delete this lines
+                // if have a larger texture and want a smooth linear filter.
+                texture.magFilter = THREE.NearestFilter;
+                texture.minFilter = THREE.NearestMipMapLinearFilter;
+            });
+        }
 
         /** * OBJ Loading ** */
         var loader = new THREE.OBJLoader(manager);
@@ -99,7 +103,10 @@ Viewer.prototype.initCanvas = function () {
                 if (child instanceof THREE.Mesh) {
                     that.object = child;
                     that.object.name = that.modelPath;
-                    child.material.map = texture;
+                    if (texture !== undefined) {
+                        child.material.map = texture;
+                    }
+                    child.material.color.setHex(0xffff00);
                     child.geometry.computeBoundingBox();
                     child.position.set(0, 0, 0);
                     var scaleFactor = 200 / child.geometry.boundingBox.max.y;

@@ -56,7 +56,10 @@ app.controller('ViewerController', [
                         };
 
                         _this.model.object = result.data.filter(objectPredicate)[0].getUrl;
-                        _this.model.texture = result.data.filter(texturePredicate)[0].getUrl;
+
+                        if (result.data.filter(texturePredicate).length > 0) {
+                            _this.model.texture = result.data.filter(texturePredicate)[0].getUrl;
+                        }
 
                         var viewer = new Viewer("#canvas-place-holder",
                             _this.model.object, _this.model.texture);
