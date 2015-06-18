@@ -102,8 +102,7 @@
                         <span class="fileinput-exists" translate>form.model.file.change</span>
                         <input type="file"
                                name="texture-file"
-                               id="texture-file"
-                               required>
+                               id="texture-file">
                     </span>
                     </div>
                 </div>
@@ -142,7 +141,7 @@
                         type="submit"
                         id="submit"
                         class="btn btn-success form-control"
-                        ng-disabled="!ctrl.valid(form.$valid)"
+                        ng-disabled="!ctrl.valid(form.$valid) || ctrl.uploading()"
                         translate>form.model.upload
                 </button>
             </div>

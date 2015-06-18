@@ -18,7 +18,7 @@ app.config(['$routeProvider', '$translateProvider',
             templateUrl: '/securedassets/partials/admin/admin.html',
             reloadOnSearch: false
         }).otherwise({
-            redirectTo: '/model/1'
+            redirectTo: '/browser'
         });
 
         $translateProvider.useStaticFilesLoader({
@@ -167,12 +167,13 @@ app.controller('ModelAddController', [
     '$scope',
     '$resource',
     '$http',
-    '$translate',
-    function ($scope, $resource, $http, $translate) {
+    '$location',
+    function ($scope, $resource, $http, $location) {
         _this = this;
 
         _this.model = {};
         _this.alerts = [];
+        _this.filesUploading = 0;
 
         _this.init = function () {
 
@@ -208,6 +209,10 @@ app.controller('ModelAddController', [
                 $scope.$apply();
             });
 
+        };
+
+        _this.uploading = function () {
+            return _this.filesUploading > 0;
         }
 
         _this.loadTags = function ($query) {
@@ -217,7 +222,6 @@ app.controller('ModelAddController', [
         _this.valid = function (valid) {
             if (valid &&
                 document.getElementById('object-file').files.length > 0 &&
-                document.getElementById('texture-file').files.length > 0 &&
                 document.getElementById('thumbnail-file').files.length > 0
             ) {
                 return true;
@@ -235,14 +239,12 @@ app.controller('ModelAddController', [
                 .replace(new RegExp('\r?\n', 'g'), ''));
 
             $http.post('/model', _this.model).success(
-                function (data, status, headers, config) {
-                    _this.uploadFile(document.getElementById('object-file').files[0], data.id, 'object');
-                    _this.uploadFile(document.getElementById('texture-file').files[0], data.id, 'texture');
-                    _this.uploadFile(document.getElementById('thumbnail-file').files[0], data.id, 'thumbnail');
-                    _this.addAlert({
-                        msg: data,
-                        type: 'success'
-                    });
+                function (model, status, headers, config) {
+                    _this.uploadFile(document.getElementById('object-file').files[0], model.id, 'object');
+                    if (document.getElementById('texture-file').files.length > 0) {
+                        _this.uploadFile(document.getElementById('texture-file').files[0], model.id, 'texture');
+                    }
+                    _this.uploadFile(document.getElementById('thumbnail-file').files[0], model.id, 'thumbnail');
                 }).error(function (data, status, headers, config) {
                     _this.addAlert({
                         msg: data,
@@ -254,11 +256,31 @@ app.controller('ModelAddController', [
 
         _this.uploadFile = function (file, modelId, type) {
 
-            var sendToS3 = function (model) {
-                $http.put(model.putUrl, file.slice()).success(
-                    function (data, status, headers, config) {
-                        $http.put('/file/acc/' + model.id, {});
-                    }).error(function (data, status, headers, config) {
+            _this.filesUploading++;
+
+            var sendToS3 = function (data) {
+                $http.put(data.putUrl, file.slice())
+                    .success(function () {
+                        acc(data);
+                    })
+                    .error(function (data, status, headers, config) {
+                        console.log("data" + data, "status" + status, "headers"
+                            + headers, "config" + config);
+                    });
+            };
+
+            var acc = function (data) {
+                $http.put('/file/acc/' + data.id, {})
+                    .success(function () {
+                        var markCompleteAndCheckIfShouldRedirect = function () {
+                            _this.filesUploading--;
+                            if (!_this.uploading()) {
+                                $location.url('/model/' + data.modelId);
+                            }
+                        }
+                        setTimeout(markCompleteAndCheckIfShouldRedirect(), 100);
+                    })
+                    .error(function (data, status, headers, config) {
                         console.log("data" + data, "status" + status, "headers"
                             + headers, "config" + config);
                     });
