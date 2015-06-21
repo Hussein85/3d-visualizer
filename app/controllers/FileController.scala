@@ -30,7 +30,7 @@ import play.api.libs.json.Json.JsValueWrapper
 class FileController(override implicit val env: RuntimeEnvironment[User])
   extends securesocial.core.SecureSocial[User] {
 
-  val bucket = S3("museum-dev")
+  val bucket = S3("cagebucket")
   val expiryTime = 60
 
   def fileWrites[T](implicit request: SecuredRequest[T]) = new Writes[File] {
