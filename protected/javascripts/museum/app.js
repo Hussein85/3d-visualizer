@@ -133,8 +133,8 @@ app.controller('BrowserAppController', ['$scope', '$resource', '$http',
 
         // TODO: Similar code as viewer break out some to service
 
-        _this.models = [];
-        _this.tags = [];
+        _this.models = {};
+        _this.tags = {};
 
         _this.init = function () {
             var assignModelAndGetFiles = function (model) {
