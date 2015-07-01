@@ -13,7 +13,8 @@
       "CONTROLLS": {
         "RESET": "Återställ vyn",
         "TOGGLE_Y_PANNING": "Skifta Y panorering",
-        "TOOGLE_BOUNDING_BOX": "Skifta bounding box"
+        "TOOGLE_BOUNDING_BOX": "Skifta bounding box",
+        "TOGGLE_TEXTURE": "Skifta textur"
       }
     },
     "INFORMATION": {

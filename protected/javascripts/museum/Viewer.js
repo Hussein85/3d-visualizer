@@ -10,11 +10,18 @@ function Viewer(id, modelPath, texturePath) {
     this.bb;
     this.object;
     this.controls;
+    this.ambientLight;
+    this.dirLight;
+    this.texture;
+    this.materialWithTexture;
+    this.materialWithOutTexture;
+    this.textureOn = false;
 }
 
 Viewer.prototype.resetView = function () {
     this.toogleBoundingBox(false);
     this.tooglePanY(false);
+    this.toogleTexture(true);
     this.controls.reset();
     this.scene.position.setY(-this.bb.box.max.y / 2);
     this.scene.updateMatrix();
@@ -29,6 +36,35 @@ Viewer.prototype.tooglePanY = function (forceState) {
     }
 }
 
+Viewer.prototype.toogleTexture = function (forceState) {
+    if (forceState == false || (this.textureOn && forceState === undefined)) {
+        this.object.material.map = this.materialWithOutTexture;
+        this.scene.remove(this.ambientLight);
+        this.scene.remove(this.dirLight);
+        this.ambientLight = new THREE.AmbientLight(0x555555);
+        this.dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        this.dirLight.castShadow = true;
+        this.scene.add(this.ambientLight);
+        this.scene.add(this.dirLight);
+        this.object.material.needsUpdate = true;
+        this.textureOn = false;
+        this.lightUpdate(this);
+    } else if (this.texture !== undefined && this.texture !== null) {
+        this.object.material.map = this.materialWithTexture;
+        this.scene.remove(this.dirLight);
+        this.scene.remove(this.ambientLight);
+        this.ambientLight = new THREE.AmbientLight(0xeeeeee);
+        this.dirLight = new THREE.DirectionalLight(0xffffff, 0.1);
+        this.dirLight.castShadow = true;
+        this.scene.add(this.ambientLight);
+        this.scene.add(this.dirLight);
+        this.object.material.map.needsUpdate = true;
+        this.object.material.needsUpdate = true;
+        this.textureOn = true;
+        this.lightUpdate(this);
+    }
+}
+
 Viewer.prototype.toogleBoundingBox = function (forceState) {
     if (forceState == false || this.boundingBoxEnabled) {
         this.scene.remove(this.bb);
@@ -36,6 +72,13 @@ Viewer.prototype.toogleBoundingBox = function (forceState) {
     } else {
         this.scene.add(this.bb);
         this.boundingBoxEnabled = true;
+    }
+}
+
+Viewer.prototype.lightUpdate = function (that) {
+    if (that.dirLight !== undefined && that.dirLight !== null
+        && that.camera.position !== undefined && that.camera.position !== null) {
+        that.dirLight.position.copy(that.camera.position);
     }
 }
 
@@ -60,36 +103,36 @@ Viewer.prototype.initCanvas = function () {
         // world
         that.scene = new THREE.Scene();
 
-        // You can set the color of the ambient light to any value.
-        // I have chose a completely white light because I want to paint
-        // all the shading into my texture. You propably want something darker.
-        var ambient = new THREE.AmbientLight(0xBBBBBB);
-        // lights
-        that.scene.add(ambient);
+        that.camera = new THREE.PerspectiveCamera(45, size.width / size.height,
+            0.1, 1000);
 
         /** * Texture Loading ** */
         var manager = new THREE.LoadingManager();
         manager.onProgress = function (item, loaded, total) {
             console.log(item, loaded, total);
         };
-        var texture = undefined;
+        that.texture = undefined;
         var loader = new THREE.ImageLoader(manager);
         loader.crossOrigin = '';
 
-
         if (that.texturePath !== undefined) {
-            texture = new THREE.Texture();
+            that.ambientLight = new THREE.AmbientLight(0xffffff);
+            that.dirLight = new THREE.DirectionalLight(0xeeeeee, 0.1);
+            that.texture = new THREE.Texture();
             // You can set the texture properties in this function.
             // The string has to be the path to your texture file.
             loader.load(that.texturePath, function (image) {
-                texture.image = image;
-                texture.needsUpdate = true;
+                that.texture.image = image;
+                that.texture.needsUpdate = true;
                 // I wanted a nearest neighbour filtering for my low-poly character,
                 // so that every pixel is crips and sharp. You can delete this lines
                 // if have a larger texture and want a smooth linear filter.
-                texture.magFilter = THREE.NearestFilter;
-                texture.minFilter = THREE.NearestMipMapLinearFilter;
+                that.texture.magFilter = THREE.NearestFilter;
+                that.texture.minFilter = THREE.NearestMipMapLinearFilter;
             });
+        } else {
+            that.ambientLight = new THREE.AmbientLight(0x555555);
+            that.dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
         }
 
         /** * OBJ Loading ** */
@@ -103,10 +146,14 @@ Viewer.prototype.initCanvas = function () {
                 if (child instanceof THREE.Mesh) {
                     that.object = child;
                     that.object.name = that.modelPath;
-                    if (texture !== undefined) {
-                        child.material.map = texture;
+                    that.object.castShadow = true;
+                    child.material.color.setHex(0xffffff);
+                    that.materialWithOutTexture = child.material.map;
+                    if (that.texture !== undefined) {
+                        child.material.map = that.texture;
+                        that.materialWithTexture = child.material.map;
+                        that.textureOn = true;
                     }
-                    child.material.color.setHex(0xffff00);
                     child.geometry.computeBoundingBox();
                     child.position.set(0, 0, 0);
                     var scaleFactor = 200 / child.geometry.boundingBox.max.y;
@@ -134,11 +181,13 @@ Viewer.prototype.initCanvas = function () {
 
         $(that.id).append(renderer.domElement);
 
-        that.camera = new THREE.PerspectiveCamera(45, size.width / size.height,
-            0.1, 1000);
+        that.dirLight.castShadow = true;
+        // lights
+        that.scene.add(that.ambientLight);
+        that.scene.add(that.dirLight);
+
 
         that.controls = new THREE.TrackballControls(that.camera, renderer.domElement);
-
         that.controls.rotateSpeed = 1.0;
         that.controls.zoomSpeed = 1.2;
         that.controls.panSpeed = 0.8;
@@ -150,6 +199,8 @@ Viewer.prototype.initCanvas = function () {
         that.controls.dynamicDampingFactor = 0.3;
 
         that.controls.keys = [65, 83, 68];
+
+        that.controls.addEventListener('change', function(){that.lightUpdate(that)});
 
         that.controls.addEventListener('change', render);
 
@@ -188,7 +239,6 @@ Viewer.prototype.initCanvas = function () {
     }
 
     function render() {
-
         renderer.render(that.scene, that.camera);
     }
 }

@@ -76,6 +76,10 @@ app.controller('ViewerController', [
                         $("#toogle-pan-Y").click(function () {
                             viewer.tooglePanY();
                         });
+
+                        $("#toogle-texture").click(function () {
+                            viewer.toogleTexture();
+                        });
                     });
 
                     $http.get('/tags/model/' + _this.model.id).then(function (result) {
