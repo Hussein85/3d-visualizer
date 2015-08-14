@@ -332,41 +332,9 @@ app.controller('ModelPublishController', [
             $scope.models = data;
         });
 
-        _this.init = function () {
-
-            tinyMCE.remove();
-
-            tinymce.init({
-                selector: "#text",
-                statusbar: true,
-                force_p_newlines: false,
-                force_br_newlines: true,
-                convert_newlines_to_brs: false,
-                remove_linebreaks: true,
-                language: museumCookie["languageCode"] === "en" ? "en" : "sv_SE",
-                height: "300px",
-                entity_encoding: "raw",
-                setup: function (editor) {
-                    editor.on('init', function () {
-                        tinymce.editors[0].setContent($('<textarea />').html(
-                            '').text());
-                    });
-                }
-            });
-
-            $("#object-file").on('change', function () {
-                $scope.$apply();
-            });
-
-            $("#texture-file").on('change', function () {
-                $scope.$apply();
-            });
-
-            $("#thumbnail-file").on('change', function () {
-                $scope.$apply();
-            });
-
-        };
+        _this.selectModel = function (model) {
+            _this.model = model;
+        }
 
         _this.uploading = function () {
             return _this.filesUploading > 0;
@@ -378,7 +346,7 @@ app.controller('ModelPublishController', [
 
         _this.valid = function (valid) {
             if (valid &&
-                document.getElementById('object-file').files.length > 0 &&
+                document.getElementById('web-object-file').files.length > 0 &&
                 document.getElementById('thumbnail-file').files.length > 0
             ) {
                 return true;
