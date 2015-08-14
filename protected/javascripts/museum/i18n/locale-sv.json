@@ -42,6 +42,7 @@
     "model": {
       "file": {
         "object": "Objektfilen",
+        "webObject": "Objektfilen (optimerad för webben)",
         "select": "Välj fil",
         "change": "Ändra",
         "texture": "Texturfilen",

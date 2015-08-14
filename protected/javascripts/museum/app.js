@@ -315,6 +315,159 @@ app.controller('ModelAddController', [
 
     }]);
 
+app.controller('ModelPublishController', [
+    '$scope',
+    '$resource',
+    '$http',
+    '$location',
+    function ($scope, $resource, $http, $location) {
+        _this = this;
+
+        _this.model = {};
+        _this.models = [];
+        _this.alerts = [];
+        _this.filesUploading = 0;
+
+        $http.get('/model').success(function (data) {
+            $scope.models = data;
+        });
+
+        _this.init = function () {
+
+            tinyMCE.remove();
+
+            tinymce.init({
+                selector: "#text",
+                statusbar: true,
+                force_p_newlines: false,
+                force_br_newlines: true,
+                convert_newlines_to_brs: false,
+                remove_linebreaks: true,
+                language: museumCookie["languageCode"] === "en" ? "en" : "sv_SE",
+                height: "300px",
+                entity_encoding: "raw",
+                setup: function (editor) {
+                    editor.on('init', function () {
+                        tinymce.editors[0].setContent($('<textarea />').html(
+                            '').text());
+                    });
+                }
+            });
+
+            $("#object-file").on('change', function () {
+                $scope.$apply();
+            });
+
+            $("#texture-file").on('change', function () {
+                $scope.$apply();
+            });
+
+            $("#thumbnail-file").on('change', function () {
+                $scope.$apply();
+            });
+
+        };
+
+        _this.uploading = function () {
+            return _this.filesUploading > 0;
+        }
+
+        _this.loadTags = function ($query) {
+            return $http.get('/tags?query=' + $query);
+        };
+
+        _this.valid = function (valid) {
+            if (valid &&
+                document.getElementById('object-file').files.length > 0 &&
+                document.getElementById('thumbnail-file').files.length > 0
+            ) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        _this.submit = function () {
+            if (_this.model.tags.length === 0) {
+                delete _this.model.tags;
+            }
+
+            _this.model.text = tinymce.DOM.encode(tinymce.editors[0].getContent()
+                .replace(new RegExp('\r?\n', 'g'), ''));
+
+            $http.post('/model', _this.model).success(
+                function (model, status, headers, config) {
+                    _this.uploadFile(document.getElementById('object-file').files[0], model.id, 'object');
+                    if (document.getElementById('texture-file').files.length > 0) {
+                        _this.uploadFile(document.getElementById('texture-file').files[0], model.id, 'texture');
+                    }
+                    _this.uploadFile(document.getElementById('thumbnail-file').files[0], model.id, 'thumbnail');
+                }).error(function (data, status, headers, config) {
+                    _this.addAlert({
+                        msg: data,
+                        type: 'danger'
+                    });
+                });
+            ;
+        }
+
+        _this.uploadFile = function (file, modelId, type) {
+
+            _this.filesUploading++;
+
+            var sendToS3 = function (data) {
+                $http.put(data.putUrl, file.slice())
+                    .success(function () {
+                        acc(data);
+                    })
+                    .error(function (data, status, headers, config) {
+                        console.log("data" + data, "status" + status, "headers"
+                            + headers, "config" + config);
+                    });
+            };
+
+            var acc = function (data) {
+                $http.put('/file/acc/' + data.id, {})
+                    .success(function () {
+                        var markCompleteAndCheckIfShouldRedirect = function () {
+                            _this.filesUploading--;
+                            if (!_this.uploading()) {
+                                $location.url('/model/' + data.modelId);
+                            }
+                        }
+                        setTimeout(markCompleteAndCheckIfShouldRedirect(), 100);
+                    })
+                    .error(function (data, status, headers, config) {
+                        console.log("data" + data, "status" + status, "headers"
+                            + headers, "config" + config);
+                    });
+            };
+
+            var filePost = {
+                modelId: modelId,
+                type: type
+            };
+
+
+            $http.post("/file", filePost).success(
+                function (model, status, headers, config) {
+                    sendToS3(model);
+                }).error(function (data, status, headers, config) {
+                    console.log("data" + data, "status" + status, "headers"
+                        + headers, "config" + config);
+                });
+        }
+
+        _this.addAlert = function (alert) {
+            _this.alerts.push(alert);
+        };
+
+        _this.closeAlert = function (index) {
+            _this.alerts.splice(index, 1);
+        };
+
+    }]);
+
 app.factory('User', ['$resource', function ($resource) {
     return $resource('/user/:email', null, {
         'update': {
