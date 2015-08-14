@@ -38,6 +38,7 @@
   "form": {
     "email": "E-Postadress",
     "enter": "Ange",
+    "optional": "Valfrit",
     "model": {
       "file": {
         "object": "Objektfilen",

@@ -61,7 +61,7 @@
                        ng-show="form.year.$invalid && !form.year.$pristine"
                        translate="VALIDATION.REQUIRED"></p>
                 </div>
-                <label translate>form.model.tags.label</label>
+                <label>{{ 'form.model.tags.label' | translate }} ({{ 'form.optional' | translate }})</label>
                 <tags-input ng-model="ctrl.model.tags" id="model.add.tags"
                             placeholder="{{'form.model.tags.placeholder' | translate}}">
                     <auto-complete source="ctrl.loadTags($query)" min-length="1">
@@ -90,7 +90,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label translate>form.model.file.texture</label>
+                    <label>{{ 'form.model.file.texture' | translate }} ({{ 'form.optional' | translate }})</label>
 
                     <div class="fileinput fileinput-new input-group" data-provides="fileinput">
                         <div class="form-control" data-trigger="fileinput">
