@@ -1,9 +1,9 @@
 package controllers
 
 import play.api._
-import play.api.libs.json._ // JSON library
+import play.api.libs.json._
 import play.api.libs.json.Writes._
-import play.api.libs.functional.syntax._ // Combinator syntax
+import play.api.libs.functional.syntax._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
@@ -19,8 +19,7 @@ import models.TagModels
 import models.TagModel
 import scala.slick.driver.PostgresDriver.simple._
 import models.Tag
-import securesocial.museum.Normal
-import securesocial.museum.Contributer
+import securesocial.museum._
 import securesocial.core.RuntimeEnvironment
 import fly.play.s3._
 import fly.play.aws._
@@ -31,8 +30,8 @@ object ModelController {
 
   val fourDigitYearConstraint: Constraint[Int] = Constraint("constraints.4digityear") {
     case i if i > DateTime.now.year.get => Invalid("error.inFuture")
-    case i if i.toString.length == 4    => Valid
-    case _                              => Invalid("error.4digityear")
+    case i if i.toString.length == 4 => Valid
+    case _ => Invalid("error.4digityear")
   }
   val fourDigitYearCheck: Mapping[Int] = number.verifying(fourDigitYearConstraint)
 
@@ -54,12 +53,13 @@ object ModelController {
 class ModelController(override implicit val env: RuntimeEnvironment[User])
   extends securesocial.core.SecureSocial[User] {
 
-  val formObject = "object-file"
-  val textureObject = "texture-file"
-  val thumbnailObject = "thumbnail-file"
-
-  def all = SecuredAction(Normal) { implicit request =>
-    val models = DB.withSession { implicit session => Models.all }
+  def published = SecuredAction(Normal) { implicit request =>
+    val models = DB.withSession { implicit session => Models.published }
+    Ok(Json.toJson(models))
+  }
+  
+  def unpublished = SecuredAction(Admin) { implicit request =>
+    val models = DB.withSession { implicit session => Models.unpublished }
     Ok(Json.toJson(models))
   }
 
@@ -83,7 +83,7 @@ class ModelController(override implicit val env: RuntimeEnvironment[User])
         val userId: String = request.user.userId
         val queryString = Map.empty[String, Seq[String]]
         val dbModel = new models.Model(id = None, name = m.name, userID = userId, date = new DateTime(m.year, 1, 1, 0, 0, 0),
-          material = m.material, location = m.location, text = m.text, timestamp = new DateTime)
+          material = m.material, location = m.location, text = m.text, timestamp = new DateTime, published = false)
         Logger.info(s"model: $dbModel")
         val modelID = DB.withSession { implicit session => Models.insert(dbModel) };
         Logger.info(s"Modellinfo: $modelID")
@@ -93,8 +93,19 @@ class ModelController(override implicit val env: RuntimeEnvironment[User])
           DB.withSession { implicit session => TagModels.insert(TagModel(tagID, modelID)) }
         })
 
-        val json: JsValue = Json.obj("id" -> modelID)
+        import com.typesafe.plugin._
+        val mail = use[MailerPlugin].email
+        mail.setSubject("A new model has been uploaded.")
+        mail.setRecipient("palmqvist.thomas@gmail.com")
+        //or use a list
+        mail.setFrom("Museumarkiv <museumarkiv@gmail.com>")
 
+        mail.send {
+          val model = dbModel.copy(id = Some(modelID))
+          s"$model"
+        }
+
+        val json: JsValue = Json.obj("id" -> modelID)
         Ok(Json.toJson(json))
       })
   }

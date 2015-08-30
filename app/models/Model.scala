@@ -11,7 +11,7 @@ import org.joda.time.DateTime
 import com.github.tototoshi.slick.PostgresJodaSupport._
 
 case class Model(id: Option[Int], name: String, userID: String, date: DateTime, 
-    material: String, location: String, text: String, timestamp: DateTime)
+    material: String, location: String, text: String, timestamp: DateTime, published: Boolean)
 
 object Model {
 
@@ -25,7 +25,8 @@ object Model {
     (JsPath \ "material").write[String] and
     (JsPath \ "location").write[String] and
     (JsPath \ "text").write[String] and
-    (JsPath \ "timeStamp").writeNullable[DateTime].contramap((_: DateTime) => None))(unlift(models.Model.unapply))
+    (JsPath \ "timeStamp").writeNullable[DateTime].contramap((_: DateTime) => None) and
+    (JsPath \ "published").write[Boolean])(unlift(models.Model.unapply))
     
 }
 
@@ -38,7 +39,8 @@ class Models(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[Model](t
   def location = column[String]("LOCATION")
   def text = column[String]("TEXT", O.DBType("TEXT"))
   def timestamp = column[DateTime]("TIMESTAMP")
-  def * = (id.?, name, userID, date, material, location, text, timestamp) <>
+  def published = column[Boolean]("PUBLISHED")
+  def * = (id.?, name, userID, date, material, location, text, timestamp, published) <>
     ((Model.apply _).tupled, Model.unapply _)
 }
 
@@ -53,6 +55,15 @@ object Models {
   def all(implicit s: Session): List[Model] = {
     models.list
   }
+  
+  def published(implicit s: Session): List[Model] = {
+    models.filter(_.published === true).list
+  }
+  
+  def unpublished(implicit s: Session): List[Model] = {
+    models.filter(_.published === false).list
+  }
+
 
   def get(id: Int)(implicit s: Session): Option[Model] = {
     models.filter(_.id === id).firstOption

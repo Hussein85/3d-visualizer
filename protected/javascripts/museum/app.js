@@ -209,10 +209,6 @@ app.controller('ModelAddController', [
                 $scope.$apply();
             });
 
-            $("#thumbnail-file").on('change', function () {
-                $scope.$apply();
-            });
-
         };
 
         _this.uploading = function () {
@@ -224,10 +220,7 @@ app.controller('ModelAddController', [
         };
 
         _this.valid = function (valid) {
-            if (valid &&
-                document.getElementById('object-file').files.length > 0 &&
-                document.getElementById('thumbnail-file').files.length > 0
-            ) {
+            if (valid && document.getElementById('object-file').files.length > 0) {
                 return true;
             } else {
                 return false;
@@ -248,7 +241,6 @@ app.controller('ModelAddController', [
                     if (document.getElementById('texture-file').files.length > 0) {
                         _this.uploadFile(document.getElementById('texture-file').files[0], model.id, 'texture');
                     }
-                    _this.uploadFile(document.getElementById('thumbnail-file').files[0], model.id, 'thumbnail');
                 }).error(function (data, status, headers, config) {
                     _this.addAlert({
                         msg: data,
@@ -265,7 +257,7 @@ app.controller('ModelAddController', [
             var sendToS3 = function (data) {
                 $http.put(data.putUrl, file.slice())
                     .success(function () {
-                        acc(data);
+                        accFile(data);
                     })
                     .error(function (data, status, headers, config) {
                         console.log("data" + data, "status" + status, "headers"
@@ -273,12 +265,13 @@ app.controller('ModelAddController', [
                     });
             };
 
-            var acc = function (data) {
+            var accFile = function (data) {
                 $http.put('/file/acc/' + data.id, {})
                     .success(function () {
                         var markCompleteAndCheckIfShouldRedirect = function () {
                             _this.filesUploading--;
                             if (!_this.uploading()) {
+
                                 $location.url('/model/' + data.modelId);
                             }
                         }
@@ -328,8 +321,16 @@ app.controller('ModelPublishController', [
         _this.alerts = [];
         _this.filesUploading = 0;
 
-        $http.get('/model').success(function (data) {
+        $http.get('/model/unpublished').success(function (data) {
             $scope.models = data;
+        });
+
+        $("#web-object-file").on('change', function () {
+            $scope.$apply();
+        });
+
+        $("#thumbnail-file").on('change', function () {
+            $scope.$apply();
         });
 
         _this.selectModel = function (model) {
@@ -365,10 +366,7 @@ app.controller('ModelPublishController', [
 
             $http.post('/model', _this.model).success(
                 function (model, status, headers, config) {
-                    _this.uploadFile(document.getElementById('object-file').files[0], model.id, 'object');
-                    if (document.getElementById('texture-file').files.length > 0) {
-                        _this.uploadFile(document.getElementById('texture-file').files[0], model.id, 'texture');
-                    }
+                    _this.uploadFile(document.getElementById('web-object-file').files[0], model.id, 'webObject');
                     _this.uploadFile(document.getElementById('thumbnail-file').files[0], model.id, 'thumbnail');
                 }).error(function (data, status, headers, config) {
                     _this.addAlert({

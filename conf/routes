@@ -10,7 +10,8 @@ GET    /tags/model/:modelId          @controllers.TagController.tag(modelId: Int
 POST   /language                     @controllers.Application.language
 
 # Model
-GET    /model                        @controllers.ModelController.all
+GET    /model                        @controllers.ModelController.published
+GET    /model/unpublished            @controllers.ModelController.unpublished
 POST   /model                        @controllers.ModelController.upload
 GET    /model/:id                    @controllers.ModelController.get(id: Int)
 GET    /model/alltags                @controllers.ModelController.allTags
