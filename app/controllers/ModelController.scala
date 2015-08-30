@@ -53,9 +53,14 @@ object ModelController {
 class ModelController(override implicit val env: RuntimeEnvironment[User])
   extends securesocial.core.SecureSocial[User] {
 
-  def published = SecuredAction(Normal) { implicit request =>
+  def getPublished = SecuredAction(Normal) { implicit request =>
     val models = DB.withSession { implicit session => Models.published }
     Ok(Json.toJson(models))
+  }
+  
+  def setPublished(id: Int, published :Boolean) = SecuredAction(Admin) { implicit request =>
+    DB.withSession { implicit session => Models.setPublished(id: Int, published :Boolean)}
+    NoContent
   }
   
   def unpublished = SecuredAction(Admin) { implicit request =>

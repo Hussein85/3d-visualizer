@@ -314,7 +314,7 @@ app.controller('ModelPublishController', [
     '$http',
     '$location',
     function ($scope, $resource, $http, $location) {
-        _this = this;
+        var _this = this;
 
         _this.model = {};
         _this.models = [];
@@ -341,10 +341,6 @@ app.controller('ModelPublishController', [
             return _this.filesUploading > 0;
         }
 
-        _this.loadTags = function ($query) {
-            return $http.get('/tags?query=' + $query);
-        };
-
         _this.valid = function (valid) {
             if (valid &&
                 document.getElementById('web-object-file').files.length > 0 &&
@@ -357,24 +353,8 @@ app.controller('ModelPublishController', [
         }
 
         _this.submit = function () {
-            if (_this.model.tags.length === 0) {
-                delete _this.model.tags;
-            }
-
-            _this.model.text = tinymce.DOM.encode(tinymce.editors[0].getContent()
-                .replace(new RegExp('\r?\n', 'g'), ''));
-
-            $http.post('/model', _this.model).success(
-                function (model, status, headers, config) {
-                    _this.uploadFile(document.getElementById('web-object-file').files[0], model.id, 'webObject');
-                    _this.uploadFile(document.getElementById('thumbnail-file').files[0], model.id, 'thumbnail');
-                }).error(function (data, status, headers, config) {
-                    _this.addAlert({
-                        msg: data,
-                        type: 'danger'
-                    });
-                });
-            ;
+            _this.uploadFile(document.getElementById('web-object-file').files[0], model.id, 'webObject');
+            _this.uploadFile(document.getElementById('thumbnail-file').files[0], model.id, 'thumbnail');
         }
 
         _this.uploadFile = function (file, modelId, type) {
@@ -395,15 +375,23 @@ app.controller('ModelPublishController', [
             var acc = function (data) {
                 $http.put('/file/acc/' + data.id, {})
                     .success(function () {
-                        var markCompleteAndCheckIfShouldRedirect = function () {
+                        var publishIfFilesUploaded = function () {
                             _this.filesUploading--;
                             if (!_this.uploading()) {
-                                $location.url('/model/' + data.modelId);
+                                $http.put('/model/' + modelId + '/published', {published: true})
+                                _this.addAlert({
+                                    msg: "File with id: " + data.id + " uploaded",
+                                    type: 'success'
+                                });
                             }
                         }
-                        setTimeout(markCompleteAndCheckIfShouldRedirect(), 100);
+                        setTimeout(publishIfFilesUploaded(), 100);
                     })
                     .error(function (data, status, headers, config) {
+                        _this.addAlert({
+                            msg: data,
+                            type: 'danger'
+                        });
                         console.log("data" + data, "status" + status, "headers"
                             + headers, "config" + config);
                     });
