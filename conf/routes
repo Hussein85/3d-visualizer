@@ -14,7 +14,7 @@ GET    /model                        @controllers.ModelController.getPublished
 GET    /model/unpublished            @controllers.ModelController.unpublished
 POST   /model                        @controllers.ModelController.upload
 GET    /model/:id                    @controllers.ModelController.get(id: Int)
-PUT    /model/:id/published          @controllers.ModelController.setPublished(id: Int, published: Boolean)
+PUT    /model/:id/published          @controllers.ModelController.setPublished(id: Int)
 GET    /model/alltags                @controllers.ModelController.allTags
 
 # Files

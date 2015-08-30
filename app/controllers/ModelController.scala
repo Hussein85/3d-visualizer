@@ -57,12 +57,22 @@ class ModelController(override implicit val env: RuntimeEnvironment[User])
     val models = DB.withSession { implicit session => Models.published }
     Ok(Json.toJson(models))
   }
-  
-  def setPublished(id: Int, published :Boolean) = SecuredAction(Admin) { implicit request =>
-    DB.withSession { implicit session => Models.setPublished(id: Int, published :Boolean)}
-    NoContent
+
+  private case class Published(published: Boolean)
+
+  def setPublished(id: Int) = SecuredAction(Admin)(parse.json) { implicit request =>
+    implicit val publishedReads = Json.reads[Published]
+    val publishedResult = request.body.validate[Published]
+    publishedResult.fold(
+      errors => {
+        BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toFlatJson(errors)))
+      },
+      published => {
+        DB.withSession { implicit session => Models.setPublished(id, published.published) }
+        NoContent
+      })
   }
-  
+
   def unpublished = SecuredAction(Admin) { implicit request =>
     val models = DB.withSession { implicit session => Models.unpublished }
     Ok(Json.toJson(models))

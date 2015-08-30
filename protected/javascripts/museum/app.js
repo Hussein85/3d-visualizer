@@ -353,8 +353,8 @@ app.controller('ModelPublishController', [
         }
 
         _this.submit = function () {
-            _this.uploadFile(document.getElementById('web-object-file').files[0], model.id, 'webObject');
-            _this.uploadFile(document.getElementById('thumbnail-file').files[0], model.id, 'thumbnail');
+            _this.uploadFile(document.getElementById('web-object-file').files[0], _this.model.id, 'webObject');
+            _this.uploadFile(document.getElementById('thumbnail-file').files[0], _this.model.id, 'thumbnail');
         }
 
         _this.uploadFile = function (file, modelId, type) {
