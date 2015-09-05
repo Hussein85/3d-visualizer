@@ -11,7 +11,7 @@ import org.joda.time.DateTime
 import com.github.tototoshi.slick.PostgresJodaSupport._
 
 case class Model(id: Option[Int], name: String, userID: String, date: DateTime,
-  material: String, location: String, text: String, timestamp: DateTime, published: Boolean)
+                 material: String, location: String, text: String, timestamp: DateTime, published: Boolean)
 
 object Model {
 
@@ -71,7 +71,9 @@ object Models {
   }
 
   def get(id: Int)(implicit s: Session): Option[Model] = {
-    models.filter(_.id === id).firstOption
+    models.filter(m => (
+      m.id === id &&
+      m.published === true)).firstOption
   }
 
 }
