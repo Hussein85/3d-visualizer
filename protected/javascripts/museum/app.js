@@ -48,7 +48,7 @@ app.controller('ViewerController', [
 
                     $http.get('/file/model/' + _this.model.id).then(function (result) {
                         var objectPredicate = function (file) {
-                            return file.type === 'object' && file.finished;
+                            return file.type === 'webObject' && file.finished;
                         };
 
                         var texturePredicate = function (file) {
