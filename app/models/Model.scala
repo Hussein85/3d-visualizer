@@ -11,7 +11,8 @@ import org.joda.time.DateTime
 import com.github.tototoshi.slick.PostgresJodaSupport._
 
 case class Model(id: Option[Int], name: String, userID: String, date: DateTime,
-                 material: String, location: String, text: String, timestamp: DateTime, published: Boolean)
+                 material: String, location: String, text: String, 
+                 timestamp: DateTime, published: Boolean, organizationId: Int)
 
 object Model {
 
@@ -26,7 +27,8 @@ object Model {
     (JsPath \ "location").write[String] and
     (JsPath \ "text").write[String] and
     (JsPath \ "timeStamp").writeNullable[DateTime].contramap((_: DateTime) => None) and
-    (JsPath \ "published").write[Boolean])(unlift(models.Model.unapply))
+    (JsPath \ "published").write[Boolean] and
+    (JsPath \ "organizationId").write[Int] )(unlift(models.Model.unapply))
 
 }
 
@@ -40,7 +42,8 @@ class Models(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[Model](t
   def text = column[String]("TEXT", O.DBType("TEXT"))
   def timestamp = column[DateTime]("TIMESTAMP")
   def published = column[Boolean]("PUBLISHED")
-  def * = (id.?, name, userID, date, material, location, text, timestamp, published) <>
+  def organizationId = column[Int]("ORGANIZATION_ID")
+  def * = (id.?, name, userID, date, material, location, text, timestamp, published, organizationId) <>
     ((Model.apply _).tupled, Model.unapply _)
 }
 

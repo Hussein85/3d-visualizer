@@ -1,6 +1,3 @@
-# --- Created by Slick DDL
-# To stop Slick DDL generation, remove this comment and start using Evolutions
-
 # --- !Ups
 
 create table "FILE" ("ID" VARCHAR(254) NOT NULL PRIMARY KEY,"MODEL_ID" INTEGER NOT NULL,"TYPE" VARCHAR(254) NOT NULL,"TIMESTAMP" TIMESTAMP NOT NULL,"FINISHED" BOOLEAN NOT NULL,"USER_ID" VARCHAR(254) NOT NULL);

@@ -1,3 +1,8 @@
 Implement change password.
 Enable customer email templates.
 Implement real less (stylesheet) pre processor instead of less javascript compiler
+Remove all database calls from controllers, maybe except admin
+Add last login date on user
+Add oragnization id to model
+Check javascript error on admin activate user
+Vid uppladdning ta mail.setRecipient från en lista t ex (leo, thomas)
