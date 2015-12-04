@@ -25,14 +25,14 @@ import securesocial.core.RuntimeEnvironment
 
 class TagController(override implicit val env: RuntimeEnvironment[User])
   extends securesocial.core.SecureSocial[User] {
-
+   
   implicit val TagWrites = new Writes[Tag] {
     def writes(tag: Tag) = Json.obj(
       "text" -> tag.name)
   }
 
   def tag(modelId: Int) = SecuredAction(Normal) { implicit request =>
-    val tags = DB.withSession { implicit session => Tags.tags(modelId) }
+    val tags = DB.withSession { implicit session => Tags.tags(modelId, request.user.organizationId) }
     Ok(Json.toJson(tags))
   }
 

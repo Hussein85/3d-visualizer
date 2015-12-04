@@ -55,12 +55,14 @@ object Models {
     (models returning models.map(_.id)) += model
   }
 
-  def all(implicit s: Session): List[Model] = {
-    models.list
+  def all(organizationId: Int)(implicit s: Session): List[Model] = {
+    models.filter(_.organizationId === organizationId).list
   }
 
-  def published(implicit s: Session): List[Model] = {
-    models.filter(_.published === true).list
+  def published(organizationId: Int)(implicit s: Session): List[Model] = {
+    models.filter(m => (
+        m.published === true &&
+        m.organizationId === organizationId)).list
   }
 
   def setPublished(id: Int, published: Boolean)(implicit s: Session) = {
@@ -73,10 +75,11 @@ object Models {
     models.filter(_.published === false).list
   }
 
-  def get(id: Int)(implicit s: Session): Option[Model] = {
+  def get(id: Int, organizationId: Int)(implicit s: Session): Option[Model] = {
     models.filter(m => (
       m.id === id &&
-      m.published === true)).firstOption
+      m.published === true &&
+      m.organizationId === organizationId)).firstOption
   }
 
 }

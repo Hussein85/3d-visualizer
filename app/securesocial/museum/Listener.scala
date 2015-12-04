@@ -6,7 +6,7 @@ import securesocial.core.PasswordResetEvent
 import securesocial.core.LoginEvent
 import securesocial.core.SignUpEvent
 import play.api.mvc.RequestHeader
-import securesocial.core.Event
+import securesocial.core._
 import play.api.Play.current
 import play.api.Logger
 import play.api.mvc.Session
@@ -18,21 +18,21 @@ import models.Models
 import models.Users
 import play.api.cache.Cache
 import models.Tables
+import models._
 
-class Listener/*(app: play.api.Application) extends EventListener*/ {
-  /*override def id: String = "my_event_listener"
-//TODO implement
-  def onEvent(event: Event, request: RequestHeader, session: Session): Option[Session] = {
-    val eventName = event match {
-      case e: LoginEvent => {
-        Cache.set(e.user.identityId.userId, Tables.Users.findByIdentityId(e.user.identityId).get)
+class Listener/*(app: play.api.Application) extends EventListener {
+
+  def onEvent[U](event: Event[U], request: RequestHeader, session: Session): Option[Session] = {
+    val eventName: String = event match {
+      case LoginEvent(u: User) => {
+        Cache.set(u.uid.get.toString, Tables.Users.findById(u.uid.get))
         "login"
       }
-      case e: LogoutEvent => {
-        Cache.remove(e.user.identityId.userId)
+      case LogoutEvent(u: User) => {
+        Cache.remove(u.uid.toString())
         "logout"
       }
-      case e: SignUpEvent => {
+      case SignUpEvent(u: User) => {
         import com.typesafe.plugin._
         val mail = use[MailerPlugin].email
         mail.setSubject("A new user has signed up.")
@@ -43,18 +43,19 @@ class Listener/*(app: play.api.Application) extends EventListener*/ {
         //mail.sendHtml("<html>html</html>" )
 
         mail.send{
-          val email = e.user.email.getOrElse("No email")
-          val fullname = e.user.fullName
+          val email = u.email.getOrElse("No email")
+          val fullname = u.fullName
           s"User with email: $email have signed up, please log in and assign a role for $fullname"
         }
         //sends both text and html
         //	mail.send( "text", "<html>html</html>")
         "signup"
       }
-      case e: PasswordResetEvent => "password reset"
-      case e: PasswordChangeEvent => "password change"
+      case  PasswordResetEvent(u: User) => "password reset"
+      case  PasswordChangeEvent(u: User) => "password change"
+      case _ => "Other event"
     }
-    Logger.info("traced %s event for user %s".format(eventName, event.user.fullName))
+    Logger.info("traced %s event for user %s".format(eventName, event.user.asInstanceOf[User].fullName))
     None
-  }*/
-}
+  }
+}*/

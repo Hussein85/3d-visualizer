@@ -18,6 +18,7 @@ object Tags {
 
   val tagsTable = TableQuery[Tags]
   val tagModels = TableQuery[TagModels]
+  val models = TableQuery[Models]
 
   def insert(tag: Tag)(implicit s: Session): Int = {
     try {
@@ -29,19 +30,13 @@ object Tags {
       }
     }
   }
-
-  def tags(model: Model)(implicit s: Session): List[Tag] = {
-    val implicitInnerJoin = for {
-      tm <- tagModels if tm.modelID === model.id
-      tag <- tagsTable if tag.id === tm.tagID
-    } yield (tag)
-    implicitInnerJoin.list
-  }
   
-  def tags(modelId: Int)(implicit s: Session): List[Tag] = {
+  def tags(modelId: Int, organizationId: Int)(implicit s: Session): List[Tag] = {
     val implicitInnerJoin = for {
       tm <- tagModels if tm.modelID === modelId
       tag <- tagsTable if tag.id === tm.tagID
+      model <- models if model.organizationId === organizationId &&
+         model.id === tm.modelID
     } yield (tag)
     implicitInnerJoin.list
   }

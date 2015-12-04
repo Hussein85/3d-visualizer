@@ -10,8 +10,7 @@ import play.api.mvc.RequestHeader
 
 object Normal extends Authorization[User] {
   def isAuthorized(user: User, request: RequestHeader): Boolean = {
-    Logger.info("ROLE: " + CacheWrapper.user(user.providerId, user.userId).role)
-    CacheWrapper.user(user.providerId, user.userId).role match {
+    CacheWrapper.user(user.uid.get).role match {
       case Role.UnInitiated                              => false
       case Role.Admin | Role.Contributer | Role.Consumer => true
     }
@@ -20,8 +19,7 @@ object Normal extends Authorization[User] {
 
 object Admin extends Authorization[User] {
   def isAuthorized(user: User, request: RequestHeader): Boolean = {
-    Logger.info("ROLE: " + CacheWrapper.user(user.providerId, user.userId).role)
-    CacheWrapper.user(user.providerId, user.userId).role match {
+    CacheWrapper.user(user.uid.get).role match {
       case Role.Admin => true
       case _          => false
     }
@@ -30,8 +28,7 @@ object Admin extends Authorization[User] {
 
 object Contributer extends Authorization[User] {
   def isAuthorized(user: User, request: RequestHeader): Boolean = {
-    Logger.info("ROLE: " + CacheWrapper.user(user.providerId, user.userId).role)
-    CacheWrapper.user(user.providerId, user.userId).role match {
+    CacheWrapper.user(user.uid.get).role match {
       case Role.Admin | Role.Contributer => true
       case _                             => false
     }

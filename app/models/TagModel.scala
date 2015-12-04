@@ -16,8 +16,18 @@ class TagModels(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[TagMo
 object TagModels {
 
   val tagModels = TableQuery[TagModels]
+  val models = TableQuery[Models]
 
-  def insert(tagModel: TagModel)(implicit s: Session) {
+  def insert(tagModel: TagModel, organizationId: Int)(implicit s: Session) {
+    val model = (for {
+         model <- models if model.organizationId === organizationId &&
+         model.id === tagModel.modelID
+    } yield(model))
+    if(model.firstOption.isEmpty){
+      Logger.warn("Trying to insert a tag for a model with non matching oragnizationId")
+      throw new IllegalAccessException;
+    }
+    
     tagModels.insert(tagModel)
   }
   

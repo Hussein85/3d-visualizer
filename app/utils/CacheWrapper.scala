@@ -8,10 +8,10 @@ import models.Tables
 
 object CacheWrapper {
   
-  def user(providerId: String, userId: String): User = {
-    Cache.get(userId) match {
+  def user(uid: Long): User = {
+    Cache.get(uid.toString()) match {
       case Some(user) => user.asInstanceOf[User]
-      case None => Tables.Users.find(providerId, userId).get
+      case None => Tables.Users.findById(uid).get
     }
   }
 

@@ -54,7 +54,7 @@ class ModelController(override implicit val env: RuntimeEnvironment[User])
   extends securesocial.core.SecureSocial[User] {
 
   def getPublished = SecuredAction(Normal) { implicit request =>
-    val models = DB.withSession { implicit session => Models.published }
+    val models = DB.withSession { implicit session => Models.published(request.user.organizationId) }
     Ok(Json.toJson(models))
   }
 
@@ -80,7 +80,7 @@ class ModelController(override implicit val env: RuntimeEnvironment[User])
 
   def get(id: Int) = SecuredAction(Normal) { implicit request =>
     DB.withSession { implicit session =>
-      Models.get(id) match {
+      Models.get(id, request.user.organizationId) match {
         case None => NotFound("The requested model is either not in the db or you lack access to it.")
         case Some(model) => {
           Ok(Json.toJson(model))
@@ -106,7 +106,8 @@ class ModelController(override implicit val env: RuntimeEnvironment[User])
         m.tags.foreach(tag => {
           Logger.info(s"tag: $tag")
           val tagID = DB.withSession { implicit session => Tags.insert(tag) }
-          DB.withSession { implicit session => TagModels.insert(TagModel(tagID, modelID)) }
+          DB.withSession { implicit session => 
+            TagModels.insert(TagModel(tagID, modelID), request.user.organizationId) }
         })
 
         import com.typesafe.plugin._
