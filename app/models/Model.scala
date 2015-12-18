@@ -10,9 +10,18 @@ import java.sql.Date
 import org.joda.time.DateTime
 import com.github.tototoshi.slick.PostgresJodaSupport._
 
-case class Model(id: Option[Int], name: String, userID: String, date: DateTime,
-                 material: String, location: String, text: String, 
-                 timestamp: DateTime, published: Boolean, organizationId: Int)
+case class Model(id: Option[Int], 
+    name: String, 
+    userID: String,
+    date: DateTime,    
+    material: String, 
+    location: String, 
+    latitude: Double, 
+    longitude: Double, 
+    text: String, 
+    timestamp: DateTime, 
+    published: Boolean, 
+    organizationId: Int)
 
 object Model {
 
@@ -25,6 +34,8 @@ object Model {
     Writes.at[DateTime]((JsPath \ "date"))(dtwrites) and
     (JsPath \ "material").write[String] and
     (JsPath \ "location").write[String] and
+    (JsPath \ "latitude").write[Double] and
+    (JsPath \ "longitude").write[Double] and
     (JsPath \ "text").write[String] and
     (JsPath \ "timeStamp").writeNullable[DateTime].contramap((_: DateTime) => None) and
     (JsPath \ "published").write[Boolean] and
@@ -39,11 +50,13 @@ class Models(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[Model](t
   def date = column[DateTime]("DATE")
   def material = column[String]("MATERIAL")
   def location = column[String]("LOCATION")
+  def latitude = column[Double]("LATITUDE")
+  def longitude = column[Double]("LONGITUDE")
   def text = column[String]("TEXT", O.DBType("TEXT"))
   def timestamp = column[DateTime]("TIMESTAMP")
   def published = column[Boolean]("PUBLISHED")
   def organizationId = column[Int]("ORGANIZATION_ID")
-  def * = (id.?, name, userID, date, material, location, text, timestamp, published, organizationId) <>
+  def * = (id.?, name, userID, date, material, location, latitude, longitude, text, timestamp, published, organizationId) <>
     ((Model.apply _).tupled, Model.unapply _)
 }
 
