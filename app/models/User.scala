@@ -28,7 +28,8 @@ case class User(uid: Option[Long] = None,
   oAuth2Info: Option[OAuth2Info],
   passwordInfo: Option[PasswordInfo],
   role: String,
-  organizationId: Int) extends GenericProfile
+  organizationId: Int, 
+  lastLogin: Date) extends GenericProfile
 
 class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag, "user") {
 
@@ -83,6 +84,7 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
   def organizationId = column[Int]("ORGANIZATION_ID")
   lazy val organizations = TableQuery[Organizations]
   def organization = foreignKey("ORAGNIZATION", organizationId, organizations)(_.id)
+  def lastLogin = column[Date]("LAST_LOGIN")
   
   def email_index = index("idx_a", email, unique = true)
 
@@ -106,7 +108,8 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
       password,
       salt,
       role,
-      organizationId).shaped
+      organizationId,
+      lastLogin).shaped
 
     shapedValue.<>({
       tuple =>
@@ -123,7 +126,8 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
           oAuth2Info = tuple2OAuth2Info(tuple._12, tuple._13, tuple._14, tuple._15),
           passwordInfo = tuple2PasswordInfo(tuple._16, tuple._17, tuple._18),
           role = tuple._19,
-          organizationId = tuple._20)
+          organizationId = tuple._20,
+          lastLogin = tuple._21)
     }, {
       (u: User) =>
         Some {
@@ -147,7 +151,8 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
             u.passwordInfo.map(_.password),
             u.passwordInfo.flatMap(_.salt),
             u.role.toString(),
-            u.organizationId)
+            u.organizationId,
+            u.lastLogin)
         }
     })
   }

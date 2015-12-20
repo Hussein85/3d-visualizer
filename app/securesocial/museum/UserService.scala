@@ -1,7 +1,8 @@
 package securesocial.museum
 
 import play.api.{ Logger, Application }
-import securesocial.core._
+import securesocial.core.BasicProfile
+import securesocial.core.PasswordInfo
 import securesocial.core.providers._
 import securesocial.core.services._
 import models._
@@ -21,6 +22,7 @@ import play.api.Play.current
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.slick.driver.PostgresDriver.simple._
 import models.notInDB.Role
+import java.sql.Date
 
 class MyUserService extends UserService[User] {
 
@@ -38,7 +40,8 @@ class MyUserService extends UserService[User] {
       oAuth2Info = bp.oAuth2Info,
       passwordInfo = bp.passwordInfo,
       role = Role.UnInitiated,
-      organizationId = 1
+      organizationId = 1,
+      lastLogin = new Date(0)
       )
   }
   
