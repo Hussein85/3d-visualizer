@@ -6,3 +6,4 @@ Add last login date on user
 Testa om organizations_id säkerheten för taggarna funderar
 Check javascript error on admin activate user
 Vid uppladdning ta mail.setRecipient från en lista t ex (leo, thomas)
+Använda ny version av S3 api istället för min egen locals

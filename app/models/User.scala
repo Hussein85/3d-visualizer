@@ -29,7 +29,7 @@ case class User(uid: Option[Long] = None,
   passwordInfo: Option[PasswordInfo],
   role: String,
   organizationId: Int, 
-  lastLogin: Date) extends GenericProfile
+  lastLogin: DateTime) extends GenericProfile
 
 class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag, "user") {
 
@@ -84,7 +84,7 @@ class Users(tag: slick.driver.PostgresDriver.simple.Tag) extends Table[User](tag
   def organizationId = column[Int]("ORGANIZATION_ID")
   lazy val organizations = TableQuery[Organizations]
   def organization = foreignKey("ORAGNIZATION", organizationId, organizations)(_.id)
-  def lastLogin = column[Date]("LAST_LOGIN")
+  def lastLogin = column[DateTime]("LAST_LOGIN")
   
   def email_index = index("idx_a", email, unique = true)
 

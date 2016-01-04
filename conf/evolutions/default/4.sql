@@ -1,0 +1,5 @@
+# --- !Ups
+ALTER TABLE "user" ADD COLUMN "LAST_LOGIN" TIMESTAMP;
+
+# --- !Downs
+ALTER TABLE "user" DROP COLUMN "LAST_LOGIN";

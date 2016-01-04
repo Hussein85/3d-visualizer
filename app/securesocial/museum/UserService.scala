@@ -41,7 +41,7 @@ class MyUserService extends UserService[User] {
       passwordInfo = bp.passwordInfo,
       role = Role.UnInitiated,
       organizationId = 1,
-      lastLogin = new Date(0)
+      lastLogin = new DateTime(0)
       )
   }
   

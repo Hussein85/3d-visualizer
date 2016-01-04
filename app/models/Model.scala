@@ -1,3 +1,4 @@
+
 package models
 
 import play.api._
