@@ -681,6 +681,8 @@ app.controller('MapCtrl', ['$scope', 'modelFactory', function ($scope, modelFact
             modelCoords.latitude = modelLat;
             modelCoords.longitude = modelLng;
 
+
+
             // If there are any coordinates specified in the model
             if (modelCoords){
 

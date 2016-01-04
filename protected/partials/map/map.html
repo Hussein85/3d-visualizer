@@ -1,7 +1,13 @@
 <div class="row container" ng-controller="MapCtrl as ctrl" ng-init="ctrl.init()">
+  <div class="col-md-3">
+    HEJ jag är en lista :)
+  </div>
+  <div class="col-md-9">
     <div id="map" style="width:100%; height: 700px;"></div>
         <br>
         <div id="repeat" ng-repeat="model in ctrl.models | orderBy : 'name'" >
               {{ctrl.showMarkerOnMap(model.name, model.id, model.thumbnail, model.latitude, model.longitude, model)}}
         </div>
+  </div>
+
 </div>

@@ -26,3 +26,17 @@ tags-input .tags {
 .browser {
   padding-top: 30px;
 }
+
+.browser-model-title {
+  font-weight: bolder;
+  padding-bottom: 10px;
+  padding-left: 10px;
+}
+
+.browser-dt {
+  width: 80px !important;
+}
+
+.browser-dd {
+  margin-left: 100px !important;
+}
