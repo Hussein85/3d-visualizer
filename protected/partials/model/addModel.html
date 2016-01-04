@@ -1,9 +1,14 @@
 <div ng-controller="ModelAddController as ctrl">
     <alert ng-repeat="alert in ctrl.alerts" type="{{alert.type}}" close="ctrl.closeAlert($index)">{{alert.msg}}</alert>
     <form name="form" ng-submit="ctrl.submit()" novalidate ng-init="ctrl.init()">
+
         <div class="row">
-            <div class="col-md-4" id="addForm-column1">
+
+            <!--left columnt -->
+            <div class="col-md-5" id="addForm-column1">
                 <div class="alert alert-info" translate>form.model.heading.info</div>
+
+                <!-- Add name area -->
                 <div class="form-group" ng-class="{ 'has-error' : form.name.$invalid && !form.name.$pristine }">
                     <label for="model.add.name" translate>form.model.name.label</label>
                     <input type="text"
@@ -18,6 +23,8 @@
                        ng-show="form.name.$invalid && !form.name.$pristine"
                        translate="VALIDATION.REQUIRED"></p>
                 </div>
+
+                <!-- Add material area -->
                 <div class="form-group" ng-class="{ 'has-error' : form.material.$invalid && !form.material.$pristine }">
                     <label for="model.add.material" translate>form.model.material.label</label>
                     <input type="text"
@@ -32,20 +39,35 @@
                        ng-show="form.material.$invalid && !form.material.$pristine"
                        translate="VALIDATION.REQUIRED"></p>
                 </div>
-                <div class="form-group" ng-class="{ 'has-error' : form.location.$invalid && !form.location.$pristine }">
-                    <label for="model.add.location" translate>form.model.location.label</label>
-                    <input type="text"
-                           name="location"
-                           class="form-control"
-                           id="model.add.location"
-                           ng-model="ctrl.model.location"
-                           required
-                           placeholder="{{'form.model.material.placeholder' | translate}}">
 
-                    <p class="help-block"
-                       ng-show="form.location.$invalid && !form.location.$pristine"
-                       translate="VALIDATION.REQUIRED"></p>
+                <!-- location input -->
+                <div ng-controller="ModalMapCtrl">
+                    <div class="form-group" ng-class="{ 'has-error' : form.location.$invalid && !form.location.$pristine }">
+                        <label for="model.add.location" translate>form.model.location.label</label>
+
+                            <div class="input-group">
+                                  <input type="text"
+                                        name="location"
+                                        class="form-control"
+                                        id="model.add.location"
+                                        ng-model="ctrl.model.location"
+                                        required
+                                        placeholder="{{'form.model.location.placeholder' | translate}}">
+
+                                  <span class="input-group-btn">
+                                       <input type="image" ng-click="openModal($event)" src="/securedassets/images/providers/googlemaps.png" alt="Submit" width="35" height="35">
+                                  </span>
+
+                            </div>
+
+                            <p class="help-block"
+                                   ng-show="form.location.$invalid && !form.location.$pristine"
+                                   translate="VALIDATION.REQUIRED"></p>
+
+                    </div>
                 </div>
+
+                <!--Enter date area  -->
                 <div class="form-group" ng-class="{ 'has-error' : form.year.$invalid && !form.year.$pristine }">
                     <label for="model.add.year" translate>form.model.year.label</label>
                     <input type="text"
@@ -61,15 +83,20 @@
                        ng-show="form.year.$invalid && !form.year.$pristine"
                        translate="VALIDATION.REQUIRED"></p>
                 </div>
+
+                <!-- Tags area -->
                 <label>{{ 'form.model.tags.label' | translate }} ({{ 'form.optional' | translate }})</label>
                 <tags-input ng-model="ctrl.model.tags" id="model.add.tags"
                             placeholder="{{'form.model.tags.placeholder' | translate}}">
                     <auto-complete source="ctrl.loadTags($query)" min-length="1">
                     </auto-complete>
                 </tags-input>
+
+                <!-- Model heading -->
                 <div class="form-group"></div>
                 <div class="alert alert-info" translate>form.model.heading.file</div>
 
+                <!--Enter object file area  -->
                 <div class="form-group">
                     <label translate>form.model.file.object</label>
 
@@ -89,6 +116,8 @@
                     </div>
                 </div>
 
+
+                <!--Enter texture-file area  -->
                 <div class="form-group">
                     <label>{{ 'form.model.file.texture' | translate }} ({{ 'form.optional' | translate }})</label>
 
@@ -105,17 +134,21 @@
                                id="texture-file">
                     </span>
                     </div>
-                </div>
-
+                </div>  
             </div>
-            <div class="col-md-8" id="addForm-text">
+
+            <!--Enter text for model area  -->
+            <div class="col-md-7" id="addForm-text">
                 <div class="alert alert-info" translate>form.model.heading.text</div>
                 <div class="form-group">
                     <input type="text" class="form-control" id="text" name="text"
                            ng-model="ctrl.model.text" placeholder="form.model.text.enter" )>
                 </div>
             </div>
+
         </div>
+
+        <!--Save button area   -->
         <div class="row">
             <div class="col-md-12">
                 <button value="Send"
@@ -127,5 +160,7 @@
                 </button>
             </div>
         </div>
+
+
     </form>
 </div>

@@ -5,6 +5,7 @@
     "BROWSER": "Utforskaren",
     "ADD": "Ladda upp ny modell",
     "ADMIN": "Admin",
+    "MAP": "Karta",
     "LANGUAGE": "Välj språk"
   },
   "VIEWER": {
@@ -14,7 +15,8 @@
         "RESET": "Återställ vyn",
         "TOGGLE_Y_PANNING": "Skifta Y panorering",
         "TOOGLE_BOUNDING_BOX": "Skifta bounding box",
-        "TOGGLE_TEXTURE": "Skifta textur"
+        "TOGGLE_TEXTURE": "Skifta textur",
+        "TOGGLE_FULLSCREEN": "Helskärm"
       }
     },
     "INFORMATION": {

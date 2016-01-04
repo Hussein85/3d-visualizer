@@ -1,5 +1,6 @@
 // Create a constructor
 function Viewer(id, modelPath, texturePath) {
+    this.renderer;
     this.scene;
     this.id = id;
     this.camera;
@@ -16,16 +17,35 @@ function Viewer(id, modelPath, texturePath) {
     this.materialWithTexture;
     this.materialWithOutTexture;
     this.textureOn = false;
+
+}
+
+Viewer.prototype.fullscreen = function() {
+
+    var i = document.getElementById('canvas-place-holder');
+
+    // go fullscreen - support most browsers
+    if (i.requestFullscreen) {
+    	i.requestFullscreen();
+    } else if (i.webkitRequestFullscreen) {
+    	i.webkitRequestFullscreen();
+    } else if (i.mozRequestFullScreen) {
+    	i.mozRequestFullScreen();
+    } else if (i.msRequestFullscreen) {
+    	i.msRequestFullscreen();
+    }
+
 }
 
 Viewer.prototype.resetView = function () {
     this.toogleBoundingBox(false);
     this.tooglePanY(false);
     this.toogleTexture(true);
-    this.controls.reset();
     this.scene.position.setY(-this.bb.box.max.y / 2);
     this.scene.updateMatrix();
     this.camera.position.set(0, 0, 300);
+    this.controls.target.set( 0, 10, 0 );
+
 }
 
 Viewer.prototype.tooglePanY = function (forceState) {
@@ -88,29 +108,33 @@ Viewer.prototype.initCanvas = function () {
     if (!Detector.webgl)
         Detector.addGetWebGLMessage();
 
-    var renderer;
-
     var size = {
         width: $(that.id).width(),
         height: 400
     };
+
+    // Create the background scene
+    var bgScene = new THREE.Scene();
+    var bgCamera = new THREE.Camera();
 
     init();
     animate();
 
     function init() {
 
-        // world
+        // The scene
         that.scene = new THREE.Scene();
 
+        // The camera
         that.camera = new THREE.PerspectiveCamera(45, size.width / size.height,
-            0.1, 1000);
+            0.1, 2000);
 
         /** * Texture Loading ** */
         var manager = new THREE.LoadingManager();
         manager.onProgress = function (item, loaded, total) {
             console.log(item, loaded, total);
         };
+
         that.texture = undefined;
         var loader = new THREE.ImageLoader(manager);
         loader.crossOrigin = '';
@@ -134,6 +158,10 @@ Viewer.prototype.initCanvas = function () {
             that.ambientLight = new THREE.AmbientLight(0x555555);
             that.dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
         }
+
+        console.log("texture before: ");
+        console.log(that.texture);
+        console.log("texture a: ");
 
         /** * OBJ Loading ** */
         var loader = new THREE.OBJLoader(manager);
@@ -167,57 +195,64 @@ Viewer.prototype.initCanvas = function () {
             that.scene.add(object);
         });
 
+        /*
         // Grid and Axis
         var axis = new THREE.AxisHelper(100);
         var grid = new THREE.GridHelper(100, 10);
         that.scene.add(axis);
         that.scene.add(grid);
+        */
+
+        // Load the background texture
+         var texture = THREE.ImageUtils.loadTexture( "/securedassets/images/background/img.jpg" );
+         var bgMesh = new THREE.Mesh(
+             new THREE.PlaneGeometry(2, 2, 0),
+             new THREE.MeshBasicMaterial({
+                 map: texture
+             }));
+
+        // The background shouldn't care about the z-buffer.
+        bgMesh.material.depthTest = false;
+        bgMesh.material.depthWrite = false;
+
+        bgScene.add(bgCamera);
+        bgScene.add(bgMesh);
+
         // renderer
-
-        renderer = new THREE.WebGLRenderer({
-            antialias: false
-        });
-        renderer.setSize(size.width, size.height);
-
-        $(that.id).append(renderer.domElement);
+        that.renderer = new THREE.WebGLRenderer({antialias: false});
+        that.renderer.setSize(size.width, size.height);
+        $(that.id).append(that.renderer.domElement);
 
         that.dirLight.castShadow = true;
+
         // lights
         that.scene.add(that.ambientLight);
         that.scene.add(that.dirLight);
 
+        // controls
+        that.controls = new THREE.OrbitControls( that.camera, that.renderer.domElement );
 
-        that.controls = new THREE.TrackballControls(that.camera, renderer.domElement);
-        that.controls.rotateSpeed = 1.0;
-        that.controls.zoomSpeed = 1.2;
-        that.controls.panSpeed = 0.8;
-
-        that.controls.noZoom = false;
-        that.controls.noPan = false;
-
-        that.controls.staticMoving = true;
-        that.controls.dynamicDampingFactor = 0.3;
-
-        that.controls.keys = [65, 83, 68];
-
+        // Event listeners
         that.controls.addEventListener('change', function(){that.lightUpdate(that)});
-
         that.controls.addEventListener('change', render);
-
         window.addEventListener('resize', onWindowResize, false);
+
     }
 
     function onWindowResize() {
 
-        that.camera.aspect = size.width / size.height;
-        that.camera.updateProjectionMatrix();
-
-        renderer.setSize(size.width, size.height);
-
-        that.controls.handleResize();
+      // Fullscreen. Supports most browsers.
+      if (document.webkitIsFullScreen || document.msFullscreenElement || document.mozFullScreen || document.fullscreen) {
+          that.camera.aspect = window.innerWidth / window.innerHeight;
+          that.camera.updateProjectionMatrix();
+          that.renderer.setSize(window.innerWidth, window.innerHeight);
+      } else {    // exit fullscreen
+          that.camera.aspect = size.width / size.height;
+          that.camera.updateProjectionMatrix();
+          that.renderer.setSize(size.width, size.height);
+      }
 
         render();
-
     }
 
     function animate() {
@@ -228,7 +263,6 @@ Viewer.prototype.initCanvas = function () {
         if (that.panY) {
             doPanY();
         }
-
         render();
     }
 
@@ -239,6 +273,9 @@ Viewer.prototype.initCanvas = function () {
     }
 
     function render() {
-        renderer.render(that.scene, that.camera);
+        that.renderer.autoClear = false;
+        that.renderer.clear();
+        that.renderer.render(bgScene, bgCamera);
+        that.renderer.render(that.scene, that.camera);
     }
 }

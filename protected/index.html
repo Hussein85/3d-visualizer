@@ -8,6 +8,7 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="/securedassets/images/favicon.png">
 
+    <!-- ccs styles files here -->
     <title translate="APP_NAME"></title>
     <link rel="shortcut icon" type="image/png" href="/securedassets/images/favicon.png">
     <link rel="stylesheet" href="/securedassets/bower_components/bootstrap/dist/css/bootstrap.css">
@@ -16,6 +17,12 @@
     <link rel="stylesheet" href="/securedassets/bower_components/jasny-bootstrap/dist/css/jasny-bootstrap.css">
     <link rel="stylesheet" media="screen" href="/securedassets/stylesheets/bootstrap-tagsinput.css">
     <link rel="stylesheet" media="screen" href="/securedassets/stylesheets/main.css">
+    <link rel="stylesheet" media="screen" href="/securedassets/stylesheets/maps.css">
+    <link rel="stylesheet" media="screen" href="/securedassets/stylesheets/modalMapWindow.css">
+    <link rel="stylesheet" media="screen" href="/securedassets/stylesheets/ngDialog.css">       <!-- for ngDialog -->
+
+
+    <!--Bower components -->
     <script type='text/javascript' src="/securedassets/bower_components/jquery/dist/jquery.js"></script>
     <script type='text/javascript' src="/securedassets/javascripts/jquery.cookie.js"></script>
     <script type='text/javascript' src="/securedassets/javascripts/angular.js"></script>
@@ -33,6 +40,8 @@
             src="/securedassets/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script type='text/javascript'
             src="/securedassets/bower_components/jasny-bootstrap/dist/js/jasny-bootstrap.js"></script>
+
+
     <script type='text/javascript' src="/securedassets/javascripts/museum/languageSelector.js"></script>
     <script type='text/javascript' src="/securedassets/javascripts/museum/museum-cookie.js"></script>
     <script type='text/javascript' src="/securedassets/javascripts/holder.js"></script>
@@ -40,12 +49,32 @@
     <script type="text/javascript" src="/securedassets/javascripts/typeahead/bootstrap3-typeahead.js"></script>
     <script type="text/javascript" src="/securedassets/javascripts/typeahead/bloodhound.js"></script>
     <script type="text/javascript" src="/securedassets/javascripts/bootstrap-tagsinput.js"></script>
-    <script type='text/javascript' src="/securedassets/javascripts/3dViewer/three.min.js"></script>
+
+    <script type='text/javascript' src="/securedassets/javascripts/3dViewer/three.min.js"></script>                              <!--three.js -->
+    <!-- <script src="  https://cdnjs.cloudflare.com/ajax/libs/three.js/r73/three.min.js"></script> -->                           <!-- three.js version 73 gives error -->
+
     <script type='text/javascript' src="/securedassets/javascripts/3dViewer/TrackballControls.js"></script>
+
+    <script src="https://dl.dropboxusercontent.com/u/3587259/Code/Threejs/OrbitControls.js"></script>                                     <!-- orbitcontroll working -->
+    <!-- <script type='text/javascript' src="/securedassets/javascripts/3dViewer/OrbitControls.js"></script> -->                          <!-- gives setfromunityvector not a function -->
+
+
     <script type='text/javascript' src="/securedassets/javascripts/3dViewer/OBJLoader.js"></script>
     <script type='text/javascript' src="/securedassets/javascripts/3dViewer/Detector.js"></script>
     <script type='text/javascript' src="/securedassets/javascripts/3dViewer/BoundingBoxHelper.js"></script>
     <script type='text/javascript' src="/securedassets/javascripts/museum/Viewer.js"></script>
+
+    <!--add Google-maps library -->
+    <script src="http://maps.googleapis.com/maps/api/js"></script>                            <!-- Google Maps API v3 -->
+    <script type='text/javascript' src="/securedassets/javascripts/lodash.js"></script>                    <!-- dependecies for google maps  -->
+    <script type='text/javascript' src="/securedassets/javascripts/angular-simple-logger.js"></script>     <!-- dependecies for google maps  -->
+    <script type='text/javascript' src="/securedassets/javascripts/angular-google-maps.js"></script>       <!-- dependecies for google maps  -->
+
+    <script src="http://rawgit.com/allenhwkim/angularjs-google-maps/master/build/scripts/ng-map.min.js"></script>     <!-- if using ngMap   -->
+
+    <!-- ngDialog -->
+    <script type='text/javascript' src="/securedassets/javascripts/ngDialog.js"></script>
+
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -77,6 +106,7 @@
                     <li><a href="#/browser" translate="NAVBAR.BROWSER"></a></li>
                     <li><a href="#/model/add" translate="NAVBAR.ADD"></a></li>
                     <li><a href="#/admin" translate="NAVBAR.ADMIN"></a></li>
+                    <li><a href="#/map" translate="NAVBAR.MAP"></a></li>
                 </ul>
                 <!--      <ul class="nav navbar-nav navbar-right">
                         <li class="dropdown">

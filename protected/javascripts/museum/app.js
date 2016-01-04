@@ -1,8 +1,8 @@
 var app = angular.module('App', ['angular.filter', 'ngResource', 'ngRoute',
-    'ngTagsInput', 'ui.bootstrap', 'pascalprecht.translate']);
+    'ngTagsInput', 'ui.bootstrap', 'pascalprecht.translate', 'ngMap', 'uiGmapgoogle-maps', 'ngDialog']);
 
-app.config(['$routeProvider', '$translateProvider',
-    function ($routeProvider, $translateProvider) {
+app.config(['$routeProvider', '$translateProvider', 'uiGmapGoogleMapApiProvider',
+    function ($routeProvider, $translateProvider, uiGmapGoogleMapApiProvider) {
         $routeProvider.when('/model/add', {
             templateUrl: '/securedassets/partials/model/addModel.html',
             reloadOnSearch: false
@@ -17,6 +17,9 @@ app.config(['$routeProvider', '$translateProvider',
         }).when('/admin/:page', {
             templateUrl: '/securedassets/partials/admin/admin.html',
             reloadOnSearch: false
+        }).when('/map', {
+              templateUrl: '/securedassets/partials/map/map.html',
+              reloadOnSearch: false
         }).otherwise({
             redirectTo: '/browser'
         });
@@ -26,7 +29,58 @@ app.config(['$routeProvider', '$translateProvider',
             suffix: '.json'
         });
         $translateProvider.preferredLanguage('sv');
+
+        uiGmapGoogleMapApiProvider.configure({
+        v: '3.17',
+        libraries: 'weather,geometry,visualization'
+        });
+
     }]);
+
+
+app.factory('modelFactory', ['$http', function($http) {
+
+        var modelFactory = {};
+
+        // Read models from databas and returning a model array
+        modelFactory.init = function () {
+
+            var models = {};
+
+            var assignModelAndGetFiles = function (model) {
+                models[model.id] = model;
+                $http.get('/file/model/' + model.id).then(function (result) {
+                    var thumbnailPredicate = function (file) {
+                        return file.type === 'thumbnail' && file.finished;
+                    };
+
+                    models[model.id].thumbnail = result.data.filter(thumbnailPredicate)[0].getUrl;
+                });
+            };
+
+            $http.get('/model').then(function (result) {
+                result.data.forEach(assignModelAndGetFiles);
+            });
+
+            return models;
+        };
+
+        // Read tags from databas and return a tag array
+        modelFactory.loadTags = function (modelId) {
+
+            var tags = {};
+
+            $http.get('/tags/model/' + modelId).then(function (result) {
+                tags[modelId] = result.data;
+            });
+
+            return tags;
+        };
+
+        return modelFactory;
+
+}]);
+
 
 app.controller('ViewerController', [
     '$scope',
@@ -63,6 +117,7 @@ app.controller('ViewerController', [
 
                         var viewer = new Viewer("#canvas-place-holder",
                             _this.model.object, _this.model.texture);
+
                         viewer.initCanvas();
 
                         $("#reset-view").click(function () {
@@ -80,13 +135,19 @@ app.controller('ViewerController', [
                         $("#toogle-texture").click(function () {
                             viewer.toogleTexture();
                         });
+
+                        $("#toogle-fullscreen").click(function () {
+                            viewer.fullscreen();
+                        });
+
+
                     });
 
                     $http.get('/tags/model/' + _this.model.id).then(function (result) {
                         _this.tags = result.data;
                     });
 
-
+                    // Text box
                     tinyMCE.remove();
 
                     var tiny = tinymce.init({
@@ -118,6 +179,7 @@ app.controller('ViewerController', [
 
 ]);
 
+
 app.controller('AdminController', ['$scope', '$resource', '$http',
     '$translate', '$routeParams',
     function ($scope, $resource, $http, $translate, $routeParams) {
@@ -131,41 +193,108 @@ app.controller('AdminController', ['$scope', '$resource', '$http',
 
 ]);
 
-app.controller('BrowserAppController', ['$scope', '$resource', '$http',
-    '$translate', function ($scope, $resource, $http, $translate) {
-        _this = this;
 
-        // TODO: Similar code as viewer break out some to service
+app.controller('BrowserAppController', ['$scope', '$resource', '$http',
+    '$translate', 'modelFactory', function ($scope, $resource, $http, $translate, modelFactory) {
+
+        _this = this;
 
         _this.models = {};
         _this.tags = {};
 
-        _this.init = function () {
-            var assignModelAndGetFiles = function (model) {
-                _this.models[model.id] = model;
-                $http.get('/file/model/' + model.id).then(function (result) {
-                    var thumbnailPredicate = function (file) {
-                        return file.type === 'thumbnail' && file.finished;
-                    };
-
-                    _this.models[model.id].thumbnail = result.data.filter(thumbnailPredicate)[0].getUrl;
-                });
-            };
-
-            $http.get('/model').then(function (result) {
-                result.data.forEach(assignModelAndGetFiles);
-            });
+        // Load models
+        _this.init = function() {
+            _this.models = modelFactory.init();
         };
 
-        _this.loadTags = function (modelId) {
-            $http.get('/tags/model/' + modelId).then(function (result) {
-                _this.tags[modelId] = result.data;
-            });
+        // Load tags from modelId
+        _this.loadTags = function(modelId) {
+            _this.tags = modelFactory.loadTags(modelId);
         };
 
     }
 
 ]);
+
+
+app.controller('ModalMapCtrl', ['$scope', '$modal', function ($scope, $modal) {
+
+      $scope.coordinates = {};        // coordinates are saved here when choosing a location on modal window
+
+      $scope.openModal = function ($event) {
+           // preventing the button from submitting the form
+           $event.preventDefault();
+
+           var modalInstance = $modal.open({
+               templateUrl: '/securedassets/partials/model/map_dtl.html',
+               controller: 'mapSelectLocationCtrl'
+           });
+
+           // When save-location button are pressed and closed
+           modalInstance.result.then(function (coords) {
+
+                // send coords to parent controller (i.e ModelAddController)
+                $scope.$emit('SendCoords', coords);
+           });
+       }
+
+}]);
+
+
+app.controller("mapSelectLocationCtrl", function($scope, $modalInstance, uiGmapGoogleMapApi, $timeout) {
+
+        $scope.map = {
+            center: { latitude: 62, longitude: 15 },
+            zoom: 4,
+            markers: [],
+            events: {
+               click: function (map, eventName, originalEventArgs) {
+                   var e = originalEventArgs[0];
+                   var lat = e.latLng.lat(),lon = e.latLng.lng();
+                   var marker = {
+                       id: Date.now(),
+                       coords: {
+                           latitude: lat,
+                           longitude: lon
+                       }
+                   };
+                   $scope.map.markers.pop();                  //for showing only one marker when clicking
+                   $scope.map.markers.push(marker);
+
+                   $scope.$apply();
+               }
+           }
+
+       };
+
+      // When Map is loaded render it on html modal view. Otherwise map will be gray on the modal window
+      uiGmapGoogleMapApi.then(function (maps) {
+        $timeout(function () {
+            $scope.showMap = true;
+        }, 100);
+      });
+
+      var coordinates = {};
+
+      // When clicking on save-location button
+      $scope.ok = function() {
+
+          if ($scope.map.markers[0]) {
+              coordinates.latitude = $scope.map.markers[0].coords.latitude;
+              coordinates.longitude = $scope.map.markers[0].coords.longitude;
+              $modalInstance.close(coordinates);
+
+          }else {
+              alert("Choose a location.")
+              return false;           //preventing alert from submitting when the dialog is closed
+          }
+			};
+
+			$scope.cancel = function() {
+				  $modalInstance.dismiss('cancel');
+			};
+});
+
 
 app.controller('ModelAddController', [
     '$scope',
@@ -178,6 +307,33 @@ app.controller('ModelAddController', [
         _this.model = {};
         _this.alerts = [];
         _this.filesUploading = 0;
+
+        //listen to events from child controller. (get coordinates from ModalMapCtrl)
+        $scope.$on('SendCoords', function(event, coords) {
+            _this.model.latitude = coords.latitude;
+            _this.model.longitude = coords.longitude;
+
+            GetAddress(coords.latitude, coords.longitude, function(address) {
+                _this.model.location = address;
+            });
+
+        });
+
+        // Get address from longitude and latitude
+        var GetAddress = function(lat, lng, callback) {
+            var address;
+            var latlng = new google.maps.LatLng(lat, lng);
+            var geocoder = geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    address = results[1].formatted_address;
+                    callback(address);   // geocoder is a asynchronous function. Returns value when ready
+                }else{
+                    console.log("Address was not successful for the following reason: " + status);
+                }
+
+            });
+        }
 
         _this.init = function () {
 
@@ -306,7 +462,9 @@ app.controller('ModelAddController', [
             _this.alerts.splice(index, 1);
         };
 
+
     }]);
+
 
 app.controller('ModelPublishController', [
     '$scope',
@@ -422,6 +580,7 @@ app.controller('ModelPublishController', [
 
     }]);
 
+
 app.factory('User', ['$resource', function ($resource) {
     return $resource('/user/:email', null, {
         'update': {
@@ -430,12 +589,14 @@ app.factory('User', ['$resource', function ($resource) {
     });
 }]);
 
+
 app.controller('MenuController', ['$scope', '$location',
     function ($scope, $location) {
         $scope.isActive = function (viewLocation) {
             return viewLocation === $location.path();
         };
-    }]);
+}]);
+
 
 app.controller('ActivateUserController', ['$scope', '$resource', '$http',
     'User', function ($scope, $resource, $http, User) {
@@ -468,6 +629,7 @@ app.controller('ActivateUserController', ['$scope', '$resource', '$http',
         }
     }]);
 
+
 app.controller('AdminOrganizationController', ['$scope', '$http',
     function ($scope, $http) {
         $scope.submitForm = function () {
@@ -480,4 +642,110 @@ app.controller('AdminOrganizationController', ['$scope', '$http',
                 alert('error');
             });
         }
-    }]);
+}]);
+
+
+app.controller('MapCtrl', ['$scope', 'modelFactory', function ($scope, modelFactory) {
+
+      _this = this;
+      _this.showLinks = false;
+      _this.markers = {};
+      _this.models = {};
+
+      // initialize map and load models from database
+      _this.init = function() {
+
+            //  config the map
+            var mapOptions = {
+                zoom: 9,
+                center: new google.maps.LatLng(55.6, 13.0),
+                mapTypeId: google.maps.MapTypeId.TERRAIN
+            }
+
+            // show the map on page
+            _this.map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+            // load the models
+            _this.models = modelFactory.init();
+            var infoWindow = new google.maps.InfoWindow();
+
+      };
+
+      // This is the bounding box container of the markers
+      var bounds = new google.maps.LatLngBounds();
+
+      // Mark the model on the map
+      _this.showMarkerOnMap = function(modelName, modelId, modelThumbnail, modelLat, modelLng, model) {
+
+            modelCoords = {};
+            modelCoords.latitude = modelLat;
+            modelCoords.longitude = modelLng;
+
+            // If there are any coordinates specified in the model
+            if (modelCoords){
+
+                _this.showLinks = true;
+
+                // Create the marker and display on map
+                var marker = _this.createMarker(modelName, modelId, modelThumbnail, modelCoords);
+
+                // extending the bounding box
+                bounds.extend(marker.position);
+
+                // save marker when using in links
+                _this.markers[modelId] = marker;
+
+                // Create info window
+                var infoWindow = new google.maps.InfoWindow();
+
+                // Display info window when the mouse is over the marker
+                google.maps.event.addListener(marker, 'mouseover', function(){
+
+                      //infoWindow = new google.maps.InfoWindow();
+                      infoWindow.setContent(marker.content);
+                      infoWindow.open(_this.map, marker);
+
+                  });
+
+                // Exit info window when the mouse is out of the marker
+                google.maps.event.addListener(marker, 'mouseout', function(){
+                    infoWindow.close();
+
+                });
+
+                // Go to modelviewer when clicking on marker.
+                google.maps.event.addListener(marker, 'click', function(){
+                    window.location.href = "#/model/" + modelId;
+                });
+
+                // zooming on the bounding box in the map
+                _this.map.fitBounds(bounds);
+                _this.map.setZoom(13);
+            }
+
+      }
+
+     _this.createMarker = function(modelName, modelId, modelThumbnail, modelCoords){
+
+            // create a marker
+            var marker = new google.maps.Marker({
+                map: _this.map,
+                position: new google.maps.LatLng(modelCoords.latitude, modelCoords.longitude),
+                title: modelName
+            });
+
+            // create marker content. (Obs! ng-directives didn't work here. {{model.name}} didn't resolve. )
+            marker.content =     '<h4 class="media-heading" style="padding-left: 40px;padding-bottom: 10px"><em>' + modelName + '</em></h4>' +
+                                            '<a href="#/model/' + modelId + '">' +
+                                                '<img class="media-object" src="' +  modelThumbnail + '"+ width="128px" height="128px">' +
+                                            '</a>';
+
+            return marker;
+      }
+
+     _this.openInfoWindow = function(e, selectedMarker){
+            e.preventDefault();
+            google.maps.event.trigger(selectedMarker, 'click');
+      }
+
+}]);

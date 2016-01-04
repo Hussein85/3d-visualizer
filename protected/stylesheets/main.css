@@ -22,3 +22,7 @@ tags-input .host,
 tags-input .tags {
     height: auto !important;
 }
+
+.browser {
+  padding-top: 30px;
+}

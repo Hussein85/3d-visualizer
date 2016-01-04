@@ -1,0 +1,28 @@
+<!-- Modal dialog window -->
+<div class="modal-header">
+    <h3>Click a location on the map</h3>
+</div>
+<form ng-submit="submit()">
+
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                  <ui-gmap-google-map ng-if="showMap" center='map.center' zoom='map.zoom' events="map.events">>     <!-- Render google map in modal window -->
+                  <ui-gmap-marker ng-repeat="m in map.markers" coords="m.coords" icon="m.icon" idkey="m.id"></ui-gmap-marker>
+                  </ui-gmap-google-map>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            {{map_selection.type}}
+            <button
+                class="btn btn-warning"
+                ng-click="cancel()">Cancel</button>
+            <input
+                type="submit"
+                class="btn primary-btn"
+                value="Save location"
+                ng-click="ok()" />
+        </div>
+  </div>
+</form>
