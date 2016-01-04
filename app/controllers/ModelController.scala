@@ -2,7 +2,6 @@ package controllers
 
 import play.api._
 import play.api.libs.json._
-import play.api.libs.json.Writes._
 import play.api.libs.functional.syntax._
 import play.api.mvc._
 import play.api.data._
@@ -50,8 +49,8 @@ object ModelController {
       "name" -> nonEmptyText,
       "material" -> text,
       "location" -> text,
-      "latitude" -> play.api.data.Forms.of(doubleFormat),
-      "longitude" -> play.api.data.Forms.of(doubleFormat),
+      "latitude" -> of(doubleFormat),
+      "longitude" -> of(doubleFormat),
       "text" -> text,
       "year" -> fourDigitYearCheck,
       "tags" -> play.api.data.Forms.list(mapping(
@@ -108,7 +107,7 @@ class ModelController(override implicit val env: RuntimeEnvironment[User])
         val userId: String = request.user.userId
         val queryString = Map.empty[String, Seq[String]]
         val dbModel = new models.Model(id = None, name = m.name, userID = userId, date = new DateTime(m.year, 1, 1, 0, 0, 0),
-          material = m.material, location = m.location, latitude = 0.0, longitude = 0.0, text = m.text, timestamp = new DateTime, published = false,
+          material = m.material, location = m.location, latitude = m.latitude, longitude = m.longitude, text = m.text, timestamp = new DateTime, published = false,
           organizationId = request.user.organizationId)
         Logger.info(s"model: $dbModel")
         val modelID = DB.withSession { implicit session => Models.insert(dbModel) };
