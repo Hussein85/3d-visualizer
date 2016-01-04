@@ -26,11 +26,12 @@ import fly.play.s3._
 import fly.play.aws._
 import securesocial.museum.Admin
 import play.api.libs.json.Json.JsValueWrapper
+import com.typesafe.config.ConfigFactory
 
 class FileController(override implicit val env: RuntimeEnvironment[User])
   extends securesocial.core.SecureSocial[User] {
 
-  val bucket = S3("cagebucket")
+  val bucket = S3(ConfigFactory.load().getString("aws.bucket.name"))
   val expiryTime = 60
 
   def fileWrites[T](implicit request: SecuredRequest[T]) = new Writes[File] {
