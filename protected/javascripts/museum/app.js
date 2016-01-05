@@ -1,5 +1,5 @@
 var app = angular.module('App', ['angular.filter', 'ngResource', 'ngRoute',
-    'ngTagsInput', 'ui.bootstrap', 'pascalprecht.translate', 'ngMap', 'uiGmapgoogle-maps', 'ngDialog']);
+    'ngTagsInput', 'ui.bootstrap', 'pascalprecht.translate', 'uiGmapgoogle-maps']);
 
 app.config(['$routeProvider', '$translateProvider', 'uiGmapGoogleMapApiProvider',
     function ($routeProvider, $translateProvider, uiGmapGoogleMapApiProvider) {

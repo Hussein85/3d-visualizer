@@ -132,8 +132,44 @@ Viewer.prototype.initCanvas = function () {
         /** * Texture Loading ** */
         var manager = new THREE.LoadingManager();
         manager.onProgress = function (item, loaded, total) {
-            console.log(item, loaded, total);
+            //console.log(item, loaded, total);
         };
+
+        // Adding canvasloader
+        manager.onLoad = function () {
+            allItemsLoaded();
+        };
+
+        function allItemsLoaded() {
+            $('.onepix-imgloader').fadeOut();
+            // fade in content (using opacity instead of fadein() so it retains it's height.
+            $('.loading-container > *:not(.onepix-imgloader)').fadeTo(8000, 100);
+        }
+
+        //to display loading animation before it's ready
+        $(document).ready(function () {
+            if ($('.loading-container').length) {
+
+                //to show loading animation
+                $imgloader = $('.loading-container');
+                $loadingimg = $('<div id="canvasloader-container" class="onepix-imgloader"></div>');
+
+                //$loadingimg.attr("src","images/flexslider/loading.gif");
+                $imgloader.prepend($loadingimg);
+
+                //canvasloader code
+                var cl = new CanvasLoader('canvasloader-container');
+                cl.setColor('#4f4f4f'); // default is '#000000'
+                cl.setDiameter(45); // default is 40
+                cl.setDensity(75); // default is 40
+                cl.setRange(0.7); // default is 1.3
+                cl.setSpeed(3); // default is 2
+                cl.setFPS(22); // default is 24
+                cl.show(); // Hidden by default
+
+            }
+
+        });
 
         that.texture = undefined;
         var loader = new THREE.ImageLoader(manager);
@@ -158,10 +194,6 @@ Viewer.prototype.initCanvas = function () {
             that.ambientLight = new THREE.AmbientLight(0x555555);
             that.dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
         }
-
-        console.log("texture before: ");
-        console.log(that.texture);
-        console.log("texture a: ");
 
         /** * OBJ Loading ** */
         var loader = new THREE.OBJLoader(manager);

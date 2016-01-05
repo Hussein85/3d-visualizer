@@ -4,15 +4,13 @@ body {
 a {
     text-decoration: none;
   }
+  
 #map{
-    /*height:700px;
-    width:900px;
-    */
     height: 700px;
      width: 100%;
        box-shadow: 3px 3px 10px gray;
-
     }
+
 #repeat{
      display: inline;
      }
