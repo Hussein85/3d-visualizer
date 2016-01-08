@@ -60,9 +60,9 @@ app.factory('modelFactory', ['$http', function($http) {
 
             $http.get('/model').then(function (result) {
                 result.data.forEach(assignModelAndGetFiles);
+
             });
 
-            return models;
         };
 
         // Read tags from databas and return a tag array
@@ -195,7 +195,7 @@ app.controller('AdminController', ['$scope', '$resource', '$http',
 
 
 app.controller('BrowserAppController', ['$scope', '$resource', '$http',
-    '$translate', 'modelFactory', function ($scope, $resource, $http, $translate, modelFactory) {
+    '$translate', function ($scope, $resource, $http, $translate) {
 
         _this = this;
 
@@ -204,12 +204,31 @@ app.controller('BrowserAppController', ['$scope', '$resource', '$http',
 
         // Load models
         _this.init = function() {
-            _this.models = modelFactory.init();
+
+          var assignModelAndGetFiles = function (model) {
+              _this.models[model.id] = model;
+              $http.get('/file/model/' + model.id).then(function (result) {
+                  var thumbnailPredicate = function (file) {
+                      return file.type === 'thumbnail' && file.finished;
+                  };
+
+                  _this.models[model.id].thumbnail = result.data.filter(thumbnailPredicate)[0].getUrl;
+              });
+          };
+
+          $http.get('/model').then(function (result) {
+              result.data.forEach(assignModelAndGetFiles);
+          });
         };
+
 
         // Load tags from modelId
         _this.loadTags = function(modelId) {
-            _this.tags = modelFactory.loadTags(modelId);
+            //_this.tags = modelFactory.loadTags(modelId);
+            $http.get('/tags/model/' + modelId).then(function (result) {
+                _this.tags[modelId] = result.data;
+            });
+
         };
 
     }
@@ -645,109 +664,147 @@ app.controller('AdminOrganizationController', ['$scope', '$http',
 }]);
 
 
-app.controller('MapCtrl', ['$scope', 'modelFactory', function ($scope, modelFactory) {
+app.controller('MapCtrl', ['$scope', '$http', function ($scope, $http ) {
 
-      _this = this;
-      _this.showLinks = false;
-      _this.markers = {};
-      _this.models = {};
+      // Initialize map and load models from database
+      var models = {};
+      var map = {};
+      init();
 
-      // initialize map and load models from database
-      _this.init = function() {
+      // The bounding box for markers
+      var bounds = new google.maps.LatLngBounds();
 
-            //  config the map
+      // Wait for models to upload from server
+      setTimeout(whenReady, 500);
+
+      // Create markers
+      function whenReady(){
+          $scope.markers = [];
+          createMarkers(models);
+
+          $scope.showList = true;
+          $scope.$apply();
+      }
+
+      // refresh page every 60 seconds
+      window.setInterval(function(){
+          window.location.reload();
+      }, 60000);
+
+      // Open infowindow when clicking in the list
+      var lastinfowindow = new google.maps.InfoWindow();
+      $(document).on("click",".loc",function() {
+          var thisloc = $(this).data("locid");
+          for (var i = 0; i < $scope.markers.length; i++) {
+              if($scope.markers[i].locid == thisloc) {
+                  if(lastinfowindow instanceof google.maps.InfoWindow) lastinfowindow.close();
+                  map.panTo($scope.markers[i].getPosition());
+                  $scope.markers[i].infowindow.open(map, $scope.markers[i]);
+                  lastinfowindow = $scope.markers[i].infowindow;
+              }
+          }
+      });
+
+      // Create markers and extending bounding box
+      function createMarkers(models){
+
+          for (var key in models) {
+              // Create the marker and add to array
+              var marker = createMarker(models[key]);
+
+              // extending the bounding box
+              bounds.extend(marker.position);
+
+              // zoom on the bounding box
+              map.fitBounds(bounds);
+              map.setZoom(13);
+          }
+      }
+
+      // Create marker and add listeners etc
+      function createMarker(model){
+
+            // create a marker
+            var marker = new google.maps.Marker({
+                map: map,
+                position: new google.maps.LatLng(model.latitude, model.longitude),
+                title: model.name
+            });
+
+            // create marker content.
+            var markerContent =     '<h4 class="media-heading" style="padding-left: 40px;padding-bottom: 10px"><em>' + model.name + '</em></h4>' +
+                                            '<a href="#/model/' + model.id + '">' +
+                                                '<img class="media-object" src="' +  model.thumbnail + '"+ width="128px" height="128px">' +
+                                            '</a>';
+
+            // Create info window
+            var infowindow = new google.maps.InfoWindow({
+                content: markerContent
+            });
+
+            // Add listeners
+            google.maps.event.addListener(marker, 'click', function() {
+					         infowindow.open(map, marker);
+					  });
+
+            // Display info window when the mouse is over the marker
+            google.maps.event.addListener(marker, 'mouseover', function(){
+                  infowindow.open(map, marker);
+            });
+
+            // Exit info window when the mouse is out of the marker
+            google.maps.event.addListener(marker, 'mouseout', function(){
+                infowindow.close();
+            });
+
+            // Go to modelviewer when clicking on marker.
+            google.maps.event.addListener(marker, 'click', function(){
+                window.location.href = "#/model/" + model.id;
+
+            });
+
+            marker.infowindow = infowindow;
+            marker.locid = model.id;
+            marker.loc = model.location;
+
+            $scope.markers.push(marker);
+
+            return marker;
+      }
+
+      // Initialize map and load models from database
+      function init(){
+
+            //  Config the map
             var mapOptions = {
                 zoom: 9,
                 center: new google.maps.LatLng(55.6, 13.0),
                 mapTypeId: google.maps.MapTypeId.TERRAIN
             }
 
-            // show the map on page
-            _this.map = new google.maps.Map(document.getElementById('map'), mapOptions);
+            // Show the map on page
+            map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
             // load the models
-            _this.models = modelFactory.init();
-            var infoWindow = new google.maps.InfoWindow();
-
+            getModels();
       };
 
-      // This is the bounding box container of the markers
-      var bounds = new google.maps.LatLngBounds();
+      function getModels(){
+            // load the models
+            var assignModelAndGetFiles = function (model) {
+                models[model.id] = model;
+                $http.get('/file/model/' + model.id).then(function (result) {
+                    var thumbnailPredicate = function (file) {
+                        return file.type === 'thumbnail' && file.finished;
+                    };
 
-      // Mark the model on the map
-      _this.showMarkerOnMap = function(modelName, modelId, modelThumbnail, modelLat, modelLng, model) {
-
-            modelCoords = {};
-            modelCoords.latitude = modelLat;
-            modelCoords.longitude = modelLng;
-
-
-
-            // If there are any coordinates specified in the model
-            if (modelCoords){
-
-                _this.showLinks = true;
-
-                // Create the marker and display on map
-                var marker = _this.createMarker(modelName, modelId, modelThumbnail, modelCoords);
-
-                // extending the bounding box
-                bounds.extend(marker.position);
-
-                // save marker when using in links
-                _this.markers[modelId] = marker;
-
-                // Create info window
-                var infoWindow = new google.maps.InfoWindow();
-
-                // Display info window when the mouse is over the marker
-                google.maps.event.addListener(marker, 'mouseover', function(){
-
-                      //infoWindow = new google.maps.InfoWindow();
-                      infoWindow.setContent(marker.content);
-                      infoWindow.open(_this.map, marker);
-
-                  });
-
-                // Exit info window when the mouse is out of the marker
-                google.maps.event.addListener(marker, 'mouseout', function(){
-                    infoWindow.close();
-
+                    models[model.id].thumbnail = result.data.filter(thumbnailPredicate)[0].getUrl;
                 });
+            };
 
-                // Go to modelviewer when clicking on marker.
-                google.maps.event.addListener(marker, 'click', function(){
-                    window.location.href = "#/model/" + modelId;
-                });
-
-                // zooming on the bounding box in the map
-                _this.map.fitBounds(bounds);
-                _this.map.setZoom(13);
-            }
-
-      }
-
-     _this.createMarker = function(modelName, modelId, modelThumbnail, modelCoords){
-
-            // create a marker
-            var marker = new google.maps.Marker({
-                map: _this.map,
-                position: new google.maps.LatLng(modelCoords.latitude, modelCoords.longitude),
-                title: modelName
+            $http.get('/model').then(function (result) {
+                result.data.forEach(assignModelAndGetFiles);
             });
-
-            // create marker content. (Obs! ng-directives didn't work here. {{model.name}} didn't resolve. )
-            marker.content =     '<h4 class="media-heading" style="padding-left: 40px;padding-bottom: 10px"><em>' + modelName + '</em></h4>' +
-                                            '<a href="#/model/' + modelId + '">' +
-                                                '<img class="media-object" src="' +  modelThumbnail + '"+ width="128px" height="128px">' +
-                                            '</a>';
-
-            return marker;
-      }
-
-     _this.openInfoWindow = function(e, selectedMarker){
-            e.preventDefault();
-            google.maps.event.trigger(selectedMarker, 'click');
       }
 
 }]);

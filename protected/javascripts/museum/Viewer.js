@@ -26,13 +26,13 @@ Viewer.prototype.fullscreen = function() {
 
     // go fullscreen - support most browsers
     if (i.requestFullscreen) {
-    	i.requestFullscreen();
+    	   i.requestFullscreen();
     } else if (i.webkitRequestFullscreen) {
-    	i.webkitRequestFullscreen();
+    	   i.webkitRequestFullscreen();
     } else if (i.mozRequestFullScreen) {
-    	i.mozRequestFullScreen();
+    	   i.mozRequestFullScreen();
     } else if (i.msRequestFullscreen) {
-    	i.msRequestFullscreen();
+       	 i.msRequestFullscreen();
     }
 
 }
@@ -160,7 +160,7 @@ Viewer.prototype.initCanvas = function () {
                 //canvasloader code
                 var cl = new CanvasLoader('canvasloader-container');
                 cl.setColor('#4f4f4f'); // default is '#000000'
-                cl.setDiameter(45); // default is 40
+                cl.setDiameter(30); // default is 40
                 cl.setDensity(75); // default is 40
                 cl.setRange(0.7); // default is 1.3
                 cl.setSpeed(3); // default is 2

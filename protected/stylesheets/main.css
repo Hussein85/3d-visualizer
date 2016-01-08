@@ -41,7 +41,7 @@ tags-input .tags {
   margin-left: 100px !important;
 }
 
-/* screen loader-------------------------------------*/
+/* canvas loader-------------------------------------*/
 .onepix-imgloader {
     position: absolute;
     top: 50%;
@@ -62,10 +62,23 @@ tags-input .tags {
     background: #dfdfdf;
     min-height: 40px;
     height: 400px;
-
 }
 
 #container {
 /*    min-width: 400px;*/
     min-height: 400px;
+}
+
+/*For google maps list ----------------------------------------------------- */
+.scroll {
+    height: 680px;
+    /*
+    overflow: scroll;
+    overflow-x: hidden;
+    */
+    overflow: auto;
+}
+
+.loc {
+    cursor: pointer;
 }
