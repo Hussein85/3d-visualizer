@@ -8,15 +8,15 @@
                 </a>
             </div>
             <div class="media-body">
-                <h4 class="media-heading" style="padding-left: 40px;padding-bottom: 10px"><em>{{model.name}}</em></h4>
+                <h4 class="media-heading browser-model-title">{{model.name}}</h4>
                 <dl class="dl-horizontal">
-                    <dt translate>THUMBNAIL.MODEL_MATERIAL</dt>
-                    <dd>{{model.material}}</dd>
-                    <dt translate>THUMBNAIL.MODEL_LOCATION</dt>
-                    <dd>{{model.location}}</dd>
-                    <dt translate>THUMBNAIL.MODEL_YEAR</dt>
-                    <dd>{{model.date}}</dd>
-                    <dt>Taggar</dt>
+                    <dt class="browser-dt" translate>THUMBNAIL.MODEL_MATERIAL</dt>
+                    <dd class="browser-dd">{{model.material}}</dd>
+                    <dt class="browser-dt" translate>THUMBNAIL.MODEL_LOCATION</dt>
+                    <dd class="browser-dd">{{model.location}}</dd>
+                    <dt class="browser-dt" translate>THUMBNAIL.MODEL_YEAR</dt>
+                    <dd class="browser-dd">{{model.date}}</dd>
+                    <dt class="browser-dt" >Taggar</dt>
                     <dd>
                         <span class="label label-info" ng-repeat="tag in ctrl.tags[model.id]">{{tag.text}}</span>
                     </dd>
