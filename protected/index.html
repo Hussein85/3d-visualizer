@@ -19,9 +19,8 @@
     <link rel="stylesheet" media="screen" href="/securedassets/stylesheets/main.css">
 
     <!-- remove these in future-->
-    <link rel="stylesheet" media="screen" href="/securedassets/stylesheets/maps.css">
+    <link rel="stylesheet" media="screen" href="/securedassets/stylesheets/map.css">
     <link rel="stylesheet" media="screen" href="/securedassets/stylesheets/modalMapWindow.css">
-
 
     <!--Bower components -->
     <script type='text/javascript' src="/securedassets/bower_components/jquery/dist/jquery.js"></script>
@@ -57,6 +56,8 @@
     <script src="https://dl.dropboxusercontent.com/u/3587259/Code/Threejs/OrbitControls.js"></script>                                     <!-- orbitcontroll working -->
     <!-- <script type='text/javascript' src="/securedassets/javascripts/3dViewer/OrbitControls.js"></script> -->                          <!-- gives setfromunityvector not a function -->
 
+    <script src="https://rawgit.com/richtr/threeVR/master/js/DeviceOrientationController.js"></script>
+
 
     <script type='text/javascript' src="/securedassets/javascripts/3dViewer/Detector.js"></script>
     <script type='text/javascript' src="/securedassets/javascripts/3dViewer/BoundingBoxHelper.js"></script>
@@ -68,15 +69,13 @@
     <script type='text/javascript' src="/securedassets/javascripts/angular-simple-logger.js"></script>     <!-- dependecies for google maps  -->
     <script type='text/javascript' src="/securedassets/javascripts/angular-google-maps.js"></script>       <!-- dependecies for google maps  -->
 
-
-
-
-
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <script type="text/javascript" src="/securedassets/javascripts/museum/app.js"></script>
 </head>
 
 <body>
@@ -101,27 +100,15 @@
                     <!--<li><a href="#/" translate="NAVBAR.VIEWER"></a></li>-->
                     <li><a href="#/browser" translate="NAVBAR.BROWSER"></a></li>
                     <li><a href="#/model/add" translate="NAVBAR.ADD"></a></li>
-                    <li><a href="#/admin" translate="NAVBAR.ADMIN"></a></li>
                     <li><a href="#/map" translate="NAVBAR.MAP"></a></li>
+                    <li><a href="#/admin" translate="NAVBAR.ADMIN"></a></li>
                 </ul>
-                <!--      <ul class="nav navbar-nav navbar-right">
-                        <li class="dropdown">
-                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" translate="NAVBAR.LANGUAGE"><b class="caret"></b></a>
-                          <ul class="dropdown-menu">
-                            <li id="language-sweden"><a href="#"><img src="/securedassets/images/flags/flags/shiny/64/Sweden.png"></img>Svenska</a></li>
-                            <li id="language-us"><a href="#"><img src="/securedassets/images/flags/flags/shiny/64/United-States.png"></img>English</a></li>
-                          </ul>
-                        </li>
-                      </ul>-->
             </div>
             <!-- /.navbar-collapse -->
         </div>
         <!-- /.container-fluid -->
     </nav>
 
-
-    <script type="text/javascript"
-            src="/securedassets/javascripts/museum/app.js"></script>
     <div ng-view>
     </div>
 </div>

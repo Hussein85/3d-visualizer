@@ -1,44 +1,50 @@
 body {
     padding-top: 25px;
 }
+
 .file-input {
     height: 100%;
 }
+
 .model-tags {
     margin-left: 20px;
     margin-right: 20px;
     margin-bottom: 10px;
 }
+
 .model-tags span.label {
     line-height: 2em;
 }
+
 .link {
     cursor: hand;
 }
+
 #camera-control {
     margin-top: 20px;
 }
+
 tags-input .host,
 tags-input .tags {
     height: auto !important;
 }
 
 .browser {
-  padding-top: 30px;
+    padding-top: 30px;
 }
 
 .browser-model-title {
-  font-weight: bolder;
-  padding-bottom: 10px;
-  padding-left: 10px;
+    font-weight: bolder;
+    padding-bottom: 10px;
+    padding-left: 10px;
 }
 
 .browser-dt {
-  width: 80px !important;
+    width: 80px !important;
 }
 
 .browser-dd {
-  margin-left: 100px !important;
+    margin-left: 100px !important;
 }
 
 /* canvas loader-------------------------------------*/
@@ -51,10 +57,10 @@ tags-input .tags {
 
 /*hide the second element in the loading container (first element is the leading img)*/
 .loading-container > *:not(.onepix-imgloader) {
-    filter:alpha(opacity=0);
-    -moz-opacity:0;
-    -khtml-opacity:0;
-    opacity:0;
+    filter: alpha(opacity=0);
+    -moz-opacity: 0;
+    -khtml-opacity: 0;
+    opacity: 0;
 }
 
 .loading-container {
@@ -62,23 +68,4 @@ tags-input .tags {
     background: #dfdfdf;
     min-height: 40px;
     height: 400px;
-}
-
-#container {
-/*    min-width: 400px;*/
-    min-height: 400px;
-}
-
-/*For google maps list ----------------------------------------------------- */
-.scroll {
-    height: 680px;
-    /*
-    overflow: scroll;
-    overflow-x: hidden;
-    */
-    overflow: auto;
-}
-
-.loc {
-    cursor: pointer;
 }

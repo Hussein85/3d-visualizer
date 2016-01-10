@@ -793,6 +793,10 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
         // Show the map on page
         map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
+        $(window).resize(function () {
+              $('#map').css('height', $('#map-row').height());
+        }).resize();
+
         // load the models
         getModels();
     };

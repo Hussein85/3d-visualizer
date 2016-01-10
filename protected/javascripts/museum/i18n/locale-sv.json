@@ -37,6 +37,12 @@
   "VALIDATION": {
     "REQUIRED": "Obligatoriskt fält"
   },
+  "MAP": {
+    "LIST": {
+      "HEADER": "Modeller",
+      "LOCATION": "Plats"
+    }
+  },
   "form": {
     "email": "E-Postadress",
     "enter": "Ange",
