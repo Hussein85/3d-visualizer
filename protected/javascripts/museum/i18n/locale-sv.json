@@ -6,7 +6,8 @@
     "ADD": "Ladda upp ny modell",
     "ADMIN": "Admin",
     "MAP": "Karta",
-    "LANGUAGE": "Välj språk"
+    "LANGUAGE": "Välj språk",
+    "LOGOUT": "Logga ut"
   },
   "VIEWER": {
     "VIEWER": {
