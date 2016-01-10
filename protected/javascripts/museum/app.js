@@ -677,11 +677,6 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
     // The bounding box for markers
     var bounds = new google.maps.LatLngBounds();
 
-    // Create markers
-    function whenReady() {
-        createMarkers(models);
-    }
-
     // Open infowindow when clicking in the list
     var lastinfowindow = new google.maps.InfoWindow();
     $(document).on("click", ".loc", function () {
@@ -821,7 +816,7 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
 
         $http.get('/model').then(function (result) {
             result.data.forEach(assignModelAndGetFiles);
-            $q.all(promises).then(whenReady);
+            $q.all(promises).then(createMarkers(models));
         });
     }
 
