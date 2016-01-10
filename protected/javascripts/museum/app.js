@@ -665,6 +665,7 @@ app.controller('AdminOrganizationController', ['$scope', '$http',
 
 
 app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q) {
+    var _this = this;
 
     $scope.markers = [];
 
@@ -681,11 +682,6 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
         createMarkers(models);
     }
 
-    // refresh page every 60 seconds
-    window.setInterval(function () {
-        window.location.reload();
-    }, 60000);
-
     // Open infowindow when clicking in the list
     var lastinfowindow = new google.maps.InfoWindow();
     $(document).on("click", ".loc", function () {
@@ -694,7 +690,7 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
             if ($scope.markers[i].locid == thisloc) {
                 if (lastinfowindow instanceof google.maps.InfoWindow) lastinfowindow.close();
                 map.panTo($scope.markers[i].getPosition());
-                $scope.markers[i].infowindow.open(map, $scope.markers[i]);
+                openInfoWindow($scope.markers[i].infowindow, $scope.markers[i]);
                 lastinfowindow = $scope.markers[i].infowindow;
             }
         }
@@ -716,6 +712,23 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
         }
     }
 
+    function reloadThumbnailUrl(model){
+        return $http.get('/file/model/' + model.id).then(function (result) {
+            var thumbnailpredicate = function (file) {
+                return file.type === 'thumbnail' && file.finished;
+            };
+
+            models[model.id].thumbnail = result.data.filter(thumbnailpredicate)[0].getUrl;
+        });
+    }
+
+    function openInfoWindow(infoWindow, marker) {
+        reloadThumbnailUrl(marker.model).then(function(){
+            infoWindow.setContent(_this.markerContent(marker.model));
+            infoWindow.open(map, marker);
+        });
+    }
+
     // Create marker and add listeners etc
     function createMarker(model) {
 
@@ -726,30 +739,37 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
             title: model.name
         });
 
+        marker.locid = model.id;
+        marker.loc = model.location;
+        marker.model = model;
+
         // create marker content.
-        var markerContent = '<h4 class="media-heading" style="padding-left: 40px;padding-bottom: 10px"><em>' + model.name + '</em></h4>' +
+        _this.markerContent = function(model) {
+            return '<h4 class="media-heading" style="padding-left: 40px;padding-bottom: 10px"><em>' +model.name + '</em></h4>' +
             '<a href="#/model/' + model.id + '">' +
             '<img class="media-object" src="' + model.thumbnail + '"+ width="128px" height="128px">' +
             '</a>';
+        };
 
         // Create info window
-        var infowindow = new google.maps.InfoWindow({
-            content: markerContent
+        var infoWindow = new google.maps.InfoWindow({
+            content: _this.markerContent(marker)
         });
+        marker.infowindow = infoWindow;
 
         // Add listeners
         google.maps.event.addListener(marker, 'click', function () {
-            infowindow.open(map, marker);
+            openInfoWindow(infoWindow, marker);
         });
 
         // Display info window when the mouse is over the marker
         google.maps.event.addListener(marker, 'mouseover', function () {
-            infowindow.open(map, marker);
+            openInfoWindow(infoWindow, marker);
         });
 
         // Exit info window when the mouse is out of the marker
         google.maps.event.addListener(marker, 'mouseout', function () {
-            infowindow.close();
+            infoWindow.close();
         });
 
         // Go to modelviewer when clicking on marker.
@@ -758,9 +778,7 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
 
         });
 
-        marker.infowindow = infowindow;
-        marker.locid = model.id;
-        marker.loc = model.location;
+
 
         $scope.markers.push(marker);
 
