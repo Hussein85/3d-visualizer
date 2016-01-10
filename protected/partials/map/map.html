@@ -6,7 +6,7 @@
     <div class="alert alert-info" style="width:100%;"> 
     <!--<div class="span3 container well" style="width:100%;"> -->
       <div class="scroll" >
-        <div ng-if="showList" ng-repeat="marker in markers | filter:searchText">
+        <div ng-repeat="marker in markers | filter:searchText">
           <h4 class="loc" data-locid={{marker.locid}} ><strong>{{marker.title}}</strong></h3>
           <p>{{marker.loc}}</p>
           <hr>
@@ -21,5 +21,3 @@
   </div>
 
 </div>
-
-<div class="alert alert-info"
