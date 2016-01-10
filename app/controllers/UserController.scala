@@ -36,7 +36,7 @@ class UserController(override implicit val env: RuntimeEnvironment[User])
   extends securesocial.core.SecureSocial[User] {
 
    def loggedIn = SecuredAction(Normal) { implicit request =>
-    Ok(Json.toJson(request.user.role.toString()))
+    Ok(Json.toJson(request.user.role))
   }
 
 }

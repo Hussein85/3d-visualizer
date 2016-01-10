@@ -707,7 +707,7 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
         }
     }
 
-    function reloadThumbnailUrl(model){
+    function reloadThumbnailUrl(model) {
         return $http.get('/file/model/' + model.id).then(function (result) {
             var thumbnailpredicate = function (file) {
                 return file.type === 'thumbnail' && file.finished;
@@ -718,7 +718,7 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
     }
 
     function openInfoWindow(infoWindow, marker) {
-        reloadThumbnailUrl(marker.model).then(function(){
+        reloadThumbnailUrl(marker.model).then(function () {
             infoWindow.setContent(_this.markerContent(marker.model));
             infoWindow.open(map, marker);
         });
@@ -739,11 +739,11 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
         marker.model = model;
 
         // create marker content.
-        _this.markerContent = function(model) {
-            return '<h4 class="media-heading" style="padding-left: 40px;padding-bottom: 10px"><em>' +model.name + '</em></h4>' +
-            '<a href="#/model/' + model.id + '">' +
-            '<img class="media-object" src="' + model.thumbnail + '"+ width="128px" height="128px">' +
-            '</a>';
+        _this.markerContent = function (model) {
+            return '<h4 class="media-heading" style="padding-left: 40px;padding-bottom: 10px"><em>' + model.name + '</em></h4>' +
+                '<a href="#/model/' + model.id + '">' +
+                '<img class="media-object" src="' + model.thumbnail + '"+ width="128px" height="128px">' +
+                '</a>';
         };
 
         // Create info window
@@ -774,7 +774,6 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
         });
 
 
-
         $scope.markers.push(marker);
 
         return marker;
@@ -794,7 +793,7 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
         map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
         $(window).resize(function () {
-              $('#map').css('height', $('#map-row').height());
+            $('#map').css('height', $('#map-row').height());
         }).resize();
 
         // load the models
@@ -824,4 +823,16 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
         });
     }
 
+}]);
+
+app.controller('NavbarController', ['$http', function ($http) {
+    var _this = this;
+    _this.admin = false;
+
+    _this.init = function () {
+        $http.get('user/logedIn').then(
+            function (result) {
+                _this.admin = (JSON.parse(result.data) == "Admin");
+            })
+    }
 }]);
