@@ -245,7 +245,7 @@ app.controller('ModalMapCtrl', ['$scope', '$modal', function ($scope, $modal) {
         $event.preventDefault();
 
         var modalInstance = $modal.open({
-            templateUrl: '/securedassets/partials/model/map_dtl.html',
+            templateUrl: '/securedassets/partials/model/modalMapWindow.html',
             controller: 'mapSelectLocationCtrl'
         });
 
@@ -304,7 +304,7 @@ app.controller("mapSelectLocationCtrl", function ($scope, $modalInstance, uiGmap
             $modalInstance.close(coordinates);
 
         } else {
-            alert("Choose a location.")
+            alert("Choose a location")
             return false;           //preventing alert from submitting when the dialog is closed
         }
     };
@@ -677,16 +677,28 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
     // The bounding box for markers
     var bounds = new google.maps.LatLngBounds();
 
+    // Creating Overlapping Marker Spiderfier
+    var oms = new OverlappingMarkerSpiderfier(map, {keepSpiderfied: true,  nearbyDistance: 40});
+
+    // Add listeners on Marker Spiderfier
+    oms.addListener('click', function(marker, event) {
+        closeAllInfoWindows();
+        openInfoWindow(marker.infowindow, marker);
+    });
+
+    // Close all infowindows when clicking on the map
+    google.maps.event.addListener(map, "click", function(event) {
+        closeAllInfoWindows();
+    });
+
     // Open infowindow when clicking in the list
-    var lastinfowindow = new google.maps.InfoWindow();
     $(document).on("click", ".loc", function () {
         var thisloc = $(this).data("locid");
+        closeAllInfoWindows();
         for (var i = 0; i < $scope.markers.length; i++) {
             if ($scope.markers[i].locid == thisloc) {
-                if (lastinfowindow instanceof google.maps.InfoWindow) lastinfowindow.close();
                 map.panTo($scope.markers[i].getPosition());
                 openInfoWindow($scope.markers[i].infowindow, $scope.markers[i]);
-                lastinfowindow = $scope.markers[i].infowindow;
             }
         }
     });
@@ -697,6 +709,9 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
         for (var key in models) {
             // Create the marker and add to array
             var marker = createMarker(models[key]);
+
+            // Add marker to Spiderfier
+            oms.addMarker(marker);
 
             // extending the bounding box
             bounds.extend(marker.position);
@@ -724,7 +739,7 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
         });
     }
 
-    // Create marker and add listeners etc
+    // Create marker and add listeners
     function createMarker(model) {
 
         // create a marker
@@ -738,6 +753,7 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
         marker.loc = model.location;
         marker.model = model;
 
+
         // create marker content.
         _this.markerContent = function (model) {
             return '<h4 class="media-heading" style="padding-left: 40px;padding-bottom: 10px"><em>' + model.name + '</em></h4>' +
@@ -748,31 +764,16 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
 
         // Create info window
         var infoWindow = new google.maps.InfoWindow({
-            content: _this.markerContent(marker)
+            content: _this.markerContent(marker),
+            pixelOffset: new google.maps.Size(0, -7)  // negative y-value will move InfoWindow above marker
         });
         marker.infowindow = infoWindow;
 
-        // Add listeners
-        google.maps.event.addListener(marker, 'click', function () {
-            openInfoWindow(infoWindow, marker);
+        // Open info window on mouseover
+        google.maps.event.addListener(marker, 'mouseover', function() {
+            closeAllInfoWindows();
+            google.maps.event.trigger(this, 'click')
         });
-
-        // Display info window when the mouse is over the marker
-        google.maps.event.addListener(marker, 'mouseover', function () {
-            openInfoWindow(infoWindow, marker);
-        });
-
-        // Exit info window when the mouse is out of the marker
-        google.maps.event.addListener(marker, 'mouseout', function () {
-            infoWindow.close();
-        });
-
-        // Go to modelviewer when clicking on marker.
-        google.maps.event.addListener(marker, 'click', function () {
-            window.location.href = "#/model/" + model.id;
-
-        });
-
 
         $scope.markers.push(marker);
 
@@ -799,6 +800,12 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
         // load the models
         getModels();
     };
+
+    function closeAllInfoWindows(){
+        for(var i = 0; i < $scope.markers.length; i++){
+            $scope.markers[i].infowindow.close();
+        }
+    }
 
     function getModels() {
 

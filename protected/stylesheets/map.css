@@ -27,3 +27,6 @@
     min-height: 100%;
     height: 100%;
 }
+
+/* For modal map window in addModel form */
+.angular-google-map-container { height: 400px; }

@@ -87,5 +87,11 @@
       },
       "upload": "Spara"
     }
+  },
+  "MODALWINDOW": {
+    "INFO": "Ange modellens geografiska plats på kartan",
+    "CANCEL": "Avbryt",
+    "SAVE": "Spara"
   }
+
 }

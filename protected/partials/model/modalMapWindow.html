@@ -1,6 +1,6 @@
 <!-- Modal dialog window -->
 <div class="modal-header">
-    <h3>Click a location on the map</h3>
+    <h3 translate>MODALWINDOW.INFO</h3>
 </div>
 <form ng-submit="submit()">
 
@@ -17,11 +17,11 @@
             {{map_selection.type}}
             <button
                 class="btn btn-warning"
-                ng-click="cancel()">Cancel</button>
+                ng-click="cancel()" translate>MODALWINDOW.CANCEL</button>
             <input
                 type="submit"
                 class="btn primary-btn"
-                value="Save location"
+                value =  " {{ 'MODALWINDOW.SAVE'| translate }} "
                 ng-click="ok()" />
         </div>
   </div>

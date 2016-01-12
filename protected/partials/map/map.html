@@ -1,13 +1,12 @@
 <div id="map-row" class="row map-row" ng-controller="MapCtrl as ctrl">
 
-
     <!-- Marker list -->
     <div class="col-md-4 map-fill">
 
         <div class="panel panel-info map-fill">
             <div class="panel-heading" translate>MAP.LIST.HEADER</div>
             <div class="panel-body map-list-body">
-                <div ng-repeat="marker in markers | filter:searchText">
+                <div ng-repeat="marker in markers | orderBy:'title'">
                     <div class="media loc" data-locid={{marker.locid}}>
                         <div class="media-left">
                             <img class="media-object map-list-thumbnail" src="{{marker.model.thumbnail}}">
