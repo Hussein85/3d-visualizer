@@ -135,41 +135,39 @@ Viewer.prototype.initCanvas = function () {
             //console.log(item, loaded, total);
         };
 
-        // Adding canvasloader
-        manager.onLoad = function () {
-            allItemsLoaded();
+        // Circular loader
+        var ctx = document.getElementById('circularLoader').getContext('2d');
+        var percentComplete = 0;
+        var start = 4.72;
+        var cw = ctx.canvas.width;
+        var ch = ctx.canvas.height;
+        var diff;
+
+        var onProgress = function (xhr){
+            if(xhr.lengthComputable){
+                //var percentComplete = xhr.loaded / xhr.total * 100;
+                percentComplete = Math.round(xhr.loaded / xhr.total * 100, 2);
+                diff = ((percentComplete / 100) * Math.PI*2*10).toFixed(2);
+              	ctx.clearRect(0, 0, cw, ch);
+              	ctx.lineWidth = 5;
+                ctx.font="20px Arial";
+              	ctx.fillStyle = '#09F';      // color of the text
+              	ctx.strokeStyle = "#09F";    // color of the circular loader
+              	ctx.textAlign = 'center';
+              	ctx.fillText(percentComplete+'%', cw*.5, ch*.5+5, cw);
+              	ctx.beginPath();
+              	ctx.arc(35, 35, 30, start, diff/10+start, false);
+              	ctx.stroke();
+                if(percentComplete >= 100){
+          			    $("#circularLoader").fadeOut("slow");
+          			    $("#canvas-place-holder").fadeIn("slow");
+
+	              }
+            }
         };
 
-        function allItemsLoaded() {
-            $('.onepix-imgloader').fadeOut();
-            // fade in content (using opacity instead of fadein() so it retains it's height.
-            $('.loading-container > *:not(.onepix-imgloader)').fadeTo(8000, 100);
-        }
-
-        //to display loading animation before it's ready
-        $(document).ready(function () {
-            if ($('.loading-container').length) {
-
-                //to show loading animation
-                $imgloader = $('.loading-container');
-                $loadingimg = $('<div id="canvasloader-container" class="onepix-imgloader"></div>');
-
-                //$loadingimg.attr("src","images/flexslider/loading.gif");
-                $imgloader.prepend($loadingimg);
-
-                //canvasloader code
-                var cl = new CanvasLoader('canvasloader-container');
-                cl.setColor('#4f4f4f'); // default is '#000000'
-                cl.setDiameter(30); // default is 40
-                cl.setDensity(75); // default is 40
-                cl.setRange(0.7); // default is 1.3
-                cl.setSpeed(3); // default is 2
-                cl.setFPS(22); // default is 24
-                cl.show(); // Hidden by default
-
-            }
-
-        });
+        var onError = function(xhr){
+        };
 
         that.texture = undefined;
         var loader = new THREE.ImageLoader(manager);
@@ -225,7 +223,7 @@ Viewer.prototype.initCanvas = function () {
             });
 
             that.scene.add(object);
-        });
+        }, onProgress, onError);
 
         /*
         // Grid and Axis
@@ -241,7 +239,7 @@ Viewer.prototype.initCanvas = function () {
              new THREE.PlaneGeometry(2, 2, 0),
              new THREE.MeshBasicMaterial({
                  map: texture
-             }));
+        }));
 
         // The background shouldn't care about the z-buffer.
         bgMesh.material.depthTest = false;
@@ -273,16 +271,16 @@ Viewer.prototype.initCanvas = function () {
 
     function onWindowResize() {
 
-      // Fullscreen. Supports most browsers.
-      if (document.webkitIsFullScreen || document.msFullscreenElement || document.mozFullScreen || document.fullscreen) {
-          that.camera.aspect = window.innerWidth / window.innerHeight;
-          that.camera.updateProjectionMatrix();
-          that.renderer.setSize(window.innerWidth, window.innerHeight);
-      } else {    // exit fullscreen
-          that.camera.aspect = size.width / size.height;
-          that.camera.updateProjectionMatrix();
-          that.renderer.setSize(size.width, size.height);
-      }
+        // Fullscreen. Supports most browsers.
+        if (document.webkitIsFullScreen || document.msFullscreenElement || document.mozFullScreen || document.fullscreen) {
+            that.camera.aspect = window.innerWidth / window.innerHeight;
+            that.camera.updateProjectionMatrix();
+            that.renderer.setSize(window.innerWidth, window.innerHeight);
+        } else {    // exit fullscreen
+            that.camera.aspect = size.width / size.height;
+            that.camera.updateProjectionMatrix();
+            that.renderer.setSize(size.width, size.height);
+        }
 
         render();
     }
