@@ -22,6 +22,9 @@ function Viewer(id, modelPath, texturePath) {
 
 Viewer.prototype.fullscreen = function() {
 
+    $("#camera-control-noFullscreen").hide();
+    $("#camera-control-Fullscreen").fadeIn(500);
+
     var i = document.getElementById('canvas-place-holder');
 
     // go fullscreen - support most browsers
@@ -34,7 +37,18 @@ Viewer.prototype.fullscreen = function() {
     } else if (i.msRequestFullscreen) {
        	 i.msRequestFullscreen();
     }
+}
 
+Viewer.prototype.exitFullscreen = function() {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
 }
 
 Viewer.prototype.resetView = function () {
@@ -143,9 +157,15 @@ Viewer.prototype.initCanvas = function () {
         var ch = ctx.canvas.height;
         var diff;
 
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        $("#camera-control-noFullscreen").hide();
+        $("#camera-control-Fullscreen").hide();
+
         var onProgress = function (xhr){
             if(xhr.lengthComputable){
-                //var percentComplete = xhr.loaded / xhr.total * 100;
                 percentComplete = Math.round(xhr.loaded / xhr.total * 100, 2);
                 diff = ((percentComplete / 100) * Math.PI*2*10).toFixed(2);
               	ctx.clearRect(0, 0, cw, ch);
@@ -161,7 +181,7 @@ Viewer.prototype.initCanvas = function () {
                 if(percentComplete >= 100){
           			    $("#circularLoader").fadeOut("slow");
           			    $("#canvas-place-holder").fadeIn("slow");
-
+                    $("#camera-control-noFullscreen").fadeIn(500);
 	              }
             }
         };
@@ -280,6 +300,8 @@ Viewer.prototype.initCanvas = function () {
             that.camera.aspect = size.width / size.height;
             that.camera.updateProjectionMatrix();
             that.renderer.setSize(size.width, size.height);
+            $("#camera-control-noFullscreen").fadeIn(500);
+            $("#camera-control-Fullscreen").hide();
         }
 
         render();

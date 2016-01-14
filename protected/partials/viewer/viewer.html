@@ -2,37 +2,42 @@
 	<div class="row">
 		<div class="col-md-8" id="model-viewer">
 			<div class="alert alert-success" translate>VIEWER.VIEWER.HEADER</div>
-
-			<!--
-			<div class = "loading-container">
-				<div id="container" >
-						<div id="canvas-place-holder"></div>
-				</div>
-			</div>
-      -->
-
-
-			<!--<div id="canvas-place-holder"></div>
-			<canvas id="my_canvas" width="70" height="70" style="border:1px dashed #CCC;"></canvas>-->
-
-
-
-
+			
 			<div id="canvas-place-holder">
 					<canvas id="circularLoader" width="70" height="70"></canvas>
+					<div id="camera-control-noFullscreen">
+							<div class="control-button" id="toogle-fullscreen" data-toggle="tooltip" title=" {{ 'VIEWER.VIEWER.CONTROLLS.TOGGLE_FULLSCREEN'| translate }} ">
+										<div class="glyphicon glyphicon-resize-full white"  ></div>
+							</div>
+							<div class="control-button" id="reset-view-noFullscreen" data-toggle="tooltip" title=" {{ 'VIEWER.VIEWER.CONTROLLS.RESET'| translate }} ">
+										<div  class="glyphicon glyphicon-repeat white"  ></div>
+							</div>
+					</div>
+					<div id="camera-control-Fullscreen">
+							<div class="control-button" id="exit-fullscreen" data-toggle="tooltip" title=" {{ 'VIEWER.VIEWER.CONTROLLS.TOGGLE_EXITFULLSCREEN'| translate }} ">
+										<div class="glyphicon glyphicon-resize-small white"></div>
+							</div>
+							<div class="control-button" id="reset-view-Fullscreen" data-toggle="tooltip" title=" {{ 'VIEWER.VIEWER.CONTROLLS.RESET'| translate }} ">
+										<div  class="glyphicon glyphicon-repeat white"  ></div>
+							</div>
+					</div>
 			</div>
 
 
+	  <!--
 			<div id="camera-control">
+
 				<button type="button" class="btn btn-primary" id="reset-view" translate>VIEWER.VIEWER.CONTROLLS.RESET</button>
-				<!--
+
 				<button type="button" class="btn btn-primary"
 					id="toogle-bounding-box" translate>VIEWER.VIEWER.CONTROLLS.TOOGLE_BOUNDING_BOX</button>
 				<button type="button" class="btn btn-primary" id="toogle-pan-Y" translate>VIEWER.VIEWER.CONTROLLS.TOGGLE_Y_PANNING</button>
         <button type="button" class="btn btn-primary" id="toogle-texture" translate>VIEWER.VIEWER.CONTROLLS.TOGGLE_TEXTURE</button>
-				-->
+
 				<button type="button" class="btn btn-primary" id="toogle-fullscreen" translate>VIEWER.VIEWER.CONTROLLS.TOGGLE_FULLSCREEN </button>
+
 			</div>
+			-->
 		</div>
 		<div class="col-md-4" id="model-info">
 			<div class="alert alert-info" translate>VIEWER.INFORMATION.HEADER.INFO</div>

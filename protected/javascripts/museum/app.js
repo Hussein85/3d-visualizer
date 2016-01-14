@@ -120,7 +120,11 @@ app.controller('ViewerController', [
 
                         viewer.initCanvas();
 
-                        $("#reset-view").click(function () {
+                        $("#reset-view-noFullscreen").click(function () {
+                            viewer.resetView();
+                        });
+
+                        $("#reset-view-Fullscreen").click(function () {
                             viewer.resetView();
                         });
 
@@ -140,6 +144,9 @@ app.controller('ViewerController', [
                             viewer.fullscreen();
                         });
 
+                        $("#exit-fullscreen").click(function () {
+                            viewer.exitFullscreen();
+                        });
 
                     });
 

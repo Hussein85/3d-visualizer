@@ -17,7 +17,8 @@
         "TOGGLE_Y_PANNING": "Skifta Y panorering",
         "TOOGLE_BOUNDING_BOX": "Skifta bounding box",
         "TOGGLE_TEXTURE": "Skifta textur",
-        "TOGGLE_FULLSCREEN": "Helskärm"
+        "TOGGLE_FULLSCREEN": "Helskärmsläge",
+        "TOGGLE_EXITFULLSCREEN": "Avsluta helskärmsläge"
       }
     },
     "INFORMATION": {
