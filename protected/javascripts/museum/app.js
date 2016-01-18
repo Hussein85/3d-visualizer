@@ -833,7 +833,8 @@ app.controller('MapCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q)
 
         $http.get('/model').then(function (result) {
             result.data.forEach(assignModelAndGetFiles);
-            $q.all(promises).then(createMarkers(models));
+            $q.all(promises).then(createMarkers(models)
+          );
         });
     }
 

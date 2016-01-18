@@ -119,6 +119,8 @@ Viewer.prototype.lightUpdate = function (that) {
 Viewer.prototype.initCanvas = function () {
     var that = this;
 
+    var textureReady = false;
+
     if (!Detector.webgl)
         Detector.addGetWebGLMessage();
 
@@ -131,10 +133,16 @@ Viewer.prototype.initCanvas = function () {
     var bgScene = new THREE.Scene();
     var bgCamera = new THREE.Camera();
 
+
+    var mouse, raycaster;
+    var i = 1;
     init();
     animate();
 
     function init() {
+         $(".hotspot").hide();
+
+         var objectLoaded = false;
 
         // The scene
         that.scene = new THREE.Scene();
@@ -178,11 +186,17 @@ Viewer.prototype.initCanvas = function () {
               	ctx.beginPath();
               	ctx.arc(35, 35, 30, start, diff/10+start, false);
               	ctx.stroke();
-                if(percentComplete >= 100){
-          			    $("#circularLoader").fadeOut("slow");
-          			    $("#canvas-place-holder").fadeIn("slow");
-                    $("#camera-control-noFullscreen").fadeIn(500);
-	              }
+
+                if(percentComplete >= 100   ){
+
+                    //TODO:: need to have promise here. Run this when texture is ready
+                    setTimeout(function () {
+                        $("#circularLoader").fadeOut("slow");
+                        $("#canvas-place-holder").fadeIn("slow");
+                        $("#camera-control-noFullscreen").fadeIn(500);
+                    }, 500);
+
+                }
             }
         };
 
@@ -207,6 +221,8 @@ Viewer.prototype.initCanvas = function () {
                 // if have a larger texture and want a smooth linear filter.
                 that.texture.magFilter = THREE.NearestFilter;
                 that.texture.minFilter = THREE.NearestMipMapLinearFilter;
+
+                textureReady = true;
             });
         } else {
             that.ambientLight = new THREE.AmbientLight(0x555555);
@@ -243,6 +259,7 @@ Viewer.prototype.initCanvas = function () {
             });
 
             that.scene.add(object);
+
         }, onProgress, onError);
 
         /*
@@ -282,11 +299,63 @@ Viewer.prototype.initCanvas = function () {
         // controls
         that.controls = new THREE.OrbitControls( that.camera, that.renderer.domElement );
 
-        // Event listeners
+        //add raycaster and mouse
+        raycaster = new THREE.Raycaster();
+        mouse = new THREE.Vector2();
+
+        // Add Event listeners
         that.controls.addEventListener('change', function(){that.lightUpdate(that)});
         that.controls.addEventListener('change', render);
         window.addEventListener('resize', onWindowResize, false);
+        document.addEventListener( 'dblclick', onDocumentMouseDown, false );
+        document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 
+    }
+
+    function onDocumentTouchStart( event ) {
+
+        event.preventDefault();
+
+        event.clientX = event.touches[0].clientX;
+        event.clientY = event.touches[0].clientY;
+        onDocumentMouseDown( event );
+
+    }
+
+    function onDocumentMouseDown( event ) {
+
+        var canvas = document.getElementById("canvas-place-holder");
+        var pos = getMousePos(canvas, event);
+
+        event.preventDefault();
+        mouse.x = ( pos.x / that.renderer.domElement.width ) * 2 - 1;
+        mouse.y = - ( pos.y / that.renderer.domElement.height ) * 2 + 1;
+
+        raycaster.setFromCamera( mouse, that.camera );
+        var intersect = raycaster.intersectObject( that.object );
+
+
+
+
+
+        if ( intersect.length > 0 ) {
+            $( ".hotspot-text" ).empty();
+            $( ".hotspot" ).append( "<div class='hotspot-text'>" + i + "</div>" );
+            $(".hotspot").css( { top:pos.y-10, left: pos.x-10 })
+            $(".hotspot").show();
+        }else{
+            $(".hotspot").hide();
+        }
+        i++;
+
+    }
+
+    function getMousePos(canvas, event) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top
+        };
     }
 
     function onWindowResize() {
@@ -328,6 +397,11 @@ Viewer.prototype.initCanvas = function () {
         that.renderer.autoClear = false;
         that.renderer.clear();
         that.renderer.render(bgScene, bgCamera);
-        that.renderer.render(that.scene, that.camera);
+
+        // Render when texture is ready, otherwise the texture will show black
+        if(textureReady){
+            that.renderer.render(that.scene, that.camera);
+        }
+
     }
 }

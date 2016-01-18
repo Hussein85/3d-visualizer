@@ -112,3 +112,48 @@ tags-input .tags {
 .white{
   color: #fff;
 }
+
+.hotspot{
+            /*
+            max-width: 75%;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.49);
+            border-radius: 5px;
+            position: absolute;
+            bottom: 5%;
+            left: 10%;
+            padding: 5px 20px 5px 20px;
+            -moz-box-shadow: 3px 3px 5px 6px #ccc;
+            -webkit-box-shadow: 3px 3px 5px 6px #ccc;
+            box-shadow: 1px 3px 1px 1px rgba(0, 0, 0, 0.17);
+            z-index:1109;
+            */
+            position:absolute;;
+            width: 20px;
+            height: 20px;
+            background-color:  #000;
+            border-radius: 50%;
+            opacity:0.6;
+            border: 2px solid white;
+            cursor: pointer;
+
+}
+
+.hotspot-text{
+    /*margin-top: 0px;
+    margin-left: 2px;
+*/
+    text-align: center;
+    margin-top:7%;
+    font-size: 75%;
+    color: white;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+.hotspot:hover{
+    opacity:1;
+}
