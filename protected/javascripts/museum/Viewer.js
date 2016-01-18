@@ -6,21 +6,15 @@ function Viewer(id, modelPath, texturePath) {
     this.camera;
     this.modelPath = modelPath;
     this.texturePath = texturePath;
-    this.panY = false;
-    this.boundingBoxEnabled = false;
-    this.bb;
     this.object;
     this.controls;
     this.ambientLight;
     this.dirLight;
     this.texture;
-    this.materialWithTexture;
-    this.materialWithOutTexture;
-    this.textureOn = false;
-
+    this.bb;
 }
 
-Viewer.prototype.fullscreen = function() {
+Viewer.prototype.fullscreen = function () {
 
     $("#camera-control-noFullscreen").hide();
     $("#camera-control-Fullscreen").fadeIn(500);
@@ -29,84 +23,34 @@ Viewer.prototype.fullscreen = function() {
 
     // go fullscreen - support most browsers
     if (i.requestFullscreen) {
-    	   i.requestFullscreen();
+        i.requestFullscreen();
     } else if (i.webkitRequestFullscreen) {
-    	   i.webkitRequestFullscreen();
+        i.webkitRequestFullscreen();
     } else if (i.mozRequestFullScreen) {
-    	   i.mozRequestFullScreen();
+        i.mozRequestFullScreen();
     } else if (i.msRequestFullscreen) {
-       	 i.msRequestFullscreen();
+        i.msRequestFullscreen();
     }
 }
 
-Viewer.prototype.exitFullscreen = function() {
+Viewer.prototype.exitFullscreen = function () {
     if (document.exitFullscreen) {
-      document.exitFullscreen();
+        document.exitFullscreen();
     } else if (document.msExitFullscreen) {
-      document.msExitFullscreen();
+        document.msExitFullscreen();
     } else if (document.mozCancelFullScreen) {
-      document.mozCancelFullScreen();
+        document.mozCancelFullScreen();
     } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
+        document.webkitExitFullscreen();
     }
 }
 
 Viewer.prototype.resetView = function () {
-    this.toogleBoundingBox(false);
-    this.tooglePanY(false);
-    this.toogleTexture(true);
     this.scene.position.setY(-this.bb.box.max.y / 2);
     this.scene.updateMatrix();
     this.camera.position.set(0, 0, 300);
-    this.controls.target.set( 0, 10, 0 );
+    this.controls.target.set(0, 10, 0);
 
-}
-
-Viewer.prototype.tooglePanY = function (forceState) {
-    if (typeof forceState !== "undefined") {
-        this.panY = forceState;
-    } else {
-        this.panY = !this.panY;
-    }
-}
-
-Viewer.prototype.toogleTexture = function (forceState) {
-    if (forceState == false || (this.textureOn && forceState === undefined)) {
-        this.object.material.map = this.materialWithOutTexture;
-        this.scene.remove(this.ambientLight);
-        this.scene.remove(this.dirLight);
-        this.ambientLight = new THREE.AmbientLight(0x555555);
-        this.dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
-        this.dirLight.castShadow = true;
-        this.scene.add(this.ambientLight);
-        this.scene.add(this.dirLight);
-        this.object.material.needsUpdate = true;
-        this.textureOn = false;
-        this.lightUpdate(this);
-    } else if (this.texture !== undefined && this.texture !== null) {
-        this.object.material.map = this.materialWithTexture;
-        this.scene.remove(this.dirLight);
-        this.scene.remove(this.ambientLight);
-        this.ambientLight = new THREE.AmbientLight(0xeeeeee);
-        this.dirLight = new THREE.DirectionalLight(0xffffff, 0.1);
-        this.dirLight.castShadow = true;
-        this.scene.add(this.ambientLight);
-        this.scene.add(this.dirLight);
-        this.object.material.map.needsUpdate = true;
-        this.object.material.needsUpdate = true;
-        this.textureOn = true;
-        this.lightUpdate(this);
-    }
-}
-
-Viewer.prototype.toogleBoundingBox = function (forceState) {
-    if (forceState == false || this.boundingBoxEnabled) {
-        this.scene.remove(this.bb);
-        this.boundingBoxEnabled = false;
-    } else {
-        this.scene.add(this.bb);
-        this.boundingBoxEnabled = true;
-    }
 }
 
 Viewer.prototype.lightUpdate = function (that) {
@@ -140,10 +84,8 @@ Viewer.prototype.initCanvas = function () {
     animate();
 
     function init() {
-         $(".hotspot").hide();
-
-         var objectLoaded = false;
-
+        $(".hotspot").hide();
+        
         // The scene
         that.scene = new THREE.Scene();
 
@@ -167,31 +109,31 @@ Viewer.prototype.initCanvas = function () {
         var ch = ctx.canvas.height;
         var diff;
 
-        $(document).ready(function(){
+        $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip();
         });
 
         $("#camera-control-noFullscreen").hide();
         $("#camera-control-Fullscreen").hide();
 
-        var onProgress = function (xhr){
-            if(xhr.lengthComputable){
+        var onProgress = function (xhr) {
+            if (xhr.lengthComputable) {
                 percentComplete = Math.round(xhr.loaded / xhr.total * 100, 2);
-                diff = ((percentComplete / 100) * Math.PI*2*10).toFixed(2);
-              	ctx.clearRect(0, 0, cw, ch);
-              	ctx.lineWidth = 5;
-                ctx.font="20px Arial";
-              	ctx.fillStyle = '#09F';      // color of the text
-              	ctx.strokeStyle = "#09F";    // color of the circular loader
-              	ctx.textAlign = 'center';
-              	ctx.fillText(percentComplete+'%', cw*.5, ch*.5+5, cw);
-              	ctx.beginPath();
-              	ctx.arc(35, 35, 30, start, diff/10+start, false);
-              	ctx.stroke();
+                diff = ((percentComplete / 100) * Math.PI * 2 * 10).toFixed(2);
+                ctx.clearRect(0, 0, cw, ch);
+                ctx.lineWidth = 5;
+                ctx.font = "20px Arial";
+                ctx.fillStyle = '#09F';      // color of the text
+                ctx.strokeStyle = "#09F";    // color of the circular loader
+                ctx.textAlign = 'center';
+                ctx.fillText(percentComplete + '%', cw * .5, ch * .5 + 5, cw);
+                ctx.beginPath();
+                ctx.arc(35, 35, 30, start, diff / 10 + start, false);
+                ctx.stroke();
             }
         };
 
-        var onError = function(xhr){
+        var onError = function (xhr) {
         };
 
         that.texture = undefined;
@@ -233,10 +175,8 @@ Viewer.prototype.initCanvas = function () {
                     that.object.name = that.modelPath;
                     that.object.castShadow = true;
                     child.material.color.setHex(0xffffff);
-                    that.materialWithOutTexture = child.material.map;
                     if (that.texture !== undefined) {
                         child.material.map = that.texture;
-                        that.materialWithTexture = child.material.map;
                         that.textureOn = true;
                     }
                     child.geometry.computeBoundingBox();
@@ -253,21 +193,13 @@ Viewer.prototype.initCanvas = function () {
 
         }, onProgress, onError);
 
-        /*
-        // Grid and Axis
-        var axis = new THREE.AxisHelper(100);
-        var grid = new THREE.GridHelper(100, 10);
-        that.scene.add(axis);
-        that.scene.add(grid);
-        */
-
         // Load the background texture
-         var texture = THREE.ImageUtils.loadTexture( "/securedassets/images/background/img.jpg" );
-         var bgMesh = new THREE.Mesh(
-             new THREE.PlaneGeometry(2, 2, 0),
-             new THREE.MeshBasicMaterial({
-                 map: texture
-        }));
+        var texture = THREE.ImageUtils.loadTexture("/securedassets/images/background/img.jpg");
+        var bgMesh = new THREE.Mesh(
+            new THREE.PlaneGeometry(2, 2, 0),
+            new THREE.MeshBasicMaterial({
+                map: texture
+            }));
 
         // The background shouldn't care about the z-buffer.
         bgMesh.material.depthTest = false;
@@ -288,53 +220,51 @@ Viewer.prototype.initCanvas = function () {
         that.scene.add(that.dirLight);
 
         // controls
-        that.controls = new THREE.OrbitControls( that.camera, that.renderer.domElement );
+        that.controls = new THREE.OrbitControls(that.camera, that.renderer.domElement);
 
         //add raycaster and mouse
         raycaster = new THREE.Raycaster();
         mouse = new THREE.Vector2();
 
         // Add Event listeners
-        that.controls.addEventListener('change', function(){that.lightUpdate(that)});
+        that.controls.addEventListener('change', function () {
+            that.lightUpdate(that)
+        });
         that.controls.addEventListener('change', render);
         window.addEventListener('resize', onWindowResize, false);
-        document.addEventListener( 'dblclick', onDocumentMouseDown, false );
-        document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+        document.addEventListener('dblclick', onDocumentMouseDown, false);
+        document.addEventListener('touchstart', onDocumentTouchStart, false);
 
     }
 
-    function onDocumentTouchStart( event ) {
+    function onDocumentTouchStart(event) {
 
         event.preventDefault();
 
         event.clientX = event.touches[0].clientX;
         event.clientY = event.touches[0].clientY;
-        onDocumentMouseDown( event );
+        onDocumentMouseDown(event);
 
     }
 
-    function onDocumentMouseDown( event ) {
+    function onDocumentMouseDown(event) {
 
         var canvas = document.getElementById("canvas-place-holder");
         var pos = getMousePos(canvas, event);
 
         event.preventDefault();
         mouse.x = ( pos.x / that.renderer.domElement.width ) * 2 - 1;
-        mouse.y = - ( pos.y / that.renderer.domElement.height ) * 2 + 1;
+        mouse.y = -( pos.y / that.renderer.domElement.height ) * 2 + 1;
 
-        raycaster.setFromCamera( mouse, that.camera );
-        var intersect = raycaster.intersectObject( that.object );
+        raycaster.setFromCamera(mouse, that.camera);
+        var intersect = raycaster.intersectObject(that.object);
 
-
-
-
-
-        if ( intersect.length > 0 ) {
-            $( ".hotspot-text" ).empty();
-            $( ".hotspot" ).append( "<div class='hotspot-text'>" + i + "</div>" );
-            $(".hotspot").css( { top:pos.y-10, left: pos.x-10 })
+        if (intersect.length > 0) {
+            $(".hotspot-text").empty();
+            $(".hotspot").append("<div class='hotspot-text'>" + i + "</div>");
+            $(".hotspot").css({top: pos.y - 10, left: pos.x - 10})
             $(".hotspot").show();
-        }else{
+        } else {
             $(".hotspot").hide();
         }
         i++;
@@ -372,17 +302,9 @@ Viewer.prototype.initCanvas = function () {
         requestAnimationFrame(animate);
         that.controls.update();
 
-        if (that.panY) {
-            doPanY();
-        }
         render();
     }
 
-    function doPanY() {
-        var timer = new Date().getTime() * 0.0005;
-        that.scene.position.setY(Math.floor(Math.cos(timer) * 100));
-        that.scene.updateMatrix();
-    }
 
     function render() {
         that.renderer.autoClear = false;
@@ -390,7 +312,7 @@ Viewer.prototype.initCanvas = function () {
         that.renderer.render(bgScene, bgCamera);
 
         // Render when texture is ready, otherwise the texture will show black
-        if(textureReady){
+        if (textureReady) {
             that.renderer.render(that.scene, that.camera);
         }
 
