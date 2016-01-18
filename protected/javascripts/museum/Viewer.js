@@ -153,8 +153,10 @@ Viewer.prototype.initCanvas = function () {
 
         /** * Texture Loading ** */
         var manager = new THREE.LoadingManager();
-        manager.onProgress = function (item, loaded, total) {
-            //console.log(item, loaded, total);
+        manager.onLoad = function () {
+            $("#circularLoader").fadeOut("slow");
+            $("#canvas-place-holder").fadeIn("slow");
+            $("#camera-control-noFullscreen").fadeIn(500);
         };
 
         // Circular loader
@@ -186,17 +188,6 @@ Viewer.prototype.initCanvas = function () {
               	ctx.beginPath();
               	ctx.arc(35, 35, 30, start, diff/10+start, false);
               	ctx.stroke();
-
-                if(percentComplete >= 100   ){
-
-                    //TODO:: need to have promise here. Run this when texture is ready
-                    setTimeout(function () {
-                        $("#circularLoader").fadeOut("slow");
-                        $("#canvas-place-holder").fadeIn("slow");
-                        $("#camera-control-noFullscreen").fadeIn(500);
-                    }, 500);
-
-                }
             }
         };
 
