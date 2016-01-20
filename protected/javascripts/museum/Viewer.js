@@ -306,6 +306,9 @@ Viewer.prototype.initCanvas = function () {
     }
 
     function fitCameraToObject() {
+        // Set camera rotation around the masscenter of the boundingBox.
+        that.controls.target.set(that.bb.box.center().x,that.bb.box.center().y,that.bb.box.center().z);
+      
         var bbsize = that.bb.box.size();
 
         var height = Math.max(bbsize.x, Math.max(bbsize.y, bbsize.z));
