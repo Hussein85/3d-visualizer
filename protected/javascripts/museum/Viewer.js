@@ -12,10 +12,10 @@ function Viewer(id, modelPath, texturePath) {
     this.dirLight;
     this.texture;
     this.bb;
+    this.savedCam;
 }
 
 Viewer.prototype.fullscreen = function () {
-
     $("#camera-control-noFullscreen").hide();
     $("#camera-control-Fullscreen").fadeIn(500);
 
@@ -46,11 +46,10 @@ Viewer.prototype.exitFullscreen = function () {
 }
 
 Viewer.prototype.resetView = function () {
-    this.scene.position.setY(-this.bb.box.max.y / 2);
-    this.scene.updateMatrix();
-    this.camera.position.set(0, 0, 300);
-    this.controls.target.set(0, 10, 0);
-
+    this.camera.position.set(this.savedCam.position.x, this.savedCam.position.y, this.savedCam.position.z);
+    this.camera.rotation.set(this.savedCam.rotation.x, this.savedCam.rotation.y, this.savedCam.rotation.z);
+    this.controls.center.set(this.savedCam.controlCenter.x, this.savedCam.controlCenter.y, this.savedCam.controlCenter.z);
+    this.controls.update();
 }
 
 Viewer.prototype.lightUpdate = function (that) {
@@ -64,6 +63,7 @@ Viewer.prototype.initCanvas = function () {
     var that = this;
 
     var textureReady = false;
+    that.savedCam = {};
 
     if (!Detector.webgl)
         Detector.addGetWebGLMessage();
@@ -73,10 +73,9 @@ Viewer.prototype.initCanvas = function () {
         height: 400
     };
 
-    // Create the background scene
+    // Create background scene
     var bgScene = new THREE.Scene();
     var bgCamera = new THREE.Camera();
-
 
     var mouse, raycaster;
     var i = 1;
@@ -85,7 +84,7 @@ Viewer.prototype.initCanvas = function () {
 
     function init() {
         $(".hotspot").hide();
-        
+
         // The scene
         that.scene = new THREE.Scene();
 
@@ -109,6 +108,7 @@ Viewer.prototype.initCanvas = function () {
         var ch = ctx.canvas.height;
         var diff;
 
+        // Camera controls
         $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip();
         });
@@ -126,7 +126,7 @@ Viewer.prototype.initCanvas = function () {
                 ctx.fillStyle = '#09F';      // color of the text
                 ctx.strokeStyle = "#09F";    // color of the circular loader
                 ctx.textAlign = 'center';
-                ctx.fillText(percentComplete + '%', cw * .5, ch * .5 + 5, cw);
+                ctx.fillText(percentComplete + '%', cw * 0.5, ch * 0.5 + 5, cw);
                 ctx.beginPath();
                 ctx.arc(35, 35, 30, start, diff / 10 + start, false);
                 ctx.stroke();
@@ -154,7 +154,6 @@ Viewer.prototype.initCanvas = function () {
                 // if have a larger texture and want a smooth linear filter.
                 that.texture.magFilter = THREE.NearestFilter;
                 that.texture.minFilter = THREE.NearestMipMapLinearFilter;
-
                 textureReady = true;
             });
         } else {
@@ -185,21 +184,20 @@ Viewer.prototype.initCanvas = function () {
                     child.scale.set(scaleFactor, scaleFactor, scaleFactor);
                     that.bb = new THREE.BoundingBoxHelper(child, 0xffff00);
                     that.bb.update();
-                    that.resetView();
                 }
             });
-
             that.scene.add(object);
+            fitCameraToObject();
 
         }, onProgress, onError);
 
-        // Load the background texture
+        // Load background texture
         var texture = THREE.ImageUtils.loadTexture("/securedassets/images/background/img.jpg");
         var bgMesh = new THREE.Mesh(
             new THREE.PlaneGeometry(2, 2, 0),
             new THREE.MeshBasicMaterial({
                 map: texture
-            }));
+        }));
 
         // The background shouldn't care about the z-buffer.
         bgMesh.material.depthTest = false;
@@ -209,7 +207,7 @@ Viewer.prototype.initCanvas = function () {
         bgScene.add(bgMesh);
 
         // renderer
-        that.renderer = new THREE.WebGLRenderer({antialias: false});
+        that.renderer = new THREE.WebGLRenderer({antialias: true});
         that.renderer.setSize(size.width, size.height);
         $(that.id).append(that.renderer.domElement);
 
@@ -238,17 +236,13 @@ Viewer.prototype.initCanvas = function () {
     }
 
     function onDocumentTouchStart(event) {
-
         event.preventDefault();
-
         event.clientX = event.touches[0].clientX;
         event.clientY = event.touches[0].clientY;
         onDocumentMouseDown(event);
-
     }
 
     function onDocumentMouseDown(event) {
-
         var canvas = document.getElementById("canvas-place-holder");
         var pos = getMousePos(canvas, event);
 
@@ -268,7 +262,6 @@ Viewer.prototype.initCanvas = function () {
             $(".hotspot").hide();
         }
         i++;
-
     }
 
     function getMousePos(canvas, event) {
@@ -280,7 +273,6 @@ Viewer.prototype.initCanvas = function () {
     }
 
     function onWindowResize() {
-
         // Fullscreen. Supports most browsers.
         if (document.webkitIsFullScreen || document.msFullscreenElement || document.mozFullScreen || document.fullscreen) {
             that.camera.aspect = window.innerWidth / window.innerHeight;
@@ -293,18 +285,14 @@ Viewer.prototype.initCanvas = function () {
             $("#camera-control-noFullscreen").fadeIn(500);
             $("#camera-control-Fullscreen").hide();
         }
-
         render();
     }
 
     function animate() {
-
         requestAnimationFrame(animate);
         that.controls.update();
-
         render();
     }
-
 
     function render() {
         that.renderer.autoClear = false;
@@ -315,6 +303,29 @@ Viewer.prototype.initCanvas = function () {
         if (textureReady) {
             that.renderer.render(that.scene, that.camera);
         }
+    }
 
+    function fitCameraToObject() {
+        var bbsize = that.bb.box.size();
+
+        var height = Math.max(bbsize.x, Math.max(bbsize.y, bbsize.z));
+        var width = bbsize.x;
+        var depth = bbsize.z;
+
+        var vertical_FOV = that.camera.fov * (Math.PI/ 180);
+        var horizontal_FOV = 2 * Math.atan (Math.tan (vertical_FOV/2) * size.width / size.height);
+
+        var distance_vertical = height / (2 * Math.tan(vertical_FOV/2));
+        var distance_horizontal = width / (2 * Math.tan(horizontal_FOV/2));
+        var z_distance = distance_vertical >= distance_horizontal? distance_vertical : distance_horizontal;
+
+        that.camera.position.z = z_distance + depth;
+        that.camera.position.y = 0;
+        that.camera.position.x = 0;
+
+        // Save camera settings when restoring camera position
+        that.savedCam.position = that.camera.position.clone();
+        that.savedCam.rotation = that.camera.rotation.clone();
+        that.savedCam.controlCenter = that.controls.center.clone();
     }
 }
