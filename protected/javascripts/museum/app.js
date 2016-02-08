@@ -148,6 +148,16 @@ app.controller('ViewerController', [
                             viewer.exitFullscreen();
                         });
 
+                        $("#save-hotpsots").click(function () {
+                            var hotspots = viewer.getHotspots();
+                            console.log(hotspots);
+                        });
+
+                        $("#delete-hotpsots").click(function () {
+                            viewer.initHotspots();
+                        });
+
+
                     });
 
                     $http.get('/tags/model/' + _this.model.id).then(function (result) {

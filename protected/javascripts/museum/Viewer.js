@@ -13,7 +13,20 @@ function Viewer(id, modelPath, texturePath) {
     this.texture;
     this.bb;
     this.savedCam;
+    this.hotspots;
+    this.hotspot_number;
 }
+
+Viewer.prototype.getHotspots = function () {
+    return this.hotspots;
+};
+
+Viewer.prototype.initHotspots = function () {
+    this.hotspots = [];
+    var el = document.getElementById('hotspots');
+    while ( el.firstChild ) el.removeChild( el.firstChild );
+    this.hotspot_number = 1;
+};
 
 Viewer.prototype.fullscreen = function () {
     $("#camera-control-noFullscreen").hide();
@@ -65,6 +78,8 @@ Viewer.prototype.initCanvas = function () {
     var textureReady = false;
     that.savedCam = {};
 
+    that.initHotspots();
+
     if (!Detector.webgl)
         Detector.addGetWebGLMessage();
 
@@ -78,12 +93,11 @@ Viewer.prototype.initCanvas = function () {
     var bgCamera = new THREE.Camera();
 
     var mouse, raycaster;
-    var i = 1;
+
     init();
     animate();
 
     function init() {
-        $(".hotspot").hide();
 
         // The scene
         that.scene = new THREE.Scene();
@@ -108,9 +122,9 @@ Viewer.prototype.initCanvas = function () {
         var ch = ctx.canvas.height;
         var diff;
 
-        // Camera controls
+        // Tooltip for camera controls
         $(document).ready(function () {
-            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="tooltip-camera"]').tooltip();
         });
 
         $("#camera-control-noFullscreen").hide();
@@ -133,8 +147,7 @@ Viewer.prototype.initCanvas = function () {
             }
         };
 
-        var onError = function (xhr) {
-        };
+        var onError = function (xhr) {};
 
         that.texture = undefined;
         var loader = new THREE.ImageLoader(manager);
@@ -226,45 +239,122 @@ Viewer.prototype.initCanvas = function () {
 
         // Add Event listeners
         that.controls.addEventListener('change', function () {
-            that.lightUpdate(that)
+            that.lightUpdate(that);
+            updateHotspotPositions();
         });
         that.controls.addEventListener('change', render);
         window.addEventListener('resize', onWindowResize, false);
-        document.addEventListener('dblclick', onDocumentMouseDown, false);
-        document.addEventListener('touchstart', onDocumentTouchStart, false);
-
+        document.getElementById("canvas-place-holder").addEventListener("dblclick", onDocumentMouseDown);
     }
 
-    function onDocumentTouchStart(event) {
-        event.preventDefault();
-        event.clientX = event.touches[0].clientX;
-        event.clientY = event.touches[0].clientY;
-        onDocumentMouseDown(event);
-    }
 
     function onDocumentMouseDown(event) {
         var canvas = document.getElementById("canvas-place-holder");
         var pos = getMousePos(canvas, event);
 
-        event.preventDefault();
+        //event.stopPropagation();
+        //event.preventDefault();
+        //event.stopImmediatePropagation();
+
         mouse.x = ( pos.x / that.renderer.domElement.width ) * 2 - 1;
         mouse.y = -( pos.y / that.renderer.domElement.height ) * 2 + 1;
 
         raycaster.setFromCamera(mouse, that.camera);
         var intersect = raycaster.intersectObject(that.object);
 
+
         if (intersect.length > 0) {
-            $(".hotspot-text").empty();
-            $(".hotspot").append("<div class='hotspot-text'>" + i + "</div>");
-            $(".hotspot").css({top: pos.y - 10, left: pos.x - 10})
-            $(".hotspot").show();
-        } else {
-            $(".hotspot").hide();
+
+            // dynamically create hotspot div and set attributes
+            var hotspot_div = document.createElement("div");
+            $('#hotspots').append(hotspot_div);
+
+            var tooltip_htmlContent =
+            "<div> <br><input type='text' id='hotspot_input_titel' name='titel' placeholder='Titel'><br>" +
+            "<textarea spellcheck='false' id='hotspot_input_description' placeholder='Beskrivning'></textarea><br><br>" +
+            "<input type='button' value='Avbryt' id='hotspot_cancel'>" +
+            "  <input type='button' value='Ok' id='hotspot_ok'> </div> ";
+
+            var hotspotId = "hotspot" + that.hotspot_number;
+            hotspot_div.setAttribute("id", hotspotId);
+            hotspot_div.setAttribute("data-html", "true");
+            hotspot_div.setAttribute("data-original-title", tooltip_htmlContent);
+            hotspot_div.setAttribute("class", "hotspot-button");
+            hotspot_div.setAttribute("style", "top:" + (pos.y-10) + "px; left: " + (pos.x-10) + "px" );
+            hotspot_div.setAttribute("data-toogle", "tooltip-hotspot");
+            hotspot_div.setAttribute("data-placement", "right");
+            hotspot_div.innerHTML="<div class=hotspot-text >" + that.hotspot_number + "</div>";
+
+            $("#" + hotspotId).tooltip({trigger: 'manual'}).tooltip('show');
+
+            document.getElementById("hotspot_input_titel").focus();
+            document.removeEventListener('dblclick', onDocumentMouseDown, false);
+
+
+            $("#hotspot_cancel").click(function(){
+                // Remove div
+                $('#' + hotspotId).tooltip('destroy')
+                document.getElementById(hotspotId).remove();
+                document.addEventListener('dblclick', onDocumentMouseDown, false);
+            });
+
+
+            $("#hotspot_ok").click(function(){
+                var hotspot = {};
+                var titel = document.getElementById("hotspot_input_titel").value;
+                var descr = document.getElementById("hotspot_input_description").value;
+
+                var tooltip_htmlContent ="<div> <strong>" + titel + "</strong><br>" + descr + "</div>";
+                hotspot_div.setAttribute("data-original-title", tooltip_htmlContent);
+
+                // replace tooltip content
+                $("#" + hotspotId).attr('title', tooltip_htmlContent).tooltip('fixTitle').tooltip('hide');
+
+                //hotspot.divElement = hotspot_div;
+                hotspot.number = that.hotspot_number;
+                hotspot.titel = titel;
+                hotspot.description = descr;
+                hotspot.hotspotId = hotspotId;
+                hotspot.position = intersect[0].point;
+
+                hotspot.camPosition = that.camera.position.clone();
+                hotspot.camRotation = that.camera.rotation.clone();
+
+
+                that.hotspots.push(hotspot);
+
+
+                $("#" + hotspotId).click(function(){
+                    $('#' + hotspotId).tooltip('hide')
+
+                    // Set camera rotation around hotspot.
+                    that.controls.target.set(hotspot.position.x,hotspot.position.y,hotspot.position.z);
+
+                    that.camera.position.set(hotspot.camPosition.x, hotspot.camPosition.y, hotspot.camPosition.z);
+                    that.camera.rotation.set(hotspot.camRotation.x, hotspot.camRotation.y, hotspot.camRotation.z);
+                });
+
+
+                $("#" + hotspotId).mouseover(function() {
+                    $("#" + hotspotId).tooltip('show');
+                });
+
+                $("#" + hotspotId).mouseleave(function() {
+                    $("#" + hotspotId).tooltip('hide');
+                });
+
+                that.hotspot_number++;
+
+                document.addEventListener('dblclick', onDocumentMouseDown, false);
+
+                $('button').prop('disabled', false);
+
+            });
         }
-        i++;
     }
 
     function getMousePos(canvas, event) {
+
         var rect = canvas.getBoundingClientRect();
         return {
             x: event.clientX - rect.left,
@@ -285,6 +375,7 @@ Viewer.prototype.initCanvas = function () {
             $("#camera-control-noFullscreen").fadeIn(500);
             $("#camera-control-Fullscreen").hide();
         }
+        updateHotspotPositions();
         render();
     }
 
@@ -303,12 +394,14 @@ Viewer.prototype.initCanvas = function () {
         if (textureReady) {
             that.renderer.render(that.scene, that.camera);
         }
+
+        updateHotspotPositions();
     }
 
     function fitCameraToObject() {
         // Set camera rotation around the masscenter of the boundingBox.
         that.controls.target.set(that.bb.box.center().x,that.bb.box.center().y,that.bb.box.center().z);
-      
+
         var bbsize = that.bb.box.size();
 
         var height = Math.max(bbsize.x, Math.max(bbsize.y, bbsize.z));
@@ -331,4 +424,57 @@ Viewer.prototype.initCanvas = function () {
         that.savedCam.rotation = that.camera.rotation.clone();
         that.savedCam.controlCenter = that.controls.center.clone();
     }
+
+    function get2dProjection(coord, camera, width, height) {
+
+        var p = new THREE.Vector3(coord.x, coord.y, coord.z);
+        var vector = p.project(camera);
+
+        vector.x = (vector.x + 1) / 2 * width-10;
+        vector.y = -(vector.y - 1) / 2 * height-10;
+
+        return vector;
+
+    }
+
+    function updateHotspotPositions() {
+        for (var i = 0; i < that.hotspots.length; i++) {
+            hotspot = that.hotspots[i];
+            if (!isObjectEmpty(hotspot.position)){
+                proj = {};
+
+                // If fullscreen
+                if (document.webkitIsFullScreen || document.msFullscreenElement || document.mozFullScreen || document.fullscreen) {
+                    proj = get2dProjection(hotspot.position, that.camera, window.innerWidth, window.innerHeight);
+                } else {
+                    proj = get2dProjection(hotspot.position, that.camera, size.width, size.height);
+
+                    if (proj.x < 0)
+                        proj.x = 0;
+                    if (proj.x > size.width)
+                        proj.x = size.width;
+                    if (proj.y < 0)
+                        proj.y = 0;
+                    if (proj.y > size.height)
+                        proj.y = size.height;
+                }
+
+                var hotspotId = hotspot.hotspotId;
+
+                $("#" + hotspotId).css({top: proj.y, left: proj.x})
+
+            }
+        }
+    }
+
+    function isObjectEmpty(object){
+        var isEmpty = true;
+        for(keys in object)
+        {
+           isEmpty = false;
+           break;
+        }
+        return isEmpty;
+    }
+
 }
