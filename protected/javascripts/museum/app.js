@@ -120,43 +120,28 @@ app.controller('ViewerController', [
 
                         viewer.initCanvas();
 
-                        $("#reset-view-noFullscreen").click(function () {
+
+                        $("#reset-view").click(function () {
                             viewer.resetView();
                         });
 
-                        $("#reset-view-Fullscreen").click(function () {
-                            viewer.resetView();
-                        });
-
-                        $("#toogle-bounding-box").click(function () {
-                            viewer.toogleBoundingBox();
-                        });
-
-                        $("#toogle-pan-Y").click(function () {
-                            viewer.tooglePanY();
-                        });
-
-                        $("#toogle-texture").click(function () {
-                            viewer.toogleTexture();
-                        });
-
-                        $("#toogle-fullscreen").click(function () {
+                        // For dynamically modified div use "on"
+                        $("#controls").on('click', '#toogle-fullscreen', function(e) {
                             viewer.fullscreen();
                         });
 
-                        $("#exit-fullscreen").click(function () {
+                        $("#controls").on('click', '#exit-fullscreen', function(e) {
                             viewer.exitFullscreen();
                         });
 
                         $("#save-hotpsots").click(function () {
                             var hotspots = viewer.getHotspots();
-                            console.log(hotspots);
+                            //TODO save hotspots in backend.
                         });
 
                         $("#delete-hotpsots").click(function () {
                             viewer.initHotspots();
                         });
-
 
                     });
 

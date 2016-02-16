@@ -4,39 +4,32 @@
 			<div class="alert alert-success" translate>VIEWER.VIEWER.HEADER</div>
 
 			<div id="canvas-place-holder">
+
 					<canvas id="circularLoader" width="70" height="70"></canvas>
-					<div id="camera-control-noFullscreen">
+
+					<div id="controls">
+							<div class="control-button" id="dist-button" data-toggle="tooltip-camera" title=" {{ 'VIEWER.VIEWER.CONTROLLS.DIST'| translate }} ">
+										<div  class="glyphicon glyphicon-resize-horizontal white"  ></div>
+							</div>
 							<div class="control-button" id="toogle-fullscreen" data-toggle="tooltip-camera" title=" {{ 'VIEWER.VIEWER.CONTROLLS.TOGGLE_FULLSCREEN'| translate }} ">
 										<div class="glyphicon glyphicon-resize-full white"  ></div>
 							</div>
-							<div class="control-button" id="reset-view-noFullscreen" data-toggle="tooltip-camera" title=" {{ 'VIEWER.VIEWER.CONTROLLS.RESET'| translate }} ">
-										<div  class="glyphicon glyphicon-repeat white"  ></div>
-							</div>
-					</div>
-					<div id="camera-control-Fullscreen">
-							<div class="control-button" id="exit-fullscreen" data-toggle="tooltip-camera" title=" {{ 'VIEWER.VIEWER.CONTROLLS.TOGGLE_EXITFULLSCREEN'| translate }} ">
-										<div class="glyphicon glyphicon-resize-small white"></div>
-							</div>
-							<div class="control-button" id="reset-view-Fullscreen" data-toggle="tooltip-camera" title=" {{ 'VIEWER.VIEWER.CONTROLLS.RESET'| translate }} ">
+							<div class="control-button" id="reset-view" data-toggle="tooltip-camera" title=" {{ 'VIEWER.VIEWER.CONTROLLS.RESET'| translate }} ">
 										<div  class="glyphicon glyphicon-repeat white"  ></div>
 							</div>
 					</div>
 
-
+					<div id="distance-infowindow"></div>
+					<div id="distance-resetButton"></div>
 					<div id="hotspots"></div>
-
+					<div id="drawLine">	</div>
 
 			</div>
 
-
-					<div id="camera-control">
-						<!--<button type="button" class="btn btn-primary" disabled="disabled" id="save-hotpsots" translate>VIEWER.VIEWER.CONTROLLS.SAVEHOTSPOTS</button>-->
-						<button type="button" class="btn btn-primary"  id="save-hotpsots" translate>VIEWER.VIEWER.CONTROLLS.SAVEHOTSPOTS</button>
-						<button type="button" class="btn btn-primary"  id="delete-hotpsots" translate>VIEWER.VIEWER.CONTROLLS.DELETEHOTSPOTS</button>
-					</div>
-
+			<div id="camera-control">	</div>
 
 		</div>
+
 		<div class="col-md-4" id="model-info">
 			<div class="alert alert-info" translate>VIEWER.INFORMATION.HEADER.INFO</div>
 <!-- 			TODO: Similar code as browser window refactor to share code. -->

@@ -29,8 +29,32 @@ Viewer.prototype.initHotspots = function () {
 };
 
 Viewer.prototype.fullscreen = function () {
-    $("#camera-control-noFullscreen").hide();
-    $("#camera-control-Fullscreen").fadeIn(500);
+
+    $("#toogle-fullscreen").off();
+    $("#toogle-fullscreen").tooltip('hide');
+
+    var fullscreenDiv = document.getElementById("toogle-fullscreen");
+
+    //fullscreenDiv.setAttribute("data-html", "true");
+    //fullscreenDiv.setAttribute("data-original-title", "{{ 'VIEWER.VIEWER.CONTROLLS.EXITFULLSCREEN'| translate }} ");
+    fullscreenDiv.setAttribute("data-original-title", "Avsluta helskärmsläge");
+
+    fullscreenDiv.innerHTML="<div class='glyphicon glyphicon-resize-small white' ></div>";
+    fullscreenDiv.setAttribute("id", "exit-fullscreen");
+
+    $("#exit-fullscreen").mouseover(function() {
+        $("#exit-fullscreen").tooltip('show');
+    });
+
+    $("#exit-fullscreen").mouseleave(function() {
+        $("#exit-fullscreen").tooltip('hide');
+    });
+
+    var el = document.getElementById('drawLine');
+    while ( el.firstChild ) el.removeChild( el.firstChild );
+    clicks = 0;
+    distance = 0;
+    document.getElementById("distance-infowindow").innerHTML="<div class=dist-infowindow-text >" + "Avstånd: " + 0 + " cm" + "</div>";
 
     var i = document.getElementById('canvas-place-holder');
 
@@ -47,6 +71,7 @@ Viewer.prototype.fullscreen = function () {
 }
 
 Viewer.prototype.exitFullscreen = function () {
+
     if (document.exitFullscreen) {
         document.exitFullscreen();
     } else if (document.msExitFullscreen) {
@@ -56,6 +81,33 @@ Viewer.prototype.exitFullscreen = function () {
     } else if (document.webkitExitFullscreen) {
         document.webkitExitFullscreen();
     }
+
+    var el = document.getElementById('drawLine');
+    while ( el.firstChild ) el.removeChild( el.firstChild );
+    clicks = 0;
+    distance = 0;
+    document.getElementById("distance-infowindow").innerHTML="<div class=dist-infowindow-text >" + "Avstånd: " + 0 + " cm" + "</div>";
+
+    $("#toogle-fullscreen").off();
+    $("#toogle-fullscreen").tooltip('hide');
+
+    // Dynimacally modify div element
+    var fullscreenDiv = document.getElementById("exit-fullscreen");
+
+    //fullscreenDiv.setAttribute("data-html", "true");
+    //fullscreenDiv.setAttribute("data-original-title", "{{ 'VIEWER.VIEWER.CONTROLLS.TOGGLE_FULLSCREEN'| translate }} ");
+    fullscreenDiv.setAttribute("data-original-title", "Helskärmsläge");
+
+    fullscreenDiv.innerHTML="<div class='glyphicon glyphicon-resize-full white' ></div>";
+    fullscreenDiv.setAttribute("id", "toogle-fullscreen");
+
+    $("#toogle-fullscreen").mouseover(function() {
+        $("#toogle-fullscreen").tooltip('show');
+    });
+
+    $("#toogle-fullscreen").mouseleave(function() {
+        $("#toogle-fullscreen").tooltip('hide');
+    });
 }
 
 Viewer.prototype.resetView = function () {
@@ -99,6 +151,38 @@ Viewer.prototype.initCanvas = function () {
 
     function init() {
 
+        clicks = 0;
+        lastClick = [0, 0];
+        distance = 0;
+        last3dPoint = new THREE.Vector3();
+
+        $('#dist-button').click(function(){
+             if($(this).toggleClass('active').hasClass('active')){
+                // When distance-button is active.
+                document.getElementById("canvas-place-holder").addEventListener('click', drawLine, false);
+                document.getElementById("distance-infowindow").innerHTML="<div class=dist-infowindow-text >" + "Avstånd: " + distance + " cm" + "</div>";
+                $("#distance-infowindow").fadeIn(500);
+                document.getElementById("distance-resetButton").innerHTML="<div class=distance-resetButton-text >" + "Nollställ" + "</div>";
+                $("#distance-resetButton").fadeIn(500);
+                $("#distance-resetButton").click(function(){
+                    var el = document.getElementById('drawLine');
+                    while ( el.firstChild ) el.removeChild( el.firstChild );
+                    clicks = 0;
+                    distance = 0;
+                    document.getElementById("distance-infowindow").innerHTML="<div class=dist-infowindow-text >" + "Avstånd: " + 0 + " cm" + "</div>";
+                });
+             }else{
+                // When distance-button is not active
+                document.getElementById("canvas-place-holder").removeEventListener('click', drawLine, false);
+                $("#distance-infowindow").fadeOut();
+                $("#distance-resetButton").fadeOut();
+                var el = document.getElementById('drawLine');
+                while ( el.firstChild ) el.removeChild( el.firstChild );
+                clicks = 0;
+                distance = 0;
+             }
+         });
+
         // The scene
         that.scene = new THREE.Scene();
 
@@ -111,7 +195,7 @@ Viewer.prototype.initCanvas = function () {
         manager.onLoad = function () {
             $("#circularLoader").fadeOut("slow");
             $("#canvas-place-holder").fadeIn("slow");
-            $("#camera-control-noFullscreen").fadeIn(500);
+            $("#controls").fadeIn(500);
         };
 
         // Circular loader
@@ -127,8 +211,9 @@ Viewer.prototype.initCanvas = function () {
             $('[data-toggle="tooltip-camera"]').tooltip();
         });
 
-        $("#camera-control-noFullscreen").hide();
-        $("#camera-control-Fullscreen").hide();
+        $("#controls").hide();
+        $("#distance-infowindow").hide();
+        $("#distance-resetButton").hide();
 
         var onProgress = function (xhr) {
             if (xhr.lengthComputable) {
@@ -193,8 +278,6 @@ Viewer.prototype.initCanvas = function () {
                     }
                     child.geometry.computeBoundingBox();
                     child.position.set(0, 0, 0);
-                    var scaleFactor = 200 / child.geometry.boundingBox.max.y;
-                    child.scale.set(scaleFactor, scaleFactor, scaleFactor);
                     that.bb = new THREE.BoundingBoxHelper(child, 0xffff00);
                     that.bb.update();
                 }
@@ -244,11 +327,63 @@ Viewer.prototype.initCanvas = function () {
         });
         that.controls.addEventListener('change', render);
         window.addEventListener('resize', onWindowResize, false);
-        document.getElementById("canvas-place-holder").addEventListener("dblclick", onDocumentMouseDown);
+        document.getElementById("canvas-place-holder").addEventListener("dblclick", addHotspots);
     }
 
+    function drawLine(evnet) {
+        var canvas = document.getElementById("canvas-place-holder");
+        var pos = getMousePos(canvas, event);
 
-    function onDocumentMouseDown(event) {
+        mouse.x = ( pos.x / that.renderer.domElement.width ) * 2 - 1;
+        mouse.y = -( pos.y / that.renderer.domElement.height ) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, that.camera);
+        var intersect = raycaster.intersectObject(that.object);
+
+        if (intersect.length > 0) {
+            var point = document.createElement("div");
+            $('#drawLine').append(point);
+
+            point.setAttribute("class", "point");
+            point.setAttribute("style", "top:" + (pos.y-5) + "px; left: " + (pos.x-5) + "px" );
+
+            if (clicks == 0) {
+                clicks++;
+            } else {
+                // compute distance between two points in 3d space (distance are in mm)
+                var point1 = last3dPoint;
+                var point2 = intersect[0].point;
+                distance += Math.round(point1.distanceTo(point2)/10);
+                document.getElementById("distance-infowindow").innerHTML="<div class=dist-infowindow-text >" + "Avstånd: " + distance + " cm" + "</div>";
+
+                // draw line
+                var x1 = lastClick[0];
+                var y1 = lastClick[1];
+                var x2 = pos.x;
+                var y2 = pos.y;
+
+                var length = Math.sqrt(((x2-x1) * (x2-x1)) + ((y2-y1) * (y2-y1)));
+                var thickness = 3;
+                var color = "#0F0";
+                var cx = ((x1 + x2) / 2) - (length / 2);
+                var cy = ((y1 + y2) / 2) - (thickness / 2);
+
+                var angle = Math.atan2((y1-y2),(x1-x2))*(180/Math.PI);
+
+                var htmlLine = "<div style='padding:0px; margin:0px; height:" + thickness + "px; background-color:" + color +
+                               "; line-height:1px; position:absolute; left:" + cx + "px; top:" + cy + "px; width:" + length +
+                               "px; -moz-transform:rotate(" + angle + "deg); -webkit-transform:rotate(" + angle +
+                               "deg); -o-transform:rotate(" + angle + "deg); -ms-transform:rotate(" + angle +
+                               "deg); transform:rotate(" + angle + "deg);' />";
+
+                document.getElementById("drawLine").innerHTML+=htmlLine;
+            }
+            lastClick = [pos.x, pos.y];
+            last3dPoint = intersect[0].point;
+        }
+    };
+
+    function addHotspots(event) {
         var canvas = document.getElementById("canvas-place-holder");
         var pos = getMousePos(canvas, event);
 
@@ -261,7 +396,6 @@ Viewer.prototype.initCanvas = function () {
 
         raycaster.setFromCamera(mouse, that.camera);
         var intersect = raycaster.intersectObject(that.object);
-
 
         if (intersect.length > 0) {
 
@@ -288,16 +422,14 @@ Viewer.prototype.initCanvas = function () {
             $("#" + hotspotId).tooltip({trigger: 'manual'}).tooltip('show');
 
             document.getElementById("hotspot_input_titel").focus();
-            document.removeEventListener('dblclick', onDocumentMouseDown, false);
-
+            document.removeEventListener('dblclick', addHotspots, false);
 
             $("#hotspot_cancel").click(function(){
                 // Remove div
                 $('#' + hotspotId).tooltip('destroy')
                 document.getElementById(hotspotId).remove();
-                document.addEventListener('dblclick', onDocumentMouseDown, false);
+                document.addEventListener('dblclick', addHotspots, false);
             });
-
 
             $("#hotspot_ok").click(function(){
                 var hotspot = {};
@@ -320,16 +452,13 @@ Viewer.prototype.initCanvas = function () {
                 hotspot.camPosition = that.camera.position.clone();
                 hotspot.camRotation = that.camera.rotation.clone();
 
-
                 that.hotspots.push(hotspot);
-
 
                 $("#" + hotspotId).click(function(){
                     $('#' + hotspotId).tooltip('hide')
 
                     // Set camera rotation around hotspot.
                     that.controls.target.set(hotspot.position.x,hotspot.position.y,hotspot.position.z);
-
                     that.camera.position.set(hotspot.camPosition.x, hotspot.camPosition.y, hotspot.camPosition.z);
                     that.camera.rotation.set(hotspot.camRotation.x, hotspot.camRotation.y, hotspot.camRotation.z);
                 });
@@ -345,7 +474,7 @@ Viewer.prototype.initCanvas = function () {
 
                 that.hotspot_number++;
 
-                document.addEventListener('dblclick', onDocumentMouseDown, false);
+                document.addEventListener('dblclick', addHotspots, false);
 
                 $('button').prop('disabled', false);
 
@@ -354,7 +483,6 @@ Viewer.prototype.initCanvas = function () {
     }
 
     function getMousePos(canvas, event) {
-
         var rect = canvas.getBoundingClientRect();
         return {
             x: event.clientX - rect.left,
@@ -372,8 +500,8 @@ Viewer.prototype.initCanvas = function () {
             that.camera.aspect = size.width / size.height;
             that.camera.updateProjectionMatrix();
             that.renderer.setSize(size.width, size.height);
-            $("#camera-control-noFullscreen").fadeIn(500);
-            $("#camera-control-Fullscreen").hide();
+            $("#controls").fadeIn(500);
+
         }
         updateHotspotPositions();
         render();
@@ -390,10 +518,7 @@ Viewer.prototype.initCanvas = function () {
         that.renderer.clear();
         that.renderer.render(bgScene, bgCamera);
 
-        // Render when texture is ready, otherwise the texture will show black
-        if (textureReady) {
-            that.renderer.render(that.scene, that.camera);
-        }
+        that.renderer.render(that.scene, that.camera);
 
         updateHotspotPositions();
     }
@@ -426,7 +551,6 @@ Viewer.prototype.initCanvas = function () {
     }
 
     function get2dProjection(coord, camera, width, height) {
-
         var p = new THREE.Vector3(coord.x, coord.y, coord.z);
         var vector = p.project(camera);
 
@@ -434,7 +558,6 @@ Viewer.prototype.initCanvas = function () {
         vector.y = -(vector.y - 1) / 2 * height-10;
 
         return vector;
-
     }
 
     function updateHotspotPositions() {
