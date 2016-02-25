@@ -8,7 +8,7 @@
             <div class="col-md-5" id="addForm-column1">
                 <div class="alert alert-info" translate>form.model.heading.info</div>
 
-                <!-- Add name area -->
+                <!-- Add name -->
                 <div class="form-group" ng-class="{ 'has-error' : form.name.$invalid && !form.name.$pristine }">
                     <label for="model.add.name" translate>form.model.name.label</label>
                     <input type="text"
@@ -24,7 +24,7 @@
                        translate="VALIDATION.REQUIRED"></p>
                 </div>
 
-                <!-- Add material area -->
+                <!-- Add material -->
                 <div class="form-group" ng-class="{ 'has-error' : form.material.$invalid && !form.material.$pristine }">
                     <label for="model.add.material" translate>form.model.material.label</label>
                     <input type="text"
@@ -67,7 +67,7 @@
                     </div>
                 </div>
 
-                <!--Enter date area  -->
+                <!--Enter year  -->
                 <div class="form-group" ng-class="{ 'has-error' : form.year.$invalid && !form.year.$pristine }">
                     <label for="model.add.year" translate>form.model.year.label</label>
                     <input type="text"
@@ -84,7 +84,7 @@
                        translate="VALIDATION.REQUIRED"></p>
                 </div>
 
-                <!-- Tags area -->
+                <!-- Tags -->
                 <label>{{ 'form.model.tags.label' | translate }} ({{ 'form.optional' | translate }})</label>
                 <tags-input ng-model="ctrl.model.tags" id="model.add.tags"
                             placeholder="{{'form.model.tags.placeholder' | translate}}">
@@ -92,11 +92,11 @@
                     </auto-complete>
                 </tags-input>
 
-                <!-- Model heading -->
+
                 <div class="form-group"></div>
                 <div class="alert alert-info" translate>form.model.heading.file</div>
 
-                <!--Enter object file area  -->
+                <!--Add object file  -->
                 <div class="form-group">
                     <label translate>form.model.file.object</label>
 
@@ -117,7 +117,7 @@
                 </div>
 
 
-                <!--Enter texture-file area  -->
+                <!--Add texture -->
                 <div class="form-group">
                     <label>{{ 'form.model.file.texture' | translate }} ({{ 'form.optional' | translate }})</label>
 
@@ -134,10 +134,30 @@
                                id="texture-file">
                     </span>
                     </div>
-                </div>  
+                </div>
+
+                <!-- Add images   -->
+                <div class="form-group">
+                    <label>{{ 'form.model.file.images' | translate }} ({{ 'form.optional' | translate }})</label>
+
+                    <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                        <div class="form-control" >
+                            <i class="glyphicon glyphicon-file fileinput-exists"></i>
+                            <span id="image-text-field"></span>
+                        </div>
+                    <div class="input-group-addon btn btn-default btn-file">
+                        <span class="fileinput-new" translate>form.model.file.selectimages</span>
+                        <span class="fileinput-exists" translate>form.model.file.change</span>
+                        <input type="file" name="image-files" id="image-files" multiple="true">
+                    </div>
+
+
+                    </div>
+                </div>
+
             </div>
 
-            <!--Enter text for model area  -->
+            <!--Enter text for model -->
             <div class="col-md-7" id="addForm-text">
                 <div class="alert alert-info" translate>form.model.heading.text</div>
                 <div class="form-group">
@@ -148,7 +168,7 @@
 
         </div>
 
-        <!--Save button area   -->
+        <!--Save button -->
         <div class="row">
             <div class="col-md-12">
                 <button value="Send"

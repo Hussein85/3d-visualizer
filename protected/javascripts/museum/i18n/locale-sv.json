@@ -51,7 +51,7 @@
   "form": {
     "email": "E-Postadress",
     "enter": "Ange",
-    "optional": "Valfrit",
+    "optional": "Valfritt",
     "model": {
       "file": {
         "object": "Objektfilen",
@@ -59,7 +59,9 @@
         "select": "Välj fil",
         "change": "Ändra",
         "texture": "Texturfilen",
-        "thumbnail": "Tumnagelfilen"
+        "thumbnail": "Tumnagelfilen",
+        "images": "Bilder",
+        "selectimages": "Välj bilder"
       },
       "heading": {
         "file": "Modellfiler",

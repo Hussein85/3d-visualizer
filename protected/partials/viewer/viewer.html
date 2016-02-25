@@ -1,60 +1,66 @@
 <div ng-controller="ViewerController as ctrl" ng-init="ctrl.init()">
-	<div class="row">
-		<div class="col-md-8" id="model-viewer">
-			<div class="alert alert-success" translate>VIEWER.VIEWER.HEADER</div>
-
-			<div id="canvas-place-holder">
-
-					<canvas id="circularLoader" width="70" height="70"></canvas>
-
-					<div id="controls">
-							<div class="control-button" id="dist-button" data-toggle="tooltip-camera" title=" {{ 'VIEWER.VIEWER.CONTROLLS.DIST'| translate }} ">
-										<div  class="glyphicon glyphicon-resize-horizontal white"  ></div>
-							</div>
-							<div class="control-button" id="toogle-fullscreen" data-toggle="tooltip-camera" title=" {{ 'VIEWER.VIEWER.CONTROLLS.TOGGLE_FULLSCREEN'| translate }} ">
-										<div class="glyphicon glyphicon-resize-full white"  ></div>
-							</div>
-							<div class="control-button" id="reset-view" data-toggle="tooltip-camera" title=" {{ 'VIEWER.VIEWER.CONTROLLS.RESET'| translate }} ">
-										<div  class="glyphicon glyphicon-repeat white"  ></div>
-							</div>
-					</div>
-
-					<div id="distance-infowindow"></div>
-					<div id="distance-resetButton"></div>
-					<div id="hotspots"></div>
-					<div id="drawLine">	</div>
-
-			</div>
-
-			<div id="camera-control">	</div>
-
-		</div>
-
-		<div class="col-md-4" id="model-info">
-			<div class="alert alert-info" translate>VIEWER.INFORMATION.HEADER.INFO</div>
-<!-- 			TODO: Similar code as browser window refactor to share code. -->
-			<dl class="dl-horizontal">
-					<dt translate>THUMBNAIL.ID</dt>
-					<dd>{{ctrl.model.id}}</dd>
-					<dt translate>THUMBNAIL.MODEL_NAME</dt>
-					<dd>{{ctrl.model.name}}</dd>
-					<dt translate>THUMBNAIL.USER_ID</dt>
-					<dd>{{ctrl.model.userId}}</dd>
-					<dt translate>THUMBNAIL.MODEL_MATERIAL</dt>
-					<dd>{{ctrl.model.material}}</dd>
-					<dt translate>THUMBNAIL.MODEL_LOCATION</dt>
-					<dd>{{ctrl.model.location}}</dd>
-					<dt translate>THUMBNAIL.MODEL_YEAR</dt>
-					<dd>{{ctrl.model.date}}</dd>
-				</dl>
-				<div class="model-tags">
-					<h4>
-						<span style="margin-left: 5px" class="label label-info" ng-repeat="tag in ctrl.tags">{{tag.text}}</span>
-					</h4>
+		<div class="row">
+				<div class="col-md-8" id="model-viewer">
+						<div class="alert alert-success" translate>VIEWER.VIEWER.HEADER</div>
+						<div id="canvas-place-holder">
+								<canvas id="circularLoader" width="70" height="70"></canvas>
+							  <span id="controls">
+										<div class="control-button" id="dist-button" data-toggle="tooltip-camera" title=" {{ 'VIEWER.VIEWER.CONTROLLS.DIST'| translate }} ">
+												<img ng-src='/securedassets/images/Measurement-Units-Length-icon.png' class="measurement-icon" >
+										</div>
+										<div class="control-button" id="reset-view" data-toggle="tooltip-camera" title=" {{ 'VIEWER.VIEWER.CONTROLLS.RESET'| translate }} ">
+												<div  class="glyphicon glyphicon-repeat white"  ></div>
+										</div>
+										<div class="control-button" id="toogle-fullscreen" data-toggle="tooltip-camera" title=" {{ 'VIEWER.VIEWER.CONTROLLS.TOGGLE_FULLSCREEN'| translate }} ">
+												<div class="glyphicon glyphicon-resize-full white"  ></div>
+										</div>
+								</span>
+								<div id="distance-infowindow">
+										<div id="distance-infowindow-text"></div>
+								</div>
+								<div id="distance-resetButton">
+										<div id="distance-resetButton-text">Nollställ</div>
+								</div>
+								<div id="hotspots"></div>
+								<div id="measure-distance">	</div>
+						</div>
+						<!-- Image gallery  -->
+						<div class = "row">
+								<div class="imageContainer">
+										<div ng-repeat="img in ctrl.images">
+												<a href = {{img.source}} data-toggle="lightbox" data-gallery="multiiimages">
+														<img ng-src={{img.source}} alt = "" class="thumbnail img-responsive" >
+												</a>
+										</div>
+								</div>
+						</div>
 				</div>
-			<br />
-			<div class="alert alert-info" translate>VIEWER.INFORMATION.HEADER.TEXT</div>
-			<textarea id="text"></textarea>
+
+				<div class="col-md-4" id="model-info">
+						<div class="alert alert-info" translate>VIEWER.INFORMATION.HEADER.INFO</div>
+	<!-- 			TODO: Similar code as browser window refactor to share code. -->
+				<dl class="dl-horizontal">
+						<dt translate>THUMBNAIL.ID</dt>
+						<dd>{{ctrl.model.id}}</dd>
+						<dt translate>THUMBNAIL.MODEL_NAME</dt>
+						<dd>{{ctrl.model.name}}</dd>
+						<dt translate>THUMBNAIL.USER_ID</dt>
+						<dd>{{ctrl.model.userId}}</dd>
+						<dt translate>THUMBNAIL.MODEL_MATERIAL</dt>
+						<dd>{{ctrl.model.material}}</dd>
+						<dt translate>THUMBNAIL.MODEL_LOCATION</dt>
+						<dd>{{ctrl.model.location}}</dd>
+						<dt translate>THUMBNAIL.MODEL_YEAR</dt>
+						<dd>{{ctrl.model.date}}</dd>
+					</dl>
+					<div class="model-tags">
+						<h4>
+							<span style="margin-left: 5px" class="label label-info" ng-repeat="tag in ctrl.tags">{{tag.text}}</span>
+						</h4>
+					</div>
+				<br />
+				<div class="alert alert-info" translate>VIEWER.INFORMATION.HEADER.TEXT</div>
+				<textarea id="text"></textarea>
+			</div>
 		</div>
-	</div>
 </div>

@@ -1,6 +1,6 @@
 <div class="container browser">
   <div class="row" ng-controller="BrowserAppController as ctrl" ng-init="ctrl.init()">
-    <div class="col-xs-6"  ng-repeat="model in ctrl.models" ng-init='ctrl.loadTags(model.id)'>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6"  ng-repeat="model in ctrl.models" ng-init='ctrl.loadTags(model.id)'>
         <div class="media">
             <div class="media-left">
                 <a href="#/model/{{model.id}}">
@@ -23,7 +23,9 @@
                 </dl>
             </div>
             <hr/>
+
         </div>
+
     </div>
   </div>
 </div>

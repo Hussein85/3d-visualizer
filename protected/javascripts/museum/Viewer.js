@@ -42,6 +42,21 @@ Viewer.prototype.fullscreen = function () {
     fullscreenDiv.innerHTML="<div class='glyphicon glyphicon-resize-small white' ></div>";
     fullscreenDiv.setAttribute("id", "exit-fullscreen");
 
+    if ( $('#distance-infowindow-text').length > 0 ) {
+        document.getElementById("distance-infowindow").style.left = "50px";
+        document.getElementById("distance-infowindow").style.top = "50px";
+        document.getElementById("distance-infowindow").style.width = "200px";
+        document.getElementById("distance-infowindow").style.height = "40px";
+        document.getElementById("distance-infowindow-text").style.fontSize = "large";
+        document.getElementById("distance-infowindow-text").style.marginTop = "5px";
+        document.getElementById("distance-resetButton").style.left = "260px";
+        document.getElementById("distance-resetButton").style.top = "50px";
+        document.getElementById("distance-resetButton").style.width = "150px";
+        document.getElementById("distance-resetButton").style.height = "40px";
+        document.getElementById("distance-resetButton-text").style.fontSize = "large";
+        document.getElementById("distance-resetButton-text").style.marginTop = "5px";
+    }
+
     $("#exit-fullscreen").mouseover(function() {
         $("#exit-fullscreen").tooltip('show');
     });
@@ -49,12 +64,6 @@ Viewer.prototype.fullscreen = function () {
     $("#exit-fullscreen").mouseleave(function() {
         $("#exit-fullscreen").tooltip('hide');
     });
-
-    var el = document.getElementById('drawLine');
-    while ( el.firstChild ) el.removeChild( el.firstChild );
-    clicks = 0;
-    distance = 0;
-    document.getElementById("distance-infowindow").innerHTML="<div class=dist-infowindow-text >" + "Avstånd: " + 0 + " cm" + "</div>";
 
     var i = document.getElementById('canvas-place-holder');
 
@@ -82,18 +91,25 @@ Viewer.prototype.exitFullscreen = function () {
         document.webkitExitFullscreen();
     }
 
-    var el = document.getElementById('drawLine');
-    while ( el.firstChild ) el.removeChild( el.firstChild );
-    clicks = 0;
-    distance = 0;
-    document.getElementById("distance-infowindow").innerHTML="<div class=dist-infowindow-text >" + "Avstånd: " + 0 + " cm" + "</div>";
-
     $("#toogle-fullscreen").off();
     $("#toogle-fullscreen").tooltip('hide');
 
-    // Dynimacally modify div element
-    var fullscreenDiv = document.getElementById("exit-fullscreen");
+    if ( $('#distance-infowindow-text').length > 0 ) {
+        document.getElementById("distance-infowindow").style.left = "5px";
+        document.getElementById("distance-infowindow").style.top = "5px";
+        document.getElementById("distance-infowindow").style.width = "120px";
+        document.getElementById("distance-infowindow").style.height = "20px";
+        document.getElementById("distance-infowindow-text").style.fontSize = "small";
+        document.getElementById("distance-infowindow-text").style.marginTop = "0px";
+        document.getElementById("distance-resetButton").style.left = "130px";
+        document.getElementById("distance-resetButton").style.top = "5px";
+        document.getElementById("distance-resetButton").style.width = "60px";
+        document.getElementById("distance-resetButton").style.height = "20px";
+        document.getElementById("distance-resetButton-text").style.fontSize = "small";
+        document.getElementById("distance-resetButton-text").style.marginTop = "0px";
+    }
 
+    var fullscreenDiv = document.getElementById("exit-fullscreen");
     //fullscreenDiv.setAttribute("data-html", "true");
     //fullscreenDiv.setAttribute("data-original-title", "{{ 'VIEWER.VIEWER.CONTROLLS.TOGGLE_FULLSCREEN'| translate }} ");
     fullscreenDiv.setAttribute("data-original-title", "Helskärmsläge");
@@ -115,6 +131,7 @@ Viewer.prototype.resetView = function () {
     this.camera.rotation.set(this.savedCam.rotation.x, this.savedCam.rotation.y, this.savedCam.rotation.z);
     this.controls.center.set(this.savedCam.controlCenter.x, this.savedCam.controlCenter.y, this.savedCam.controlCenter.z);
     this.controls.update();
+
 }
 
 Viewer.prototype.lightUpdate = function (that) {
@@ -129,6 +146,7 @@ Viewer.prototype.initCanvas = function () {
 
     var textureReady = false;
     that.savedCam = {};
+    that.measurementPoints = [];
 
     that.initHotspots();
 
@@ -152,34 +170,38 @@ Viewer.prototype.initCanvas = function () {
     function init() {
 
         clicks = 0;
-        lastClick = [0, 0];
+        lastClick = {};
         distance = 0;
         last3dPoint = new THREE.Vector3();
 
         $('#dist-button').click(function(){
              if($(this).toggleClass('active').hasClass('active')){
                 // When distance-button is active.
-                document.getElementById("canvas-place-holder").addEventListener('click', drawLine, false);
-                document.getElementById("distance-infowindow").innerHTML="<div class=dist-infowindow-text >" + "Avstånd: " + distance + " cm" + "</div>";
+                $('#canvas-place-holder').css('cursor','crosshair');
+                document.getElementById("canvas-place-holder").addEventListener('click', measureDistance, false);
+                document.getElementById("distance-infowindow-text").innerHTML="Avstånd: " + distance + " cm";
                 $("#distance-infowindow").fadeIn(500);
-                document.getElementById("distance-resetButton").innerHTML="<div class=distance-resetButton-text >" + "Nollställ" + "</div>";
                 $("#distance-resetButton").fadeIn(500);
                 $("#distance-resetButton").click(function(){
-                    var el = document.getElementById('drawLine');
+                    var el = document.getElementById('measure-distance');
                     while ( el.firstChild ) el.removeChild( el.firstChild );
                     clicks = 0;
                     distance = 0;
-                    document.getElementById("distance-infowindow").innerHTML="<div class=dist-infowindow-text >" + "Avstånd: " + 0 + " cm" + "</div>";
+                    document.getElementById("distance-infowindow-text").innerHTML="Avstånd: " + 0 + " cm";
+                    that.measurementPoints = [];
                 });
+
              }else{
                 // When distance-button is not active
-                document.getElementById("canvas-place-holder").removeEventListener('click', drawLine, false);
+                $('#canvas-place-holder').css('cursor','default');
+                document.getElementById("canvas-place-holder").removeEventListener('click', measureDistance, false);
                 $("#distance-infowindow").fadeOut();
                 $("#distance-resetButton").fadeOut();
-                var el = document.getElementById('drawLine');
+                var el = document.getElementById('measure-distance');
                 while ( el.firstChild ) el.removeChild( el.firstChild );
                 clicks = 0;
                 distance = 0;
+                that.measurementPoints = [];
              }
          });
 
@@ -324,13 +346,15 @@ Viewer.prototype.initCanvas = function () {
         that.controls.addEventListener('change', function () {
             that.lightUpdate(that);
             updateHotspotPositions();
+            updateMeasurementPoints();
+
         });
         that.controls.addEventListener('change', render);
         window.addEventListener('resize', onWindowResize, false);
-        document.getElementById("canvas-place-holder").addEventListener("dblclick", addHotspots);
+        //document.getElementById("canvas-place-holder").addEventListener("dblclick", addHotspots);
     }
 
-    function drawLine(evnet) {
+    function measureDistance(event) {
         var canvas = document.getElementById("canvas-place-holder");
         var pos = getMousePos(canvas, event);
 
@@ -341,11 +365,19 @@ Viewer.prototype.initCanvas = function () {
         var intersect = raycaster.intersectObject(that.object);
 
         if (intersect.length > 0) {
+
             var point = document.createElement("div");
-            $('#drawLine').append(point);
+            $('#measure-distance').append(point);
 
             point.setAttribute("class", "point");
+            point.setAttribute("id", "point" + clicks);
             point.setAttribute("style", "top:" + (pos.y-5) + "px; left: " + (pos.x-5) + "px" );
+
+            var measurementPoint = {};
+            measurementPoint.pos3d = intersect[0].point;
+            measurementPoint.pos2d = pos;
+            measurementPoint.pointId = "point" + clicks;
+            that.measurementPoints.push(measurementPoint);
 
             if (clicks == 0) {
                 clicks++;
@@ -354,34 +386,39 @@ Viewer.prototype.initCanvas = function () {
                 var point1 = last3dPoint;
                 var point2 = intersect[0].point;
                 distance += Math.round(point1.distanceTo(point2)/10);
-                document.getElementById("distance-infowindow").innerHTML="<div class=dist-infowindow-text >" + "Avstånd: " + distance + " cm" + "</div>";
+                document.getElementById("distance-infowindow-text").innerHTML="Avstånd: " + distance + " cm";
 
-                // draw line
-                var x1 = lastClick[0];
-                var y1 = lastClick[1];
-                var x2 = pos.x;
-                var y2 = pos.y;
-
-                var length = Math.sqrt(((x2-x1) * (x2-x1)) + ((y2-y1) * (y2-y1)));
-                var thickness = 3;
-                var color = "#0F0";
-                var cx = ((x1 + x2) / 2) - (length / 2);
-                var cy = ((y1 + y2) / 2) - (thickness / 2);
-
-                var angle = Math.atan2((y1-y2),(x1-x2))*(180/Math.PI);
-
-                var htmlLine = "<div style='padding:0px; margin:0px; height:" + thickness + "px; background-color:" + color +
-                               "; line-height:1px; position:absolute; left:" + cx + "px; top:" + cy + "px; width:" + length +
-                               "px; -moz-transform:rotate(" + angle + "deg); -webkit-transform:rotate(" + angle +
-                               "deg); -o-transform:rotate(" + angle + "deg); -ms-transform:rotate(" + angle +
-                               "deg); transform:rotate(" + angle + "deg);' />";
-
-                document.getElementById("drawLine").innerHTML+=htmlLine;
+                drawLine(lastClick, pos, 3, "#0F0");
+                clicks++;
             }
-            lastClick = [pos.x, pos.y];
+            lastClick.x = pos.x;
+            lastClick.y = pos.y;
             last3dPoint = intersect[0].point;
         }
     };
+
+    function drawLine(point1, point2, thickness, color){
+        var x1 = point1.x;
+        var y1 = point1.y;
+        var x2 = point2.x;
+        var y2 = point2.y;
+
+        var length = Math.sqrt(((x2-x1) * (x2-x1)) + ((y2-y1) * (y2-y1)));
+
+        var cx = ((x1 + x2) / 2) - (length / 2);
+        var cy = ((y1 + y2) / 2) - (thickness / 2);
+
+        var angle = Math.atan2((y1-y2),(x1-x2))*(180/Math.PI);
+
+        var htmlLine = "<div class='distance-line' style='padding:0px; margin:0px; height:" + thickness + "px; background-color:" + color +
+                       "; line-height:1px; position:absolute; left:" + cx + "px; top:" + cy + "px; width:" + length +
+                       "px; -moz-transform:rotate(" + angle + "deg); -webkit-transform:rotate(" + angle +
+                       "deg); -o-transform:rotate(" + angle + "deg); -ms-transform:rotate(" + angle +
+                       "deg); transform:rotate(" + angle + "deg);' />";
+
+        document.getElementById("measure-distance").innerHTML+=htmlLine;
+
+    }
 
     function addHotspots(event) {
         var canvas = document.getElementById("canvas-place-holder");
@@ -422,13 +459,13 @@ Viewer.prototype.initCanvas = function () {
             $("#" + hotspotId).tooltip({trigger: 'manual'}).tooltip('show');
 
             document.getElementById("hotspot_input_titel").focus();
-            document.removeEventListener('dblclick', addHotspots, false);
+            document.getElementById("canvas-place-holder").removeEventListener('dblclick', addHotspots, false);
 
             $("#hotspot_cancel").click(function(){
                 // Remove div
                 $('#' + hotspotId).tooltip('destroy')
                 document.getElementById(hotspotId).remove();
-                document.addEventListener('dblclick', addHotspots, false);
+                document.getElementById("canvas-place-holder").addEventListener('dblclick', addHotspots, false);
             });
 
             $("#hotspot_ok").click(function(){
@@ -474,7 +511,7 @@ Viewer.prototype.initCanvas = function () {
 
                 that.hotspot_number++;
 
-                document.addEventListener('dblclick', addHotspots, false);
+                document.getElementById("canvas-place-holder").addEventListener('dblclick', addHotspots, false);
 
                 $('button').prop('disabled', false);
 
@@ -504,6 +541,7 @@ Viewer.prototype.initCanvas = function () {
 
         }
         updateHotspotPositions();
+        updateMeasurementPoints();
         render();
     }
 
@@ -521,6 +559,7 @@ Viewer.prototype.initCanvas = function () {
         that.renderer.render(that.scene, that.camera);
 
         updateHotspotPositions();
+        updateMeasurementPoints();
     }
 
     function fitCameraToObject() {
@@ -554,8 +593,8 @@ Viewer.prototype.initCanvas = function () {
         var p = new THREE.Vector3(coord.x, coord.y, coord.z);
         var vector = p.project(camera);
 
-        vector.x = (vector.x + 1) / 2 * width-10;
-        vector.y = -(vector.y - 1) / 2 * height-10;
+        vector.x = (vector.x + 1) / 2 * width;
+        vector.y = -(vector.y - 1) / 2 * height;
 
         return vector;
     }
@@ -584,10 +623,49 @@ Viewer.prototype.initCanvas = function () {
 
                 var hotspotId = hotspot.hotspotId;
 
-                $("#" + hotspotId).css({top: proj.y, left: proj.x})
-
+                $("#" + hotspotId).css({top: proj.y-10, left: proj.x-10})
             }
         }
+    }
+
+    function updateMeasurementPoints() {
+      if ( $('.distance-line').length ) {
+          $(".distance-line").remove();
+      }
+
+      var lastPoint = {};
+      for (var i = 0; i < that.measurementPoints.length; i++) {
+          point = that.measurementPoints[i];
+          if (!isObjectEmpty(point.pos3d)){
+              proj = {};
+
+              // If fullscreen
+              if (document.webkitIsFullScreen || document.msFullscreenElement || document.mozFullScreen || document.fullscreen) {
+                  proj = get2dProjection(point.pos3d, that.camera, window.innerWidth, window.innerHeight);
+              } else {
+                  proj = get2dProjection(point.pos3d, that.camera, size.width, size.height);
+
+                  if (proj.x < 0)
+                      proj.x = 0;
+                  if (proj.x > size.width)
+                      proj.x = size.width;
+                  if (proj.y < 0)
+                      proj.y = 0;
+                  if (proj.y > size.height)
+                      proj.y = size.height;
+              }
+
+              var pointId = point.pointId;
+              $("#" + pointId).css({top: proj.y-5, left: proj.x-5});
+          }
+
+          if (i != 0){
+
+              drawLine(lastPoint, proj, 3, "#0F0");
+          }
+          lastPoint = proj;
+      }
+
     }
 
     function isObjectEmpty(object){

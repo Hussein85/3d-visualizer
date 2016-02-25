@@ -38,50 +38,6 @@ app.config(['$routeProvider', '$translateProvider', 'uiGmapGoogleMapApiProvider'
     }]);
 
 
-app.factory('modelFactory', ['$http', function ($http) {
-
-    var modelFactory = {};
-
-    // Read models from databas and returning a model array
-    modelFactory.init = function () {
-
-        var models = {};
-
-        var assignModelAndGetFiles = function (model) {
-            models[model.id] = model;
-            $http.get('/file/model/' + model.id).then(function (result) {
-                var thumbnailPredicate = function (file) {
-                    return file.type === 'thumbnail' && file.finished;
-                };
-
-                models[model.id].thumbnail = result.data.filter(thumbnailPredicate)[0].getUrl;
-            });
-        };
-
-        $http.get('/model').then(function (result) {
-            result.data.forEach(assignModelAndGetFiles);
-
-        });
-
-    };
-
-    // Read tags from databas and return a tag array
-    modelFactory.loadTags = function (modelId) {
-
-        var tags = {};
-
-        $http.get('/tags/model/' + modelId).then(function (result) {
-            tags[modelId] = result.data;
-        });
-
-        return tags;
-    };
-
-    return modelFactory;
-
-}]);
-
-
 app.controller('ViewerController', [
     '$scope',
     '$resource',
@@ -175,6 +131,26 @@ app.controller('ViewerController', [
                     });
                 });
 
+                // TODO load 2d-images from backend.
+              _this.images=[
+                   {id:'1', source:'/securedassets/images/gycklaren/gycklaren1.jpg'},
+                   {id:'2', source:'/securedassets/images/gycklaren/gycklaren2.jpg'},
+                   {id:'3', source:'/securedassets/images/gycklaren/gycklaren3.jpg'},
+                   {id:'4', source:'/securedassets/images/gycklaren/gycklaren4.jpg'},
+                   {id:'5', source:'/securedassets/images/gycklaren/gycklaren5.jpg'},
+                   {id:'6', source:'/securedassets/images/gycklaren/gycklaren1.jpg'},
+                   {id:'7', source:'/securedassets/images/gycklaren/gycklaren2.jpg'},
+                   {id:'8', source:'/securedassets/images/gycklaren/gycklaren3.jpg'},
+                   {id:'9', source:'/securedassets/images/gycklaren/gycklaren4.jpg'},
+                   {id:'10', source:'/securedassets/images/gycklaren/gycklaren5.jpg'}
+               ];
+
+               $(document).delegate('*[data-toggle="lightbox"]', 'click', function(event) {
+                  event.preventDefault();
+                  $(this).ekkoLightbox();
+              });
+
+
         };
 
     }
@@ -226,7 +202,6 @@ app.controller('BrowserAppController', ['$scope', '$resource', '$http',
 
         // Load tags from modelId
         _this.loadTags = function (modelId) {
-            //_this.tags = modelFactory.loadTags(modelId);
             $http.get('/tags/model/' + modelId).then(function (result) {
                 _this.tags[modelId] = result.data;
             });
@@ -386,6 +361,13 @@ app.controller('ModelAddController', [
                 $scope.$apply();
             });
 
+            $("#image-files").on('change', function () {
+                var imageInput = document.getElementById('image-files');
+                var inputText = document.getElementById('image-text-field');
+                inputText.innerHTML = imageInput.files.length  + " bilder valda";
+            });
+
+
         };
 
         _this.uploading = function () {
@@ -418,6 +400,11 @@ app.controller('ModelAddController', [
                     if (document.getElementById('texture-file').files.length > 0) {
                         _this.uploadFile(document.getElementById('texture-file').files[0], model.id, 'texture');
                     }
+                    /*
+                    if (document.getElementById('image-files').files.length > 0) {
+                        _this.uploadFile(document.getElementById('image-files').files, model.id, 'images');
+                    }
+                    */
                 }).error(function (data, status, headers, config) {
                     _this.addAlert({
                         msg: data,
